@@ -1,0 +1,3 @@
+
+/* defined in presence of konforka library */
+#undef OPKELE_HAVE_KONFORKA

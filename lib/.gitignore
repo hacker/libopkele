@@ -1,0 +1,7 @@
+*.lo
+*.o
+Makefile.in
+libopkele.la
+.libs
+.deps
+Makefile
