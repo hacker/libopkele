@@ -35,6 +35,8 @@ if test "${WANT_KONFORKA}" = "yes" ; then
    AC_DEFINE([HAVE_KONFORKA],,[defined in presence of konforka library])
    AC_DEFINE([OPKELE_HAVE_KONFORKA],,[defined in presence of konforka library])
    AC_SUBST([KONFORKA_KONFORKA],[konforka])
+  ],[
+   AC_MSG_RESULT([no])
   ]
  )
 fi
