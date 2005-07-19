@@ -4,6 +4,16 @@
 
 namespace opkele {
 
+#   ifndef OPKELE_HAVE_KONFORKA
+
+    exception::~exception() throw() {
+    }
+    const char *exception::what() const throw() {
+	return _what.c_str();
+    }
+    
+#   endif
+
     exception_openssl::exception_openssl(OPKELE_E_PARS)
 	: _error(ERR_peek_last_error()),
 	_ssl_string(ERR_error_string(_error,0)),

@@ -28,7 +28,8 @@
  */
 # define OPKELE_RETHROW catch(konforka::exception& e) { e.see(CODEPOINT); throw }
 #else /* OPKELE_HAVE_KONFORKA */
-# include <stdexcept>
+# include <exception>
+# include <string>
 /**
  * the exception parameter declaration
  */
@@ -74,9 +75,12 @@ namespace opkele {
 		exception(const string& fi,const string& fu,int l,const string& w)
 		    : konforka::exception(fi,fu,l,w) { }
 #           else /* OPKELE_HAVE_KONFORKA */
+	    string _what;
 	    explicit
 		exception(const string& w)
-		    : std::exception(w) { } 
+		    : _what(w) { } 
+	    virtual ~exception() throw();
+	    virtual const char * what() const throw();
 #           endif /* OPKELE_HAVE_KONFORKA */
     };
 
