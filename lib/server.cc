@@ -78,12 +78,15 @@ namespace opkele {
     void server_t::checkid_(mode_t mode,const params_t& pin,string& return_to,params_t& pout) {
 	if(mode!=mode_checkid_immediate && mode!=mode_checkid_setup)
 	    throw bad_input(OPKELE_CP_ "invalid checkid_* mode");
+	pout.clear();
 	assoc_t assoc;
 	try {
 	    assoc = retrieve_assoc(pin.get_param("openid.assoc_handle"));
 	}catch(failed_lookup& fl) {
 	    // no handle specified or no valid handle found, going dumb
 	    assoc = alloc_assoc(mode_checkid_setup);
+	    if(pin.has_param("openid.assoc_handle"))
+		pout["invalidate_handle"]=pin.get_param("openid.assoc_handle");
 	}
 	string trust_root;
 	try {
@@ -92,7 +95,6 @@ namespace opkele {
 	string identity = pin.get_param("openid.identity");
 	return_to = pin.get_param("openid.return_to");
 	validate(*assoc,pin,identity,trust_root);
-	pout.clear();
 	pout["mode"] = "id_res";
 	pout["assoc_handle"] = assoc->handle();
 	if(pin.has_param("openid.assoc_handle") && assoc->stateless())
