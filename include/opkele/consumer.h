@@ -128,6 +128,8 @@ namespace opkele {
 	     */
 	    void check_authentication(const string& server,const params_t& p);
 
+	    static string canonicalize(const string& url);
+
     };
 
 }

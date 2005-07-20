@@ -137,7 +137,7 @@ namespace opkele {
 	    p["mode"]="checkid_setup";
 	else
 	    throw bad_input(OPKELE_CP_ "unknown checkid_* mode");
-	string iurl = util::canonicalize_url(identity);
+	string iurl = canonicalize(identity);
 	string server, delegate;
 	retrieve_links(iurl,server,delegate);
 	p["identity"] = delegate.empty()?iurl:delegate;
@@ -160,7 +160,7 @@ namespace opkele {
 	if(pin.has_param("openid.user_setup_url"))
 	    throw id_res_setup(OPKELE_CP_ "assertion failed, setup url provided",pin.get_param("openid.user_setup_url"));
 	string server,delegate;
-	retrieve_links(identity.empty()?pin.get_param("openid.identity"):util::canonicalize_url(identity),server,delegate);
+	retrieve_links(identity.empty()?pin.get_param("openid.identity"):canonicalize(identity),server,delegate);
 	try {
 	    assoc_t assoc = retrieve_assoc(server,pin.get_param("openid.assoc_handle"));
 	    const string& sigenc = pin.get_param("openid.sig");
@@ -311,6 +311,31 @@ namespace opkele {
 
     assoc_t consumer_t::find_assoc(const string& server) {
 	throw failed_lookup(OPKELE_CP_ "no find_assoc() provided");
+    }
+
+    string consumer_t::canonicalize(const string& url) {
+	string rv = url;
+	// strip leading and trailing spaces
+	string::size_type i = rv.find_first_not_of(" \t\r\n");
+	if(i==string::npos)
+	    throw bad_input(OPKELE_CP_ "empty URL");
+	if(i)
+	    rv.erase(0,i);
+	i = rv.find_last_not_of(" \t\r\n");
+	assert(i!=string::npos);
+	if(i<(rv.length()-1))
+	    rv.erase(i+1);
+	// add missing http://
+	i = rv.find("://");
+	if(i==string::npos) { // primitive. but do we need more?
+	    rv.insert(0,"http://");
+	    i = sizeof("http://")-1;
+	}else{
+	    i += sizeof("://")-1;
+	}
+	if(rv.find('/',i)==string::npos)
+	    rv += '/';
+	return rv;
     }
 
 }

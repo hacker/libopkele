@@ -83,31 +83,6 @@ namespace opkele {
 	 *
 	 */
 
-	string canonicalize_url(const string& url) {
-	    string rv = url;
-	    // strip leading and trailing spaces
-	    string::size_type i = rv.find_first_not_of(" \t\r\n");
-	    if(i==string::npos)
-		throw bad_input(OPKELE_CP_ "empty URL");
-	    if(i)
-		rv.erase(0,i);
-	    i = rv.find_last_not_of(" \t\r\n");
-	    assert(i!=string::npos);
-	    if(i<(rv.length()-1))
-		rv.erase(i+1);
-	    // add missing http://
-	    i = rv.find("://");
-	    if(i==string::npos) { // primitive. but do we need more?
-		rv.insert(0,"http://");
-		i = sizeof("http://")-1;
-	    }else{
-		i += sizeof("://")-1;
-	    }
-	    if(rv.find('/',i)==string::npos)
-		rv += '/';
-	    return rv;
-	}
-
 	string url_encode(const string& str) {
 	    char * t = curl_escape(str.c_str(),str.length());
 	    if(!t)

@@ -48,7 +48,6 @@ namespace opkele {
 	string time_to_w3c(time_t t);
 	time_t w3c_to_time(const string& w);
 
-	string canonicalize_url(const string& url);
 	string url_encode(const string& str);
 
 	string long_to_string(long l);
