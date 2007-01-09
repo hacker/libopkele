@@ -333,8 +333,15 @@ namespace opkele {
 	}else{
 	    i += sizeof("://")-1;
 	}
-	if(rv.find('/',i)==string::npos)
-	    rv += '/';
+	string::size_type qm = rv.find('?',i);
+	string::size_type sl = rv.find('/',i);
+	if(qm!=string::npos) {
+	    if(sl==string::npos || sl>qm)
+		rv.insert(qm,1,'/');
+	}else{
+	    if(sl==string::npos)
+		rv += '/';
+	}
 	return rv;
     }
 
