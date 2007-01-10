@@ -75,8 +75,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 
 INPUT                  = \
-	@srcdir@/include/opkele/
-FILE_PATTERNS          = *.h
+	@srcdir@/include/opkele/ @srcdir@/lib/
+FILE_PATTERNS          = *.h *.cc
 RECURSIVE              = NO
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
@@ -93,7 +93,7 @@ FILTER_SOURCE_FILES    = NO
 # configuration options related to source browsing
 #---------------------------------------------------------------------------
 
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 INLINE_SOURCES         = NO
 STRIP_CODE_COMMENTS    = YES
 REFERENCED_BY_RELATION = YES
