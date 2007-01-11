@@ -23,6 +23,7 @@ libopkele_la_SOURCES = \
 		       consumer.cc \
 		       exception.cc \
 		       extension.cc \
-		       sreg.cc
+		       sreg.cc \
+		       extension_chain.cc
 libopkele_la_LDFLAGS = \
 	-version-info 1:0:0
