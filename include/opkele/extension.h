@@ -1,5 +1,5 @@
-#ifndef __OPKELE_EXTENSIONS_H
-#define __OPKELE_EXTENSIONS_H
+#ifndef __OPKELE_EXTENSION_H
+#define __OPKELE_EXTENSION_H
 
 /**
  * @file
@@ -56,4 +56,4 @@ namespace opkele {
 
 }
 
-#endif /* __OPKELE_EXTENSIONS_H */
+#endif /* __OPKELE_EXTENSION_H */
