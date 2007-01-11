@@ -2,6 +2,7 @@
 #define __OPKELE_CONSUMER_H
 
 #include <opkele/types.h>
+#include <opkele/extension.h>
 
 /**
  * @file
@@ -82,20 +83,22 @@ namespace opkele {
 	     * @param identity the identity to verify
 	     * @param return_to the return_to url to pass with the request
 	     * @param trust_root the trust root to advertise with the request
+	     * @param ext pointer to an extension(s) hooks object
 	     * @return the location string
 	     * @throw exception in case of error
 	     */
-	    string checkid_immediate(const string& identity,const string& return_to,const string& trust_root="");
+	    string checkid_immediate(const string& identity,const string& return_to,const string& trust_root="",extension_t *ext=0);
 	    /**
 	     * prepare the parameters for the checkid_setup
 	     * request.
 	     * @param identity the identity to verify
 	     * @param return_to the return_to url to pass with the request
 	     * @param trust_root the trust root to advertise with the request
+	     * @param ext pointer to an extension(s) hooks object
 	     * @return the location string
 	     * @throw exception in case of error
 	     */
-	    string checkid_setup(const string& identity,const string& return_to,const string& trust_root="");
+	    string checkid_setup(const string& identity,const string& return_to,const string& trust_root="",extension_t *ext=0);
 	    /**
 	     * the actual implementation behind checkid_immediate() and
 	     * checkid_setup() functions.
@@ -103,24 +106,24 @@ namespace opkele {
 	     * @param identity the identity to verify
 	     * @param return_to the return_to url to pass with the request
 	     * @param trust_root the trust root to advertise with the request
+	     * @param ext pointer to an extension(s) hooks object
 	     * @return the location string
 	     * @throw exception in case of error
 	     */
-	    string checkid_(mode_t mode,const string& identity,const string& return_to,const string& trust_root="");
+	    string checkid_(mode_t mode,const string& identity,const string& return_to,const string& trust_root="",extension_t *ext=0);
 	    /**
 	     * verify the id_res response
 	     * @param pin the response parameters
-	     * @param identity the identity being checked (if not specified, extracted
-	     * from the openid.identity parameter
-	     * @throw id_res_mismatch in case of signature
-	     * mismatch
-	     * @throw id_res_setup in case of
-	     * openid.user_setup_url failure (supposedly
-	     * checkid_immediate only)
+	     * @param identity the identity being checked (if not specified,
+	     * @param ext pointer to an extension(s) hooks object
+	     * extracted from the openid.identity parameter
+	     * @throw id_res_mismatch in case of signature mismatch
+	     * @throw id_res_setup in case of openid.user_setup_url failure
+	     * (supposedly checkid_immediate only)
 	     * @throw id_res_failed in case of failure
 	     * @throw exception in case of other failures
 	     */
-	    void id_res(const params_t& pin,const string& identity="");
+	    void id_res(const params_t& pin,const string& identity="",extension_t *ext=0);
 	    /**
 	     * perform a check_authentication request.
 	     * @param server the OpenID server

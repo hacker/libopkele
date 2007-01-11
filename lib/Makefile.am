@@ -21,4 +21,5 @@ libopkele_la_SOURCES = \
 		       secret.cc \
 		       data.cc \
 		       consumer.cc \
-		       exception.cc
+		       exception.cc \
+		       extension.cc

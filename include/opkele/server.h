@@ -7,6 +7,7 @@
  */
 
 #include <opkele/types.h>
+#include <opkele/extension.h>
 
 /**
  * @brief the main opkele namespace
@@ -60,17 +61,19 @@ namespace opkele {
 	     * @param pin the incoming request parameters
 	     * @param return_to reference to the object to store return_to url to
 	     * @param pout the response parameters
+	     * @param ext pointer to the extension hooks object
 	     * @throw exception in case of errors or negative reply
 	     */
-	    void checkid_immediate(const params_t& pin,string& return_to,params_t& pout);
+	    void checkid_immediate(const params_t& pin,string& return_to,params_t& pout,extension_t *ext=0);
 	    /**
 	     * process the checkid_setup request.
 	     * @param pin the incoming request parameters
 	     * @param return_to reference to the object to store return_to url to
 	     * @param pout the response parameters
+	     * @param ext pointer to the extension hooks object
 	     * @throw exception in case of errors or negative reply
 	     */
-	    void checkid_setup(const params_t& pin,string& return_to,params_t& pout);
+	    void checkid_setup(const params_t& pin,string& return_to,params_t& pout,extension_t *ext=0);
 	    /**
 	     * the actual functionality behind checkid_immediate() and
 	     * checkid_setup()
@@ -79,9 +82,10 @@ namespace opkele {
 	     * @param pin the incoming request parameters
 	     * @param return_to reference to the object to store return_to url to
 	     * @param pout the response parameters
+	     * @param ext pointer to the extension hooks object
 	     * @throw exception in case of errors or negative reply
 	     */
-	    void checkid_(mode_t mode,const params_t& pin,string& return_to,params_t& pout);
+	    void checkid_(mode_t mode,const params_t& pin,string& return_to,params_t& pout,extension_t *ext=0);
 	    /**
 	     * process the check_authentication request.
 	     * @param pin incoming request parameters

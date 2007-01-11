@@ -5,7 +5,8 @@ nobase_include_HEADERS = \
 	opkele/association.h \
 	opkele/exception.h \
 	opkele/server.h \
-	opkele/consumer.h
+	opkele/consumer.h \
+	opkele/extension.h
 EXTRA_DIST = \
 	opkele/data.h \
 	opkele/util.h

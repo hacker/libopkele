@@ -67,15 +67,15 @@ namespace opkele {
 	}
     }
 
-    void server_t::checkid_immediate(const params_t& pin,string& return_to,params_t& pout) {
-	checkid_(mode_checkid_immediate,pin,return_to,pout);
+    void server_t::checkid_immediate(const params_t& pin,string& return_to,params_t& pout,extension_t *ext) {
+	checkid_(mode_checkid_immediate,pin,return_to,pout,ext);
     }
 
-    void server_t::checkid_setup(const params_t& pin,string& return_to,params_t& pout) {
-	checkid_(mode_checkid_setup,pin,return_to,pout);
+    void server_t::checkid_setup(const params_t& pin,string& return_to,params_t& pout,extension_t *ext) {
+	checkid_(mode_checkid_setup,pin,return_to,pout,ext);
     }
 
-    void server_t::checkid_(mode_t mode,const params_t& pin,string& return_to,params_t& pout) {
+    void server_t::checkid_(mode_t mode,const params_t& pin,string& return_to,params_t& pout,extension_t *ext) {
 	if(mode!=mode_checkid_immediate && mode!=mode_checkid_setup)
 	    throw bad_input(OPKELE_CP_ "invalid checkid_* mode");
 	pout.clear();
@@ -106,7 +106,9 @@ namespace opkele {
 	pout["issued"] = util::time_to_w3c(now);
 	pout["valid_to"] = util::time_to_w3c(now+120);
 	pout["exipres_in"] = "120";
-	pout.sign(assoc->secret(),pout["sig"],pout["signed"]="mode,identity,return_to");
+	pout["signed"]="mode,identity,return_to";
+	if(ext) ext->checkid_hook(pin,pout);
+	pout.sign(assoc->secret(),pout["sig"],pout["signed"]);
     }
 
     void server_t::check_authentication(const params_t& pin,params_t& pout) {

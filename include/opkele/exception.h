@@ -205,6 +205,16 @@ namespace opkele {
 	    ~exception_curl() throw() { }
     };
 
+    /**
+     * not implemented (think pure virtual) member function executed, signfies
+     * programmer error
+     */
+    class not_implemented : public exception {
+	public:
+	    not_implemented(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
 }
 
 #endif /* __OPKELE_EXCEPTION_H */

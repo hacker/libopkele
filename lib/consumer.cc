@@ -123,13 +123,13 @@ namespace opkele {
 	return store_assoc(server,p.get_param("assoc_handle"),secret,expires_in);
     }
 
-    string consumer_t::checkid_immediate(const string& identity,const string& return_to,const string& trust_root) {
-	return checkid_(mode_checkid_immediate,identity,return_to,trust_root);
+    string consumer_t::checkid_immediate(const string& identity,const string& return_to,const string& trust_root,extension_t *ext) {
+	return checkid_(mode_checkid_immediate,identity,return_to,trust_root,ext);
     }
-    string consumer_t::checkid_setup(const string& identity,const string& return_to,const string& trust_root) {
-	return checkid_(mode_checkid_setup,identity,return_to,trust_root);
+    string consumer_t::checkid_setup(const string& identity,const string& return_to,const string& trust_root,extension_t *ext) {
+	return checkid_(mode_checkid_setup,identity,return_to,trust_root,ext);
     }
-    string consumer_t::checkid_(mode_t mode,const string& identity,const string& return_to,const string& trust_root) {
+    string consumer_t::checkid_(mode_t mode,const string& identity,const string& return_to,const string& trust_root,extension_t *ext) {
 	params_t p;
 	if(mode==mode_checkid_immediate)
 	    p["mode"]="checkid_immediate";
@@ -153,14 +153,16 @@ namespace opkele {
 		p["assoc_handle"] = ah;
 	    }
 	}catch(exception& e) { }
+	if(ext) ext->checkid_hook(p,identity);
 	return p.append_query(server);
     }
 
-    void consumer_t::id_res(const params_t& pin,const string& identity) {
+    void consumer_t::id_res(const params_t& pin,const string& identity,extension_t *ext) {
 	if(pin.has_param("openid.user_setup_url"))
 	    throw id_res_setup(OPKELE_CP_ "assertion failed, setup url provided",pin.get_param("openid.user_setup_url"));
 	string server,delegate;
 	retrieve_links(identity.empty()?pin.get_param("openid.identity"):canonicalize(identity),server,delegate);
+	params_t ps;
 	try {
 	    assoc_t assoc = retrieve_assoc(server,pin.get_param("openid.assoc_handle"));
 	    const string& sigenc = pin.get_param("openid.sig");
@@ -180,6 +182,7 @@ namespace opkele {
 		f.insert(0,"openid.");
 		kv += pin.get_param(f);
 		kv += '\n';
+		if(ext) ps[f.substr(sizeof("openid."))] = pin.get_param(f);
 		if(co==string::npos)
 		    break;
 		p = co+1;
@@ -219,6 +222,7 @@ namespace opkele {
 		throw id_res_failed(OPKELE_CP_ "failed to check_authentication()");
 	    }
 	}
+	if(ext) ext->id_res_hook(pin,ps,identity);
     }
 
     void consumer_t::check_authentication(const string& server,const params_t& p) {
