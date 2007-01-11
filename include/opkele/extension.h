@@ -14,7 +14,7 @@
 namespace opkele {
 
     /**
-     * OpenID consumer extension hooks base class
+     * OpenID extension hooks base class
      */
     class extension_t {
 	public:
