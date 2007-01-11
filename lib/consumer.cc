@@ -182,7 +182,7 @@ namespace opkele {
 		f.insert(0,"openid.");
 		kv += pin.get_param(f);
 		kv += '\n';
-		if(ext) ps[f.substr(sizeof("openid."))] = pin.get_param(f);
+		if(ext) ps[f.substr(sizeof("openid.")-1)] = pin.get_param(f);
 		if(co==string::npos)
 		    break;
 		p = co+1;
