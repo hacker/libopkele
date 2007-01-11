@@ -24,6 +24,9 @@ namespace opkele {
 	     * @param p parameters about to be submitted to server
 	     * @param identity identity being verified. It may differ from the
 	     * one available in parameters list in case of delegation
+	     * @see consumer_t::checkid_
+	     * @see consumer_t::checkid_immediate
+	     * @see consumer_t::checkid_setup
 	     */
 	    virtual void checkid_hook(params_t& p,const string& identity);
 	    /**
@@ -35,6 +38,7 @@ namespace opkele {
 	     * @param identity identity confirmed. May differ from the one
 	     * available in parameters list in case of delegation. May also be
 	     * empty which means - extract one from parameters
+	     * @see consumer_t::id_res
 	     */
 	    virtual void id_res_hook(const params_t& p,const params_t& sp,const string& identity);
 
@@ -42,8 +46,11 @@ namespace opkele {
 	     * hook called by server before returning information to consumer.
 	     * The hook may manipulate output parameters. It is important to
 	     * note that modified pout["signed"] is used for signing response.
-	     * @param pin request parameters list
-	     * @param put response parameters list
+	     * @param pin request parameters list with "openid." prefix
+	     * @param pout response parameters list without "openid." prefix
+	     * @see server_t::checkid_
+	     * @see server_t::checkid_immediate
+	     * @see server_t::checkid_setup
 	     */
 	    virtual void checkid_hook(const params_t& pin,params_t& pout);
 
