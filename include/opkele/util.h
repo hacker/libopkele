@@ -13,6 +13,10 @@ namespace opkele {
 
     namespace util {
 
+	/**
+	 * Convenience class encapsulating SSL BIGNUM object for the purpose of
+	 * automatical freeing.
+	 */
 	class bignum_t {
 	    public:
 		BIGNUM *_bn;
@@ -26,6 +30,10 @@ namespace opkele {
 		operator const BIGNUM*(void) const { return _bn; }
 		operator BIGNUM*(void) { return _bn; }
 	};
+	/**
+	 * Convenience clas encapsulating SSL DH object for the purpose of
+	 * automatic freeing.
+	 */
 	class dh_t {
 	    public:
 		DH *_dh;
@@ -43,19 +51,77 @@ namespace opkele {
 		const DH* operator->() const { return _dh; }
 	};
 
+	/**
+	 * Convert base64-encoded SSL BIGNUM to internal representation.
+	 * @param b64 base64-encoded number
+	 * @return SSL BIGNUM
+	 * @throw failed_conversion in case of error
+	 */
 	BIGNUM *base64_to_bignum(const string& b64);
+	/**
+	 * Convert decimal representation to SSL BIGNUM.
+	 * @param dec decimal representation
+	 * @return resulting BIGNUM
+	 * @throw failed_conversion in case of error
+	 */
 	BIGNUM *dec_to_bignum(const string& dec);
+	/**
+	 * Convert SSL BIGNUM data to base64 encoded string.
+	 * @param bn BIGNUM
+	 * @return base64encoded string
+	 */
 	string bignum_to_base64(const BIGNUM *bn);
 
+	/**
+	 * Convert internal time representation to w3c format
+	 * @param t internal representation
+	 * @return w3c time
+	 * @throw failed_conversion in case of error
+	 */
 	string time_to_w3c(time_t t);
+	/**
+	 * Convert W3C time representation to  internal time_t
+	 * @param w w3c representation
+	 * @return converted time
+	 * @throw failed_conversion in case of error
+	 */
 	time_t w3c_to_time(const string& w);
 
+	/**
+	 * Encode string to the representation suitable for using in URL.
+	 * @param str string to encode
+	 * @return encoded string
+	 * @throw failed_conversion in case of failure
+	 */
 	string url_encode(const string& str);
 
+	/**
+	 * Convert number to string
+	 * @param l number
+	 * @return string representation
+	 * @throw failed_conversion in case of failure
+	 */
 	string long_to_string(long l);
+	/**
+	 * Convert string to number
+	 * @param s string, containing the number
+	 * @return the number
+	 * @throw failed_conversion in case of failure
+	 */
 	long string_to_long(const string& s);
 
+	/**
+	 * Encode binary data using base64.
+	 * @param data pointer to binary data
+	 * @param length length of data
+	 * @return encoded data
+	 */
 	string encode_base64(const void *data,size_t length);
+	/**
+	 * Decode binary data from base64 representation.
+	 * @param data base64-encoded data
+	 * @param rv container for decoded binary
+	 */
 	void decode_base64(const string& data,vector<unsigned char>& rv);
     }
 
