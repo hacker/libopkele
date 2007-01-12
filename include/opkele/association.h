@@ -79,7 +79,7 @@ namespace opkele {
 	     */
 	    virtual int expires_in() const { return _expires-time(0); }
 	    /**
-	     * @overload associationn_t::stateless()
+	     * @overload association_t::stateless()
 	     */
 	    virtual bool stateless() const { return _stateless; }
     };
