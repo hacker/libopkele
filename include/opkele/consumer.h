@@ -9,9 +9,6 @@
  * @brief OpenID consumer-side functionality
  */
 
-/**
- * @brief the main opkele namespace
- */
 namespace opkele {
 
     /**

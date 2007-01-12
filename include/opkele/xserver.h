@@ -9,9 +9,6 @@
 #include <opkele/extension_chain.h>
 #include <opkele/server.h>
 
-/**
- * @brief the main opkele namespace
- */
 namespace opkele {
 
     /**

@@ -53,9 +53,6 @@
  */
 # define OPKELE_E_CONS OPKELE_E_CONS_ w
 
-/*
- * @brief the main opkele namespace
- */
 namespace opkele {
     using std::string;
 

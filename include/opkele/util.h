@@ -11,6 +11,9 @@ namespace opkele {
     using std::string;
     using std::vector;
 
+    /**
+     * @brief opkele utils namespace
+     */
     namespace util {
 
 	/**

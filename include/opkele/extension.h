@@ -8,9 +8,6 @@
 
 #include <opkele/types.h>
 
-/**
- * @brief the main opkele namespace
- */
 namespace opkele {
 
     /**

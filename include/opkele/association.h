@@ -9,9 +9,6 @@
  * @brief reference implementation of association_t
  */
 
-/**
- * @brief the main opkele namespace
- */
 namespace opkele {
 
     /**
@@ -58,29 +55,11 @@ namespace opkele {
 		: _server(__server), _handle(__handle), _assoc_type(__assoc_type),
 		_secret(__secret), _expires(__expires), _stateless(__stateless) { }
 
-	    /**
-	     * @overload association_t::server()
-	     */
 	    virtual string server() const { return _server; }
-	    /**
-	     * @overload association_t::handle()
-	     */
 	    virtual string handle() const { return _handle; }
-	    /**
-	     * @overload association_t::assoc_type()
-	     */
 	    virtual string assoc_type() const { return _assoc_type; }
-	    /**
-	     * @overload association_t::secret()
-	     */
 	    virtual secret_t secret() const { return _secret; }
-	    /**
-	     * @overload association_t::expires_in()
-	     */
 	    virtual int expires_in() const { return _expires-time(0); }
-	    /**
-	     * @overload association_t::stateless()
-	     */
 	    virtual bool stateless() const { return _stateless; }
     };
 

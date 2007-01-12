@@ -12,9 +12,6 @@
 #include <map>
 #include <memory>
 
-/**
- * @brief the main opkele namespace
- */
 namespace opkele {
     using std::vector;
     using std::string;

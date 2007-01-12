@@ -8,9 +8,6 @@
 
 #include <opkele/extension.h>
 
-/**
- * @brief the main opkele namespace
- */
 namespace opkele {
     using std::map;
 

@@ -9,9 +9,6 @@
 #include <opkele/types.h>
 #include <opkele/extension.h>
 
-/**
- * @brief the main opkele namespace
- */
 namespace opkele {
 
     /**

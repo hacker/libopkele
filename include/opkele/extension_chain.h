@@ -9,9 +9,6 @@
 #include <list>
 #include <opkele/extension.h>
 
-/**
- * @brief the main opkele namespace
- */
 namespace opkele {
     using std::list;
 
@@ -31,17 +28,8 @@ namespace opkele {
 	     */
 	    extension_chain_t(extension_t *e) { push_back(e); }
 
-	    /**
-	     * Implementation of consumer's checkid hook
-	     */
 	    virtual void checkid_hook(params_t& p,const string& identity);
-	    /**
-	     * Implementation of consumer's id_res hook
-	     */
 	    virtual void id_res_hook(const params_t& p,const params_t& sp,const string& identity);
-	    /**
-	     * Implementation of server's checkid_hook
-	     */
 	    virtual void checkid_hook(const params_t& pin,params_t& pout);
     };
 
