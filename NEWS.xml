@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
+ <version version="0.1.1">
+  <ni>Fixed a bug in curl errors handling</ni>
+  <ni>Build fix that eliminates the need to pass --disable-konforka in the
+  absence of it.</ni>
+ </version>
  <version version="0.1" date="January 12th, 2007">
   <ni>OpenID simple registration extension implementation</ni>
   <ni>OpenID extensions framework</ni>
