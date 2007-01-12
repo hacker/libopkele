@@ -13,12 +13,9 @@ AC_HEADER_STDC
 AC_PATH_PROG([XSLTPROC],[xsltproc],[true])
 AC_WITH_PKGCONFIG
 
-PKG_CHECK_MODULES([OPENSSL],[openssl],[
-  AC_MSG_RESULT([yes])
- ],[
-  AC_MSG_ERROR([no openssl library found. get one from http://www.openssl.org/])
- ]
-)
+PKG_CHECK_MODULES([OPENSSL],[openssl],,[
+ AC_MSG_ERROR([no openssl library found. get one from http://www.openssl.org/])
+])
 
 WANT_KONFORKA="yes"
 AC_ARG_ENABLE([konforka],
@@ -29,16 +26,12 @@ AC_ARG_ENABLE([konforka],
 )
 if test "${WANT_KONFORKA}" = "yes" ; then
  PKG_CHECK_MODULES([KONFORKA],[konforka],[
-   AC_MSG_RESULT([yes])
-   AC_SUBST([KONFORKA_CFLAGS])
-   AC_SUBST([KONFORKA_LIBS])
-   AC_DEFINE([HAVE_KONFORKA],,[defined in presence of konforka library])
-   AC_DEFINE([OPKELE_HAVE_KONFORKA],,[defined in presence of konforka library])
-   AC_SUBST([KONFORKA_KONFORKA],[konforka])
-  ],[
-   AC_MSG_RESULT([no])
-  ]
- )
+  AC_SUBST([KONFORKA_CFLAGS])
+  AC_SUBST([KONFORKA_LIBS])
+  AC_DEFINE([HAVE_KONFORKA],,[defined in presence of konforka library])
+  AC_DEFINE([OPKELE_HAVE_KONFORKA],,[defined in presence of konforka library])
+  AC_SUBST([KONFORKA_KONFORKA],[konforka])
+ ])
 fi
 
 WANT_DOXYGEN="yes"
