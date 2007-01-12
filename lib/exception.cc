@@ -26,7 +26,7 @@ namespace opkele {
     exception_curl::exception_curl(OPKELE_E_PARS,CURLcode e)
 	: _error(e),
 	_curl_string(curl_easy_strerror(e)),
-	exception_network(OPKELE_E_CONS_ w+" ["+_curl_string+']') {
+	exception_network(OPKELE_E_CONS_ w+" ["+curl_easy_strerror(e)+']') {
 	}
 
 }
