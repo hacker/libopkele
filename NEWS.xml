@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
+ <version version="0.1" date="January 12th, 2007">
+  <ni>OpenID simple registration extension implementation</ni>
+  <ni>OpenID extensions framework</ni>
+  <ni>Canonicalization bugfix</ni>
+ </version>
  <version version="0.0" date="July 25th, 2005">
   <ni>Initial release</ni>
  </version>
