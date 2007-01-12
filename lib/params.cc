@@ -3,7 +3,6 @@
 #include <opkele/util.h>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
-#include <mimetic/mimetic.h>
 
 namespace opkele {
     using namespace std;
@@ -60,11 +59,7 @@ namespace opkele {
 		&(secret.front()),secret.size(),
 		(const unsigned char *)kv.data(),kv.length(),
 		0,&md_len);
-	mimetic::Base64::Encoder b(0);
-	sig.erase();
-	mimetic::encode(
-		md,md+md_len, b,
-		back_insert_iterator<string>(sig) );
+	sig = util::encode_base64(md,md_len);
     }
 
     string params_t::append_query(const string& url,const char *prefix) const {

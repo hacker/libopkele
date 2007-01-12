@@ -3,11 +3,13 @@
 
 #include <time.h>
 #include <string>
+#include <vector>
 #include <openssl/bn.h>
 #include <openssl/dh.h>
 
 namespace opkele {
     using std::string;
+    using std::vector;
 
     namespace util {
 
@@ -52,6 +54,9 @@ namespace opkele {
 
 	string long_to_string(long l);
 	long string_to_long(const string& s);
+
+	string encode_base64(const void *data,size_t length);
+	void decode_base64(const string& data,vector<unsigned char>& rv);
     }
 
 }

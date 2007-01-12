@@ -41,17 +41,6 @@ if test "${WANT_KONFORKA}" = "yes" ; then
  )
 fi
 
-AC_LANG_PUSH([C++])
- AC_CHECK_LIB([mimetic],[main],[
-   MIMETIC_LIBS=-lmimetic
-   AC_SUBST([MIMETIC_CFLAGS])
-   AC_SUBST([MIMETIC_LIBS])
-  ],[
-   AC_MSG_ERROR([no mimetic library found. get one from http://codesink.org/mimetic_mime_library.html])
-  ]
- )
-AC_LANG_POP([C++])
-
 WANT_DOXYGEN="yes"
 AC_ARG_ENABLE([doxygen],
  AC_HELP_STRING([--disable-doxygen],[do not generate documentation]),

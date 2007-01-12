@@ -1,24 +1,15 @@
 #include <algorithm>
+#include <cassert>
 #include <opkele/util.h>
 #include <opkele/exception.h>
 #include <opkele/data.h>
 #include <opkele/consumer.h>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
-#include <mimetic/mimetic.h>
 #include <curl/curl.h>
 #include <pcre++.h>
 
 #include <iostream>
-
-/* silly mimetic */
-#undef PACKAGE
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_NAME
-#undef PACKAGE_STRING
-#undef PACKAGE_TARNAME
-#undef PACKAGE_VERSION
-#undef VERSION
 
 #include "config.h"
 
@@ -166,11 +157,8 @@ namespace opkele {
 	try {
 	    assoc_t assoc = retrieve_assoc(server,pin.get_param("openid.assoc_handle"));
 	    const string& sigenc = pin.get_param("openid.sig");
-	    mimetic::Base64::Decoder b;
 	    vector<unsigned char> sig;
-	    mimetic::decode(
-		    sigenc.begin(),sigenc.end(), b,
-		    back_insert_iterator<vector<unsigned char> >(sig) );
+	    util::decode_base64(sigenc,sig);
 	    const string& slist = pin.get_param("openid.signed");
 	    string kv;
 	    string::size_type p = 0;

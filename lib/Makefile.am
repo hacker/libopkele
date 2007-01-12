@@ -4,13 +4,11 @@ INCLUDES = \
 	   -I${top_srcdir}/include/ \
 	   ${KONFORKA_CFLAGS} \
 	   ${OPENSSL_CFLAGS} \
-	   ${MIMETIC_CFLAGS} \
 	   ${LIBCURL_CPPFLAGS} \
 	   ${PCREPP_CFLAGS}
 LDADD = \
 	${LIBCURL} \
 	${PCREPP_LIBS} \
-	${MIMETIC_LIBS} \
 	${OPENSSL_LIBS} \
 	${KONFORKA_LIBS}
 

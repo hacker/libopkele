@@ -1,7 +1,6 @@
 #include <vector>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
-#include <mimetic/mimetic.h>
 #include <opkele/util.h>
 #include <opkele/exception.h>
 #include <opkele/server.h>
@@ -113,11 +112,8 @@ namespace opkele {
 
     void server_t::check_authentication(const params_t& pin,params_t& pout) {
 	vector<unsigned char>  sig;
-	mimetic::Base64::Decoder b;
 	const string& sigenc = pin.get_param("openid.sig");
-	mimetic::decode(
-		sigenc.begin(),sigenc.end(), b,
-		back_insert_iterator<vector<unsigned char> >(sig));
+	util::decode_base64(sigenc,sig);
 	assoc_t assoc;
 	try {
 	    assoc = retrieve_assoc(pin.get_param("openid.assoc_handle"));

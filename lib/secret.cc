@@ -2,7 +2,7 @@
 #include <functional>
 #include <opkele/types.h>
 #include <opkele/exception.h>
-#include <mimetic/mimetic.h>
+#include <opkele/util.h>
 
 namespace opkele {
     using namespace std;
@@ -23,18 +23,12 @@ namespace opkele {
 		key_sha1,
 		back_insert_iterator<vector<unsigned char> >(tmp),
 		bitwise_xor<unsigned char,unsigned char,unsigned char>() );
-	mimetic::Base64::Encoder b(0);
-	mimetic::encode(
-		tmp.begin(),tmp.end(), b,
-		back_insert_iterator<string>(rv) );
+	rv = util::encode_base64(&(tmp.front()),tmp.size());
     }
 
     void secret_t::enxor_from_base64(const unsigned char *key_sha1,const string& b64) {
-	mimetic::Base64::Decoder b;
 	clear();
-	mimetic::decode(
-		b64.begin(),b64.end(), b,
-		back_insert_iterator<secret_t>(*this) );
+	util::decode_base64(b64,*this);
 	transform(
 		begin(), end(),
 		key_sha1,
@@ -45,17 +39,11 @@ namespace opkele {
     void secret_t::to_base64(string& rv) const {
 	if(size()!=20)
 	    throw bad_input(OPKELE_CP_ "wrong secret size");
-	mimetic::Base64::Encoder b(0);
-	mimetic::encode(
-		begin(),end(), b,
-		back_insert_iterator<string>(rv) );
+	rv = util::encode_base64(&(front()),size());
     }
 
     void secret_t::from_base64(const string& b64) {
-	mimetic::Base64::Decoder b;
-	mimetic::decode(
-		b64.begin(),b64.end(), b,
-		back_insert_iterator<secret_t>(*this) );
+	util::decode_base64(b64,*this);
     }
 
 }
