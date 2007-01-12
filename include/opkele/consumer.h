@@ -87,7 +87,7 @@ namespace opkele {
 	     * @return the location string
 	     * @throw exception in case of error
 	     */
-	    string checkid_immediate(const string& identity,const string& return_to,const string& trust_root="",extension_t *ext=0);
+	    virtual string checkid_immediate(const string& identity,const string& return_to,const string& trust_root="",extension_t *ext=0);
 	    /**
 	     * prepare the parameters for the checkid_setup
 	     * request.
@@ -98,7 +98,7 @@ namespace opkele {
 	     * @return the location string
 	     * @throw exception in case of error
 	     */
-	    string checkid_setup(const string& identity,const string& return_to,const string& trust_root="",extension_t *ext=0);
+	    virtual string checkid_setup(const string& identity,const string& return_to,const string& trust_root="",extension_t *ext=0);
 	    /**
 	     * the actual implementation behind checkid_immediate() and
 	     * checkid_setup() functions.
@@ -110,7 +110,7 @@ namespace opkele {
 	     * @return the location string
 	     * @throw exception in case of error
 	     */
-	    string checkid_(mode_t mode,const string& identity,const string& return_to,const string& trust_root="",extension_t *ext=0);
+	    virtual string checkid_(mode_t mode,const string& identity,const string& return_to,const string& trust_root="",extension_t *ext=0);
 	    /**
 	     * verify the id_res response
 	     * @param pin the response parameters
@@ -123,7 +123,7 @@ namespace opkele {
 	     * @throw id_res_failed in case of failure
 	     * @throw exception in case of other failures
 	     */
-	    void id_res(const params_t& pin,const string& identity="",extension_t *ext=0);
+	    virtual void id_res(const params_t& pin,const string& identity="",extension_t *ext=0);
 	    /**
 	     * perform a check_authentication request.
 	     * @param server the OpenID server

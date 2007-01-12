@@ -64,7 +64,7 @@ namespace opkele {
 	     * @param ext pointer to the extension hooks object
 	     * @throw exception in case of errors or negative reply
 	     */
-	    void checkid_immediate(const params_t& pin,string& return_to,params_t& pout,extension_t *ext=0);
+	    virtual void checkid_immediate(const params_t& pin,string& return_to,params_t& pout,extension_t *ext=0);
 	    /**
 	     * process the checkid_setup request.
 	     * @param pin the incoming request parameters
@@ -73,7 +73,7 @@ namespace opkele {
 	     * @param ext pointer to the extension hooks object
 	     * @throw exception in case of errors or negative reply
 	     */
-	    void checkid_setup(const params_t& pin,string& return_to,params_t& pout,extension_t *ext=0);
+	    virtual void checkid_setup(const params_t& pin,string& return_to,params_t& pout,extension_t *ext=0);
 	    /**
 	     * the actual functionality behind checkid_immediate() and
 	     * checkid_setup()
@@ -85,7 +85,7 @@ namespace opkele {
 	     * @param ext pointer to the extension hooks object
 	     * @throw exception in case of errors or negative reply
 	     */
-	    void checkid_(mode_t mode,const params_t& pin,string& return_to,params_t& pout,extension_t *ext=0);
+	    virtual void checkid_(mode_t mode,const params_t& pin,string& return_to,params_t& pout,extension_t *ext=0);
 	    /**
 	     * process the check_authentication request.
 	     * @param pin incoming request parameters

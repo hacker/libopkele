@@ -8,7 +8,9 @@ nobase_include_HEADERS = \
 	opkele/consumer.h \
 	opkele/extension.h \
 	opkele/sreg.h \
-	opkele/extension_chain.h
+	opkele/extension_chain.h \
+	opkele/xconsumer.h \
+	opkele/xserver.h
 EXTRA_DIST = \
 	opkele/data.h \
 	opkele/util.h
