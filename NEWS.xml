@@ -4,6 +4,7 @@
   <ni>OpenID simple registration extension implementation</ni>
   <ni>OpenID extensions framework</ni>
   <ni>Canonicalization bugfix</ni>
+  <ni>Slightly improved interoperability with buggy implementations</ni>
  </version>
  <version version="0.0" date="July 25th, 2005">
   <ni>Initial release</ni>

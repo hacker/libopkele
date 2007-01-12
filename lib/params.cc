@@ -33,7 +33,8 @@ namespace opkele {
 	    string::size_type nl = kv.find('\n',co+1);
 	    if(nl==string::npos)
 		throw bad_input(OPKELE_CP_ "malformed input");
-	    insert(value_type(kv.substr(p,co-p),kv.substr(co+1,nl-co-1)));
+	    if(nl>co)
+		insert(value_type(kv.substr(p,co-p),kv.substr(co+1,nl-co-1)));
 	    p = nl+1;
 	}
     }
