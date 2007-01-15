@@ -2,6 +2,9 @@
 <news>
  <version version="0.1.1">
   <ni>Fixed a bug in curl errors handling</ni>
+  <ni>added --disable-ssl-verify-host and --disable-ssl-verify-peer options to
+  configure to alter default implementation of consumer's retrieve_links
+  behaviour</ni>
   <ni>Build fix that eliminates the need to pass --disable-konforka in the
   absence of it.</ni>
  </version>
