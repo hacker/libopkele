@@ -41,7 +41,7 @@ namespace opkele {
 #ifdef	DISABLE_CURL_SSL_VERIFYHOST
 	|| (r=curl_easy_setopt(c,CURLOPT_SSL_VERIFYHOST,0))
 #endif
-#ifdef	DISABLE_CURL_SSL_VERYPEER
+#ifdef	DISABLE_CURL_SSL_VERIFYPEER
 	|| (r=curl_easy_setopt(c,CURLOPT_SSL_VERIFYPEER,0))
 #endif
 	;
