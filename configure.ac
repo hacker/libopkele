@@ -61,6 +61,20 @@ AC_WITH_PCRE([
  ]
 )
 
+curl_ssl_verify_host="true"
+AC_ARG_ENABLE([ssl-verify-host],
+ AC_HELP_STRING([--disable-ssl-verify-host],[disable cURL cert/host relationships verification]),
+ [ test "${enableval}" = "no" && curl_ssl_verify_host="false" ]
+)
+${curl_ssl_verify_host} || AC_DEFINE([DISABLE_CURL_SSL_VERIFYHOST],,[defined if cURL is not to verify cert/host])
+
+curl_ssl_verify_peer="true"
+AC_ARG_ENABLE([ssl-verify-peer],
+ AC_HELP_STRING([--disable-ssl-verify-peer],[disable cURL cert validity verification]),
+ [ test "${enableval}" = "no" && curl_ssl_verify_peer="false" ]
+)
+${curl_ssl_verify_peer} || AC_DEFINE([DISABLE_CURL_SSL_VERIFYPEER],,[defined if cURL is not to verify cert validity])
+
 AC_CONFIG_FILES([
  Makefile
   libopkele.pc
