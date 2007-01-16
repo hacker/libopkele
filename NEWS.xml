@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
- <version version="0.1.1">
+ <version version="0.1.1" date="January 16th, 2007">
   <ni>Fixed a bug in curl errors handling</ni>
   <ni>added --disable-ssl-verify-host and --disable-ssl-verify-peer options to
   configure to alter default implementation of consumer's retrieve_links
