@@ -161,8 +161,8 @@ AC_DEFUN([AC_WITH_PCREPP],[
  PCREPP_LIBS=""
  PCREPP_LOCATIONS="${PATH}:/usr/local/bin:/usr/bin"
  test -z "$WANT_PCREPP" && WANT_PCREPP=""
- AC_ARG_WITH([pcre++],
-  AC_HELP_STRING([--with-pcre++=location],[Look for pcre++ in specified locations]),
+ AC_ARG_WITH([pcrepp],
+  AC_HELP_STRING([--with-pcrepp=location],[Look for pcre++ in specified locations]),
   [
    if test "${withval}" = "no" ; then
     WANT_PCREPP="no"
