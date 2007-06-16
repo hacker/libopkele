@@ -142,14 +142,12 @@ namespace opkele {
 	    p["trust_root"] = trust_root;
 	p["return_to"] = return_to;
 	try {
-	    try {
-		string ah = find_assoc(server)->handle();
-		p["assoc_handle"] = ah;
-	    }catch(failed_lookup& fl) {
-		string ah = associate(server)->handle();
-		p["assoc_handle"] = ah;
-	    }
-	}catch(exception& e) { }
+	    string ah = find_assoc(server)->handle();
+	    p["assoc_handle"] = ah;
+	}catch(failed_lookup& fl) {
+	    string ah = associate(server)->handle();
+	    p["assoc_handle"] = ah;
+	}
 	if(ext) ext->checkid_hook(p,identity);
 	return p.append_query(server);
     }
