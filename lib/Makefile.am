@@ -6,7 +6,7 @@ INCLUDES = \
 	   ${OPENSSL_CFLAGS} \
 	   ${LIBCURL_CPPFLAGS} \
 	   ${PCREPP_CFLAGS}
-LDADD = \
+libopkele_la_LIBADD = \
 	${LIBCURL} \
 	${PCREPP_LIBS} \
 	${OPENSSL_LIBS} \
