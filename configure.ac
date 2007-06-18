@@ -75,6 +75,13 @@ AC_ARG_ENABLE([ssl-verify-peer],
 )
 ${curl_ssl_verify_peer} || AC_DEFINE([DISABLE_CURL_SSL_VERIFYPEER],,[defined if cURL is not to verify cert validity])
 
+postels_law=true
+AC_ARG_ENABLE([postels-law],
+ AC_HELP_STRING([--disable-postels-law],[Be strict, do not adhere to Postel's Law ("be conservative in what you do, be liberal in what you accept from others", RFC 793)]),
+ [ test "${enableval}" = "no" && postels_law=false ]
+)
+$postels_law && AC_DEFINE([POSTELS_LAW],,[defined if we want to adhere to Postel's Law])
+
 AC_CONFIG_FILES([
  Makefile
   libopkele.pc

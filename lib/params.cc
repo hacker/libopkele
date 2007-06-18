@@ -4,6 +4,8 @@
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
 
+#include "config.h"
+
 namespace opkele {
     using namespace std;
 
@@ -30,12 +32,26 @@ namespace opkele {
 	    string::size_type co = kv.find(':',p);
 	    if(co==string::npos)
 		break;
+#ifndef POSTELS_LAW
 	    string::size_type nl = kv.find('\n',co+1);
 	    if(nl==string::npos)
 		throw bad_input(OPKELE_CP_ "malformed input");
 	    if(nl>co)
 		insert(value_type(kv.substr(p,co-p),kv.substr(co+1,nl-co-1)));
 	    p = nl+1;
+#else /* POSTELS_LAW */
+	    string::size_type lb = kv.find_first_of("\r\n",co+1);
+	    if(lb==string::npos) {
+		insert(value_type(kv.substr(p,co-p),kv.substr(co+1)));
+		break;
+	    }
+	    if(lb>co)
+		insert(value_type(kv.substr(p,co-p),kv.substr(co+1,lb-co-1)));
+	    string::size_type nolb = kv.find_first_not_of("\r\n",lb);
+	    if(nolb==string::npos)
+		break;
+	    p = nolb;
+#endif /* POSTELS_LAW */
 	}
     }
 
