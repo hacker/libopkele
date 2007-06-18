@@ -34,14 +34,15 @@ namespace opkele {
 		dh->g = util::dec_to_bignum(data::_default_g);
 	    if(!DH_generate_key(dh))
 		throw exception_openssl(OPKELE_CP_ "failed to DH_generate_key()");
-	    vector<unsigned char> ck(DH_size(dh));
+	    vector<unsigned char> ck(DH_size(dh)+1);
+	    unsigned char *ckptr = &(ck.front())+1;
 	    int cklen = DH_compute_key(&(ck.front()),c_pub,dh);
 	    if(cklen<0)
 		throw exception_openssl(OPKELE_CP_ "failed to DH_compute_key()");
-	    ck.resize(cklen);
-	    // OpenID algorithm requires extra zero in case of set bit here
-	    if(ck[0]&0x80) ck.insert(ck.begin(),1,0);
-	    SHA1(&(ck.front()),ck.size(),key_sha1);
+	    if(cklen && (*ckptr)&0x80) {
+		(*(--ckptr)) = 0; ++cklen;
+	    }
+	    SHA1(ckptr,cklen,key_sha1);
 	    st = sess_dh_sha1;
 	}
 	assoc_t assoc = alloc_assoc(mode_associate);

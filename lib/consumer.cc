@@ -99,15 +99,16 @@ namespace opkele {
 	    secret.from_base64(p.get_param("mac_key"));
 	}else{
 	    util::bignum_t s_pub = util::base64_to_bignum(p.get_param("dh_server_public"));
-	    vector<unsigned char> ck(DH_size(dh));
-	    int cklen = DH_compute_key(&(ck.front()),s_pub,dh);
+	    vector<unsigned char> ck(DH_size(dh)+1);
+	    unsigned char *ckptr = &(ck.front())+1;
+	    int cklen = DH_compute_key(ckptr,s_pub,dh);
 	    if(cklen<0)
 		throw exception_openssl(OPKELE_CP_ "failed to DH_compute_key()");
-	    ck.resize(cklen);
-	    // OpenID algorithm requires extra zero in case of set bit here
-	    if(ck[0]&0x80) ck.insert(ck.begin(),1,0);
+	    if(cklen && (*ckptr)&0x80) {
+		(*(--ckptr)) = 0; ++cklen;
+	    }
 	    unsigned char key_sha1[SHA_DIGEST_LENGTH];
-	    SHA1(&(ck.front()),ck.size(),key_sha1);
+	    SHA1(ckptr,cklen,key_sha1);
 	    secret.enxor_from_base64(key_sha1,p.get_param("enc_mac_key"));
 	}
 	int expires_in = 0;

@@ -86,9 +86,13 @@ namespace opkele {
 	}
 
 	string bignum_to_base64(const BIGNUM *bn) {
-	    vector<unsigned char> bin(BN_num_bytes(bn));
-	    int l = BN_bn2bin(bn,&(bin.front()));
-	    return encode_base64(&(bin.front()),l);
+	    vector<unsigned char> bin(BN_num_bytes(bn)+1);
+	    unsigned char *binptr = &(bin.front())+1;
+	    int l = BN_bn2bin(bn,binptr);
+	    if(l && (*binptr)&0x80){
+		(*(--binptr)) = 0; ++l;
+	    }
+	    return encode_base64(binptr,l);
 	}
 
 	/*
