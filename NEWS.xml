@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
+ <version version="0.2.1" date="June 24th, 2007">
+  <ni>open id server invalid signature bugfix</ni>
+ </version>
  <version version="0.2" date="June 19th, 2007">
   <ni>A few robustness improvements and optimizations</ni>
   <ni>More liberal key/values messages parsing</ni>
