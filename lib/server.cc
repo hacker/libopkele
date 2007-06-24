@@ -36,7 +36,7 @@ namespace opkele {
 		throw exception_openssl(OPKELE_CP_ "failed to DH_generate_key()");
 	    vector<unsigned char> ck(DH_size(dh)+1);
 	    unsigned char *ckptr = &(ck.front())+1;
-	    int cklen = DH_compute_key(&(ck.front()),c_pub,dh);
+	    int cklen = DH_compute_key(ckptr,c_pub,dh);
 	    if(cklen<0)
 		throw exception_openssl(OPKELE_CP_ "failed to DH_compute_key()");
 	    if(cklen && (*ckptr)&0x80) {
