@@ -310,7 +310,7 @@ namespace opkele {
 	throw failed_lookup(OPKELE_CP_ "no find_assoc() provided");
     }
 
-    string consumer_t::canonicalize(const string& url) {
+    string consumer_t::normalize(const string& url) {
 	string rv = url;
 	// strip leading and trailing spaces
 	string::size_type i = rv.find_first_not_of(" \t\r\n");
@@ -340,6 +340,30 @@ namespace opkele {
 		rv += '/';
 	}
 	return rv;
+    }
+
+    string consumer_t::canonicalize(const string& url) {
+	string rv = normalize(url);
+	curl_t curl = curl_easy_init();
+	if(!curl)
+	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_init()");
+	string html;
+	CURLcode r;
+	(r=curl_misc_sets(curl))
+	|| (r=curl_easy_setopt(curl,CURLOPT_URL,rv.c_str()))
+	|| (r=curl_easy_setopt(curl,CURLOPT_NOBODY,1))
+	;
+	if(r)
+	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_setopt()",r);
+	r = curl_easy_perform(curl);
+	if(r)
+	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
+	const char *eu = 0;
+	r = curl_easy_getinfo(curl,CURLINFO_EFFECTIVE_URL,&eu);
+	if(r)
+	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_getinfo(..CURLINFO_EFFECTIVE_URL..)",r);
+	rv = eu;
+	return normalize(rv);
     }
 
 }

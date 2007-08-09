@@ -129,11 +129,18 @@ namespace opkele {
 	    void check_authentication(const string& server,const params_t& p);
 
 	    /**
-	     * make URL canonical, by adding http:// and trailing slash, if needed.
+	     * normalize URL by adding http:// and trailing slash if needed.
+	     * @param url
+	     * @return normalized url
+	     */
+	    static string normalize(const string& url);
+
+	    /**
+	     * Canonicalize URL, by normalizing its appearance and following redirects.
 	     * @param url
 	     * @return canonicalized url
 	     */
-	    static string canonicalize(const string& url);
+	    virtual string canonicalize(const string& url);
 
     };
 
