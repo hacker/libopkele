@@ -1,4 +1,4 @@
-AC_INIT([libopkele], [0.2.1], [libopkele-bugs@klever.net])
+AC_INIT([libopkele], [0.3], [libopkele-bugs@klever.net])
 AC_CONFIG_SRCDIR([include/opkele/opkele-config.h])
 AC_CONFIG_HEADERS([config.h include/opkele/acconfig.h])
 AM_INIT_AUTOMAKE([dist-bzip2])

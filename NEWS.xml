@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
+ <version version="0.3" date="August 9th, 2007">
+  <ni>fixed canonicalization procedure to be specs-compliant. Note, that the old
+  consumer_t::canonicalize is now called consumer_t::normalize and the
+  canonicalize memeber is now virtual to allow caching layer, not static</ni>
+  <ni>robustness improvement in handling associations expiry</ni>
+  <ni>minor documentation updates</ni>
+ </version>
  <version version="0.2.1" date="June 24th, 2007">
   <ni>open id server invalid signature bugfix</ni>
  </version>
