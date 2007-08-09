@@ -95,6 +95,11 @@ namespace opkele {
 	     * @return true if stateless
 	     */
 	    virtual bool stateless() const = 0;
+	    /**
+	     * check whether the association is expired.
+	     * @return true if expired
+	     */
+	    virtual bool is_expired() const = 0;
     };
 
     /**

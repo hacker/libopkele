@@ -144,8 +144,6 @@ namespace opkele {
 	p["return_to"] = return_to;
 	try {
 	    string ah = find_assoc(server)->handle();
-	    if(ah->is_expired()) /* TODO: or should I throw some other exception to force programmer fix his implementation? */
-		throw failed_lookup(OPKELE_CP_ "find_assoc() has returned expired handle");
 	    p["assoc_handle"] = ah;
 	}catch(failed_lookup& fl) {
 	    string ah = associate(server)->handle();
