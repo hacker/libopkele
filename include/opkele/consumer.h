@@ -13,6 +13,11 @@ namespace opkele {
 
     /**
      * implementation of basic consumer functionality
+     *
+     * @note
+     * The consumer uses libcurl internally, which means that if you're using
+     * libopkele in multithreaded environment you should call curl_global_init
+     * yourself before spawning any threads.
      */
     class consumer_t {
 	public:
@@ -31,10 +36,16 @@ namespace opkele {
 	     * retrieve stored association. The function should be overridden
 	     * in the real implementation to provide persistent assocations
 	     * store.
+	     *
+	     * @note
+	     * The user is responsible for handling associations expiry and
+	     * this function should never return an expired or invalidated
+	     * association.
+	     *
 	     * @param server the OpenID server
 	     * @param handle association handle
 	     * @return the autho_ptr<> for the newly allocated association_t object
-	     * @throw failed_lookup in case of error
+	     * @throw failed_lookup if no unexpired association found
 	     */
 	    virtual assoc_t retrieve_assoc(const string& server,const string& handle) = 0;
 	    /**
@@ -48,6 +59,12 @@ namespace opkele {
 	     * retrieve any unexpired association for the server. If the
 	     * function is not overridden in the real implementation, the new
 	     * association will be established for each request.
+	     *
+	     * @note
+	     * The user is responsible for handling associations and this
+	     * function should never return an expired or invalidated
+	     * association.
+	     *
 	     * @param server the OpenID server
 	     * @return the auto_ptr<> for the newly allocated association_t object
 	     * @throw failed_lookup in case of absence of the handle

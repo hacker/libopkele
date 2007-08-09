@@ -144,6 +144,8 @@ namespace opkele {
 	p["return_to"] = return_to;
 	try {
 	    string ah = find_assoc(server)->handle();
+	    if(ah->is_expired()) /* TODO: or should I throw some other exception to force programmer fix his implementation? */
+		throw failed_lookup(OPKELE_CP_ "find_assoc() has returned expired handle");
 	    p["assoc_handle"] = ah;
 	}catch(failed_lookup& fl) {
 	    string ah = associate(server)->handle();
@@ -161,6 +163,8 @@ namespace opkele {
 	params_t ps;
 	try {
 	    assoc_t assoc = retrieve_assoc(server,pin.get_param("openid.assoc_handle"));
+	    if(assoc->is_expired()) /* TODO: or should I throw some other exception to force programmer fix his implementation? */
+		throw failed_lookup(OPKELE_CP_ "retrieve_assoc() has returned expired handle");
 	    const string& sigenc = pin.get_param("openid.sig");
 	    vector<unsigned char> sig;
 	    util::decode_base64(sigenc,sig);

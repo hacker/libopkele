@@ -61,6 +61,8 @@ namespace opkele {
 	    virtual secret_t secret() const { return _secret; }
 	    virtual int expires_in() const { return _expires-time(0); }
 	    virtual bool stateless() const { return _stateless; }
+
+	    virtual bool is_expired() const { return _expires<time(0); }
     };
 
 }
