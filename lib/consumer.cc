@@ -7,11 +7,18 @@
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
 #include <curl/curl.h>
-#include <pcre++.h>
 
 #include <iostream>
 
 #include "config.h"
+
+#if defined(USE_LIBPCRECPP)
+# include <pcrecpp.h>
+#elif defined(USE_PCREPP)
+# include <pcre++.h>
+#else
+ /* internal implementation won't be built */
+#endif
 
 namespace opkele {
     using namespace std;
@@ -261,6 +268,7 @@ namespace opkele {
     }
 
     void consumer_t::retrieve_links(const string& url,string& server,string& delegate) {
+#if defined(USE_LIBPCRECPP) || defined(USE_PCREPP)
 	server.erase();
 	delegate.erase();
 	curl_t curl = curl_easy_init();
@@ -278,17 +286,44 @@ namespace opkele {
 	r = curl_easy_perform(curl);
 	if(r && r!=CURLE_WRITE_ERROR)
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
-	pcrepp::Pcre bre("<body\\b",PCRE_CASELESS);
 	// strip out everything past body
+	static const char *re_hdre = "<head[^>]*>",
+		     *re_lre = "<link\\b([^>]+)>",
+		     *re_rre = "\\brel=['\"]([^'\"]+)['\"]",
+		     *re_hre = "\\bhref=['\"]([^'\"]+)['\"]";
+#if defined(USE_LIBPCRECPP)
+	static pcrecpp::RE_Options ro(PCRE_CASELESS|PCRE_DOTALL);
+	static pcrecpp::RE
+	    bre("<body\\b.*",ro), hdre(re_hdre,ro),
+	    lre(re_lre,ro), rre(re_rre), hre(re_hre,ro);
+	bre.Replace("",&html);
+	pcrecpp::StringPiece hpiece(html);
+	if(!hdre.FindAndConsume(&hpiece))
+	    throw bad_input(OPKELE_CP_ "failed to find head");
+	string attrs;
+	while(lre.FindAndConsume(&hpiece,&attrs)) {
+	    pcrecpp::StringPiece rel, href;
+	    if(!(rre.PartialMatch(attrs,&rel) && hre.PartialMatch(attrs,&href)))
+		continue;
+	    if(rel=="openid.server") {
+		href.CopyToString(&server);
+		if(!delegate.empty())
+		    break;
+	    }else if(rel=="openid.delegate") {
+		href.CopyToString(&delegate);
+		if(!server.empty())
+		    break;
+	    }
+	}
+#elif defined(USE_PCREPP)
+	pcrepp::Pcre bre("<body\\b",PCRE_CASELESS);
 	if(bre.search(html))
 	    html.erase(bre.get_match_start());
-	pcrepp::Pcre hdre("<head[^>]*>",PCRE_CASELESS);
+	pcrepp::Pcre hdre(re_hdre,PCRE_CASELESS);
 	if(!hdre.search(html))
 	    throw bad_input(OPKELE_CP_ "failed to find head");
 	html.erase(0,hdre.get_match_end()+1);
-	pcrepp::Pcre lre("<link\\b([^>]+)>",PCRE_CASELESS),
-	    rre("\\brel=['\"]([^'\"]+)['\"]",PCRE_CASELESS),
-	    hre("\\bhref=['\"]([^'\"]+)['\"]",PCRE_CASELESS);
+	pcrepp::Pcre lre(re_lre,PCRE_CASELESS), rre(re_rre,PCRE_CASELESS), hre(re_hre,PCRE_CASELESS);
 	while(lre.search(html)) {
 	    string attrs = lre[0];
 	    html.erase(0,lre.get_match_end()+1);
@@ -304,8 +339,14 @@ namespace opkele {
 		    break;
 	    }
 	}
+#else
+	#error "I must have gone crazy"
+#endif
 	if(server.empty())
 	    throw failed_assertion(OPKELE_CP_ "The location has no openid.server declaration");
+#else /* none of the RE bindings enabled */
+	throw not_implemented(OPKELE_CP_ "No internal implementation of retrieve_links were provided at compile-time");
+#endif
     }
 
     assoc_t consumer_t::find_assoc(const string& server) {
