@@ -82,11 +82,14 @@ AC_ARG_ENABLE([postels-law],
 )
 $postels_law && AC_DEFINE([POSTELS_LAW],,[defined if we want to adhere to Postel's Law])
 
+AC_DEFINE_UNQUOTED([OPKELE_SRC_DIR],["$PWD"],[source directory])
+
 AC_CONFIG_FILES([
  Makefile
   libopkele.pc
   Doxyfile
  include/Makefile
  lib/Makefile
+ test/Makefile
 ])
 AC_OUTPUT

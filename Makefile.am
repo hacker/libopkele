@@ -1,5 +1,5 @@
 
-SUBDIRS=include lib
+SUBDIRS=include lib test
 EXTRA_DIST= NEWS NEWS.xml NEWS.xsl
 
 DISTCHECK_CONFIGURE_FLAGS=--with-pkgconfigdir=$${dc_install_base}/lib/pkgconfig
