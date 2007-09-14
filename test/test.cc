@@ -39,10 +39,10 @@ void test_retrieve_links(const string& f,bool success,const string& s="",const s
 	    throw failed_test(OPKELE_CP_ "retrieve_links test failed, expected delegate '"+d+"', got '"+delegate+"'");
     }catch(opkele::bad_input& obi) {
 	if(success)
-	    throw failed_test(OPKELE_CP_ "Test failed");
+	    throw failed_test(OPKELE_CP_ "Test '"+f+"' failed due to 'bad_input'["+obi.what()+"]");
     }catch(opkele::failed_assertion& ofa) {
 	if(success)
-	    throw failed_test(OPKELE_CP_ "Test failed");
+	    throw failed_test(OPKELE_CP_ "Test '"+f+"' failed due to 'failed_assertion'["+ofa.what()+"]");
     }
 }
 
@@ -53,6 +53,9 @@ void test_retrieve_links() {
     test_retrieve_links("hkn.html",true,"http://www.klever.net/openid.server","http://hacker.klever.net/");
     test_retrieve_links("hkn-server.html",true,"http://www.klever.net/openid.server");
     test_retrieve_links("hkn-delegate.html",false);
+    test_retrieve_links("unclosed-head.html",true,"http://www.klever.net/openid.server","http://hacker.klever.net/");
+    test_retrieve_links("spaced-links.html",true,"http://www.klever.net/openid.server","http://hacker.klever.net/");
+    test_retrieve_links("spaced-link-attrs.html",true,"http://www.klever.net/openid.server","http://hacker.klever.net/");
 }
 
 main() {
