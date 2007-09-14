@@ -287,10 +287,10 @@ namespace opkele {
 	if(r && r!=CURLE_WRITE_ERROR)
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
 	// strip out everything past body
-	static const char *re_hdre = "<head[^>]*>",
-		     *re_lre = "<link\\b([^>]+)>",
-		     *re_rre = "\\brel=['\"]([^'\"]+)['\"]",
-		     *re_hre = "\\bhref=['\"]([^'\"]+)['\"]";
+	static const char *re_hdre = "<\\s*head[^>]*>",
+		     *re_lre = "<\\s*link\\b([^>]+)>",
+		     *re_rre = "\\brel\\s*=\\s*['\"]\\s*([^'\"\\s]+)\\s*['\"]",
+		     *re_hre = "\\bhref\\s*=\\s*['\"]\\s*([^'\"\\s]+)\\s*['\"]";
 #if defined(USE_LIBPCRECPP)
 	static pcrecpp::RE_Options ro(PCRE_CASELESS|PCRE_DOTALL);
 	static pcrecpp::RE
