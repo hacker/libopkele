@@ -342,12 +342,11 @@ namespace opkele {
 	    if(!( rre.exec(attrs,m1)>=2 && hre.exec(attrs,m2)>=2 ))
 		continue;
 	    string rel(attrs,m1.begin(1),m1.length(1));
-	    string href(attrs,m2.begin(1),m2.length(1));
 	    if(rel=="openid.server") {
-		server = href;
+		server.assign(attrs,m2.begin(1),m2.length(1));
 		if(!delegate.empty()) break;
 	    }else if(rel=="openid.delegate") {
-		delegate = href;
+		delegate.assign(attrs,m2.begin(1),m2.length(1));
 		if(!server.empty()) break;
 	    }
 	}
