@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: libopkele
 Description: C++ implementation of OpenID protocol
 Version: @VERSION@
-Requires: openssl @KONFORKA_KONFORKA@
+Requires: openssl libpcre @KONFORKA_KONFORKA@
 Cflags: -I${includedir} @LIBCURL_CPPFLAGS@ @PCREPP_CFLAGS@
 Libs: -L${libdir} -lopkele @LIBCURL@ @PCREPP_LIBS@

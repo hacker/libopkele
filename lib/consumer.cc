@@ -12,16 +12,54 @@
 
 #include "config.h"
 
-#if defined(USE_LIBPCRECPP)
-# include <pcrecpp.h>
-#elif defined(USE_PCREPP)
-# include <pcre++.h>
-#else
- /* internal implementation won't be built */
-#endif
+#include <pcre.h>
 
 namespace opkele {
     using namespace std;
+
+    class pcre_matches_t {
+	public:
+	    int *_ov;
+	    int _s;
+
+	    pcre_matches_t() : _ov(0), _s(0) { }
+	    pcre_matches_t(int s) : _ov(0), _s(s) {
+		if(_s&1) ++_s;
+		_s += _s>>1;
+		_ov = new int[_s];
+	    }
+	    ~pcre_matches_t() throw() { if(_ov) delete[] _ov; }
+
+	    int begin(int i) const { return _ov[i<<1]; }
+	    int end(int i) const { return _ov[(i<<1)+1]; }
+	    int length(int i) const { int t=i<<1; return _ov[t+1]-_ov[t]; }
+    };
+
+    class pcre_t {
+	public:
+	    pcre *_p;
+
+	    pcre_t() : _p(0) { }
+	    pcre_t(pcre *p) : _p(p) { }
+	    pcre_t(const char *re,int opts) : _p(0) {
+		static const char *errptr; static int erroffset;
+		_p = pcre_compile(re,opts,&errptr,&erroffset,NULL);
+		if(!_p)
+		    throw internal_error(OPKELE_CP_ string("Failed to compile regexp: ")+errptr);
+	    }
+	    ~pcre_t() throw() { if(_p) (*pcre_free)(_p); }
+
+	    pcre_t& operator=(pcre *p) { if(_p) (*pcre_free)(_p); _p=p; return *this; }
+
+	    operator const pcre*(void) const { return _p; }
+	    operator pcre*(void) { return _p; }
+
+	    int exec(const string& s,pcre_matches_t& m) {
+		if(!_p)
+		    throw internal_error(OPKELE_CP_ "Trying to execute absent regexp");
+		return pcre_exec(_p,NULL,s.c_str(),s.length(),0,0,m._ov,m._s);
+	    }
+    };
 
     class curl_t {
 	public:
@@ -268,7 +306,6 @@ namespace opkele {
     }
 
     void consumer_t::retrieve_links(const string& url,string& server,string& delegate) {
-#if defined(USE_LIBPCRECPP) || defined(USE_PCREPP)
 	server.erase();
 	delegate.erase();
 	curl_t curl = curl_easy_init();
@@ -286,67 +323,36 @@ namespace opkele {
 	r = curl_easy_perform(curl);
 	if(r && r!=CURLE_WRITE_ERROR)
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
-	// strip out everything past body
-	static const char *re_hdre = "<\\s*head[^>]*>",
+	static const char *re_bre = "<\\s*body\\b", *re_hdre = "<\\s*head[^>]*>",
 		     *re_lre = "<\\s*link\\b([^>]+)>",
 		     *re_rre = "\\brel\\s*=\\s*['\"]\\s*([^'\"\\s]+)\\s*['\"]",
 		     *re_hre = "\\bhref\\s*=\\s*['\"]\\s*([^'\"\\s]+)\\s*['\"]";
-#if defined(USE_LIBPCRECPP)
-	static pcrecpp::RE_Options ro(PCRE_CASELESS|PCRE_DOTALL);
-	static pcrecpp::RE
-	    bre("<body\\b.*",ro), hdre(re_hdre,ro),
-	    lre(re_lre,ro), rre(re_rre), hre(re_hre,ro);
-	bre.Replace("",&html);
-	pcrecpp::StringPiece hpiece(html);
-	if(!hdre.FindAndConsume(&hpiece))
-	    throw bad_input(OPKELE_CP_ "failed to find head");
-	string attrs;
-	while(lre.FindAndConsume(&hpiece,&attrs)) {
-	    pcrecpp::StringPiece rel, href;
-	    if(!(rre.PartialMatch(attrs,&rel) && hre.PartialMatch(attrs,&href)))
+	pcre_matches_t m1(3), m2(3);
+	pcre_t bre(re_bre,PCRE_CASELESS);
+	if(bre.exec(html,m1)>0)
+	    html.erase(m1.begin(0));
+	pcre_t hdre(re_hdre,PCRE_CASELESS);
+	if(hdre.exec(html,m1)<=0)
+	    throw bad_input(OPKELE_CP_ "failed to find <head>");
+	html.erase(0,m1.end(0)+1);
+	pcre_t lre(re_lre,PCRE_CASELESS), rre(re_rre,PCRE_CASELESS), hre(re_hre,PCRE_CASELESS);
+	while(lre.exec(html,m1)>=2) {
+	    string attrs(html,m1.begin(1),m1.length(1));
+	    html.erase(0,m1.end(0)+1);
+	    if(!( rre.exec(attrs,m1)>=2 && hre.exec(attrs,m2)>=2 ))
 		continue;
+	    string rel(attrs,m1.begin(1),m1.length(1));
+	    string href(attrs,m2.begin(1),m2.length(1));
 	    if(rel=="openid.server") {
-		href.CopyToString(&server);
-		if(!delegate.empty())
-		    break;
+		server = href;
+		if(!delegate.empty()) break;
 	    }else if(rel=="openid.delegate") {
-		href.CopyToString(&delegate);
-		if(!server.empty())
-		    break;
+		delegate = href;
+		if(!server.empty()) break;
 	    }
 	}
-#elif defined(USE_PCREPP)
-	pcrepp::Pcre bre("<body\\b",PCRE_CASELESS);
-	if(bre.search(html))
-	    html.erase(bre.get_match_start());
-	pcrepp::Pcre hdre(re_hdre,PCRE_CASELESS);
-	if(!hdre.search(html))
-	    throw bad_input(OPKELE_CP_ "failed to find head");
-	html.erase(0,hdre.get_match_end()+1);
-	pcrepp::Pcre lre(re_lre,PCRE_CASELESS), rre(re_rre,PCRE_CASELESS), hre(re_hre,PCRE_CASELESS);
-	while(lre.search(html)) {
-	    string attrs = lre[0];
-	    html.erase(0,lre.get_match_end()+1);
-	    if(!(rre.search(attrs)&&hre.search(attrs)))
-		continue;
-	    if(rre[0]=="openid.server") {
-		server = hre[0];
-		if(!delegate.empty())
-		    break;
-	    }else if(rre[0]=="openid.delegate") {
-		delegate = hre[0];
-		if(!server.empty())
-		    break;
-	    }
-	}
-#else
-	#error "I must have gone crazy"
-#endif
 	if(server.empty())
 	    throw failed_assertion(OPKELE_CP_ "The location has no openid.server declaration");
-#else /* none of the RE bindings enabled */
-	throw not_implemented(OPKELE_CP_ "No internal implementation of retrieve_links were provided at compile-time");
-#endif
     }
 
     assoc_t consumer_t::find_assoc(const string& server) {

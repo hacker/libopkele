@@ -212,6 +212,15 @@ namespace opkele {
 		: exception(OPKELE_E_CONS) { }
     };
 
+    /**
+     * internal error, indicates internal libopkele problem
+     */
+    class internal_error : public exception {
+	public:
+	    internal_error(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
 }
 
 #endif /* __OPKELE_EXCEPTION_H */

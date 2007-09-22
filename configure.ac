@@ -53,50 +53,9 @@ LIBCURL_CHECK_CONFIG(,,,[
  AC_MSG_ERROR([no required libcurl library. get one from http://curl.haxx.se/])
 ])
 
-want_pcre_impl=""
-AC_ARG_WITH([pcre-bindings],
- AC_HELP_STRING([--with-pcre-bindings=(pcrepp|none|libpcrecpp)],[Specify which pcre c++ bindings to use. 'pcrepp' stands for quite sensible library, found at http://www.daemon.de/PCRE/, 'libcrecpp' makes use of crappy bindings by google and 'none' disables internal implementation of OP discovery]),
- [
-  case "$withval" in
-   pcrepp) want_pcre_impl="pcrepp" ;;
-   libpcrecpp) want_pcre_impl="libpcrecpp" ;;
-   none) want_pcre_impl="none";;
-   *) AC_MSG_ERROR([I'm not sure I understand what do you want for a pcre c++ bindings]) ;;
-  esac
- ]
-)
-
-found_pcre_impl=""
-
-if test -z "$want_pcre_impl" -o "$want_pcre_impl" = "pcrepp" ; then
- AC_WITH_PCRE([
-   AC_WITH_PCREPP([
-    found_pcre_impl=pcrepp
-   ])
-  ],[
-   AC_MSG_ERROR([no pcre library found. get one at http://www.pcre.org/])
-  ]
- )
- test "$want_pcre_impl,$found_pcre_impl" = "pcrepp," && AC_MSG_ERROR([no pcre++ library found. get one at http://www.daemon.de/PCRE])
-fi
-
-if test "$found_pcre_impl,$want_pcre_impl" = "," -o "$want_pcre_impl" = "libpcrecpp" ; then
- test -z "$want_pcre_impl" || AC_MSG_NOTICE([You want to use crappy libpcre c++ bindings])
- PKG_CHECK_MODULES([LIBPCRECPP],[libpcrecpp],[
-   found_pcre_impl=libpcrecpp
-   CXXFLAGS="$CXXFLAGS $LIBPCRECPP_CFLAGS"
-   LIBS="$LIBS $LIBPCRECPP_LIBS"
-  ],[
-   test -z "$want_pcre_impl" || AC_MSG_ERROR([no libpcre c++ bindings found. why would you want it if you don't have it installed?])
-  ]
- )
-fi
-test "$want_pcre_impl,$found_pcre_impl" = "," && AC_MSG_ERROR([no pcre c++ bindings found, use --with-pcre-bindings=none to disable code that makes use of it])
-
-case "$found_pcre_impl" in
- pcrepp) AC_DEFINE([USE_PCREPP],,[defined if pcre++ is to be used]) ;;
- libpcrecpp) AC_DEFINE([USE_LIBPCRECPP],,[defined if crappy google bindings are to be used]) ;;
-esac
+PKG_CHECK_MODULES([PCRE],[libpcre],,[
+ AC_MSG_ERROR([no libpcre found, go get it at http://www.pcre.org/])
+])
 
 curl_ssl_verify_host="true"
 AC_ARG_ENABLE([ssl-verify-host],

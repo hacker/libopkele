@@ -5,10 +5,10 @@ INCLUDES = \
 	   ${KONFORKA_CFLAGS} \
 	   ${OPENSSL_CFLAGS} \
 	   ${LIBCURL_CPPFLAGS} \
-	   ${PCREPP_CFLAGS}
+	   ${PCRE_CFLAGS}
 libopkele_la_LIBADD = \
 	${LIBCURL} \
-	${PCREPP_LIBS} \
+	${PCRE_LIBS} \
 	${OPENSSL_LIBS} \
 	${KONFORKA_LIBS}
 
