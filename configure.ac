@@ -7,11 +7,11 @@ AC_PROG_INSTALL
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_LIBTOOL
+PKG_PROG_PKG_CONFIG
 
 AC_HEADER_STDC
 
 AC_PATH_PROG([XSLTPROC],[xsltproc],[true])
-AC_WITH_PKGCONFIG
 
 PKG_CHECK_MODULES([OPENSSL],[openssl],,[
  AC_MSG_ERROR([no openssl library found. get one from http://www.openssl.org/])
