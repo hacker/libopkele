@@ -325,7 +325,7 @@ namespace opkele {
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
 	static const char *re_bre = "<\\s*body\\b", *re_hdre = "<\\s*head[^>]*>",
 		     *re_lre = "<\\s*link\\b([^>]+)>",
-		     *re_rre = "\\brel\\s*=\\s*['\"]\\s*([^'\"\\s]+)\\s*['\"]",
+		     *re_rre = "\\brel\\s*=\\s*['\"]([^'\"]+)['\"]",
 		     *re_hre = "\\bhref\\s*=\\s*['\"]\\s*([^'\"\\s]+)\\s*['\"]";
 	pcre_matches_t m1(3), m2(3);
 	pcre_t bre(re_bre,PCRE_CASELESS);
@@ -336,18 +336,40 @@ namespace opkele {
 	    throw bad_input(OPKELE_CP_ "failed to find <head>");
 	html.erase(0,m1.end(0)+1);
 	pcre_t lre(re_lre,PCRE_CASELESS), rre(re_rre,PCRE_CASELESS), hre(re_hre,PCRE_CASELESS);
-	while(lre.exec(html,m1)>=2) {
+	bool gotit = false;
+	while( (!gotit) && lre.exec(html,m1)>=2 ) {
+	    static const char *whitespace = " \t";
 	    string attrs(html,m1.begin(1),m1.length(1));
 	    html.erase(0,m1.end(0)+1);
 	    if(!( rre.exec(attrs,m1)>=2 && hre.exec(attrs,m2)>=2 ))
 		continue;
-	    string rel(attrs,m1.begin(1),m1.length(1));
-	    if(rel=="openid.server") {
-		server.assign(attrs,m2.begin(1),m2.length(1));
-		if(!delegate.empty()) break;
-	    }else if(rel=="openid.delegate") {
-		delegate.assign(attrs,m2.begin(1),m2.length(1));
-		if(!server.empty()) break;
+	    string rels(attrs,m1.begin(1),m1.length(1));
+	    for(string::size_type ns = rels.find_first_not_of(whitespace);
+		    ns!=string::npos;
+		    ns=rels.find_first_not_of(whitespace,ns)) {
+		string::size_type s = rels.find_first_of(whitespace,ns);
+		string rel;
+		if(s==string::npos) {
+		    rel.assign(rels,ns,string::npos);
+		    ns=string::npos;
+		}else{
+		    rel.assign(rels,ns,s-ns);
+		    ns=s;
+		}
+		if(rel=="openid.server") {
+		    server.assign(attrs,m2.begin(1),m2.length(1));
+		    if(!delegate.empty()) {
+			gotit = true;
+			break;
+		    }
+		}else if(rel=="openid.delegate") {
+		    delegate.assign(attrs,m2.begin(1),m2.length(1));
+		    if(!server.empty()) {
+			gotit = true;
+			break;
+		    }
+		}
+		if(ns==string::npos) break;
 	    }
 	}
 	if(server.empty())
