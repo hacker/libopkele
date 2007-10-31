@@ -56,6 +56,7 @@ void test_retrieve_links() {
     test_retrieve_links("unclosed-head.html",true,"http://www.klever.net/openid.server","http://hacker.klever.net/");
     test_retrieve_links("spaced-links.html",true,"http://www.klever.net/openid.server","http://hacker.klever.net/");
     test_retrieve_links("spaced-link-attrs.html",true,"http://www.klever.net/openid.server","http://hacker.klever.net/");
+    test_retrieve_links("2rels.html",true,"http://www.klever.net/openid.server","http://www.klever.net/openid.server");
 }
 
 main() {
