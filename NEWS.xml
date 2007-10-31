@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
+ <version>
+  <ni>more robustness improvements in links discovery</ni>
+  <ni>removed dependency on pcre c++ bindings, because there are few of them and
+  not everyone likes all of them</ni>
+ </version>
  <version version="0.3" date="August 9th, 2007">
   <ni>fixed canonicalization procedure to be specs-compliant. Note, that the old
   consumer_t::canonicalize is now called consumer_t::normalize and the
