@@ -56,6 +56,7 @@ LIBCURL_CHECK_CONFIG(,,,[
 if test -n "$PCRE_LIBS" -a -n "$PCRE_CFLAGS" ; then
  AC_SUBST([PCRE_CFLAGS])
  AC_SUBST([PCRE_LIBS])
+ :
 else
  PKG_CHECK_MODULES([PCRE],[libpcre],,[
   AC_MSG_ERROR([no libpcre found, go get it at http://www.pcre.org/])
