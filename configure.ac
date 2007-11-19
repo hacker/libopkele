@@ -53,9 +53,14 @@ LIBCURL_CHECK_CONFIG(,,,[
  AC_MSG_ERROR([no required libcurl library. get one from http://curl.haxx.se/])
 ])
 
-PKG_CHECK_MODULES([PCRE],[libpcre],,[
- AC_MSG_ERROR([no libpcre found, go get it at http://www.pcre.org/])
-])
+if test -n "$PCRE_LIBS" -a -n "$PCRE_CFLAGS" ; then
+ AC_SUBST([PCRE_CFLAGS])
+ AC_SUBST([PCRE_LIBS])
+else
+ PKG_CHECK_MODULES([PCRE],[libpcre],,[
+  AC_MSG_ERROR([no libpcre found, go get it at http://www.pcre.org/])
+ ])
+fi
 
 curl_ssl_verify_host="true"
 AC_ARG_ENABLE([ssl-verify-host],
