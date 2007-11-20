@@ -16,7 +16,8 @@ AC_PATH_PROG([XSLTPROC],[xsltproc],[true])
 AC_MSG_CHECKING([for source tree version])
 if headrev=$(cd $srcdir && git rev-parse --verify HEAD 2>/dev/null) ; then
  PACKAGE_SRC_VERSION="$(cd $srcdir && git describe --tags $headrev)"
- test "$PACKAGE_SRC_VERSION" = "$PACKAGE_VERSION" || PACKAGE_SRC_VERSION="${PACKAGE_VERSION}:${PACKAGE_SRC_VERSION}"
+ test "$PACKAGE_SRC_VERSION" = "$PACKAGE_VERSION" \
+  -o "${PACKAGE_SRC_VERSION#${PACKAGE_VERSION}-}" != "$PACKAGE_SRC_VERSION" || PACKAGE_SRC_VERSION="${PACKAGE_VERSION}:${PACKAGE_SRC_VERSION}"
  ( cd $srcdir && git diff-index $headrev | read dirt ) && PACKAGE_SRC_VERSION="${PACKAGE_SRC_VERSION}-dirty"
 else
  PACKAGE_SRC_VERSION="$PACKAGE_VERSION"
