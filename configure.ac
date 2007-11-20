@@ -13,6 +13,17 @@ AC_HEADER_STDC
 
 AC_PATH_PROG([XSLTPROC],[xsltproc],[true])
 
+AC_MSG_CHECKING([for source tree version])
+if headrev=$(cd $srcdir && git rev-parse --verify HEAD 2>/dev/null) ; then
+ PACKAGE_SRC_VERSION="${PACKAGE_VERSION}:$(cd $srcdir && git describe --tags $headrev)"
+ ( cd $srcdir && git diff-index $headrev | read dirt ) && PACKAGE_SRC_VERSION="${PACKAGE_SRC_VERSION}-dirty"
+else
+ PACKAGE_SRC_VERSION="$PACKAGE_VERSION"
+fi
+AC_MSG_RESULT([$PACKAGE_SRC_VERSION])
+AC_SUBST([PACKAGE_SRC_VERSION])
+AC_DEFINE_UNQUOTED([PACKAGE_SRC_VERSION],["$PACKAGE_SRC_VERSION"],[more or less precise source tree version])
+
 PKG_CHECK_MODULES([OPENSSL],[openssl],,[
  AC_MSG_ERROR([no openssl library found. get one from http://www.openssl.org/])
 ])
