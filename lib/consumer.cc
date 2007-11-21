@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 #include <opkele/util.h>
 #include <opkele/exception.h>
 #include <opkele/data.h>

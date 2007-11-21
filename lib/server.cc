@@ -1,3 +1,4 @@
+#include <cstring>
 #include <vector>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>

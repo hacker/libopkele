@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <cassert>
+#include <cstring>
 #include <vector>
 #include <string>
 #include <openssl/bio.h>
