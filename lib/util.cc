@@ -28,9 +28,10 @@ namespace opkele {
 		if(!bmem)
 		    throw exception_openssl(OPKELE_CP_ "failed to BIO_new() memory buffer");
 		BIO_push(b64,bmem);
-		if(BIO_write(b64,data,length)!=length)
+		if(((size_t)BIO_write(b64,data,length))!=length)
 		    throw exception_openssl(OPKELE_CP_ "failed to BIO_write()");
-		BIO_flush(b64);
+		if(BIO_flush(b64)!=1)
+		    throw exception_openssl(OPKELE_CP_ "failed to BIO_flush()");
 		char *rvd;
 		long rvl = BIO_get_mem_data(bmem,&rvd);
 		string rv(rvd,rvl);
@@ -144,7 +145,7 @@ namespace opkele {
 	string long_to_string(long l) {
 	    char rv[32];
 	    int r=snprintf(rv,sizeof(rv),"%ld",l);
-	    if(r<0 || r>=sizeof(rv))
+	    if(r<0 || r>=(int)sizeof(rv))
 		throw failed_conversion(OPKELE_CP_ "failed to snprintf()");
 	    return rv;
 	}
