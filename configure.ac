@@ -99,6 +99,24 @@ $postels_law && AC_DEFINE([POSTELS_LAW],,[defined if we want to adhere to Postel
 
 AC_DEFINE_UNQUOTED([OPKELE_SRC_DIR],["$PWD"],[source directory])
 
+nitpick=false
+AC_ARG_ENABLE([nitpicking],
+ AC_HELP_STRING([--enable-nitpicking],[make compiler somewhat overly fastidious about the code it deals with]),
+ [ test "$enableval" = "no" || nitpick=true ]
+)
+if $nitpick ; then
+ CPP_NITPICK="-pedantic -Wall -Wextra -Wundef -Wshadow \
+  -Wunsafe-loop-optimizations -Wconversion -Wmissing-declarations \
+  -Wmissing-format-attribute -Wredundant-decls"
+ # -Wlogical-op -Wmissing-noreturn 
+ C_NITPICK="$CPP_NITPICK"
+ CXX_NITPICK="$C_NITPICK"
+
+ CPPFLAGS="$CPPFLAGS $CPP_NITPICK"
+ CFLAGS="$CFLAGS $C_NITPICK"
+ CXXFLAGS="$CXXFLAGS $CXX_NITPICK"
+fi
+
 AC_CONFIG_FILES([
  Makefile
   libopkele.pc
