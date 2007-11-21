@@ -161,7 +161,7 @@ namespace opkele {
 	if(pin.has_param("openid.invalidate_handle")) {
 	    string h = pin.get_param("openid.invalidate_handle");
 	    try {
-		assoc_t assoc = retrieve_assoc(h);
+		assoc_t tmp = retrieve_assoc(h);
 	    }catch(invalid_handle& ih) {
 		pout["invalidate_handle"] = h;
 	    }catch(failed_lookup& fl) { }
