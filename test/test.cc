@@ -59,7 +59,7 @@ void test_retrieve_links() {
     test_retrieve_links("2rels.html",true,"http://www.klever.net/openid.server","http://www.klever.net/openid.server");
 }
 
-main() {
+int main() {
     try {
 	test_retrieve_links();
     }catch(failed_test& ft) {
