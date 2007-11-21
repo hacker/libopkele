@@ -106,8 +106,8 @@ AC_ARG_ENABLE([nitpicking],
 )
 if $nitpick ; then
  CPP_NITPICK="-pedantic -Wall -Wextra -Wundef -Wshadow \
-  -Wunsafe-loop-optimizations -Wconversion -Wmissing-declarations \
-  -Wmissing-format-attribute -Wredundant-decls"
+  -Wunsafe-loop-optimizations -Wconversion -Wmissing-format-attribute \
+  -Wredundant-decls -ansi"
  # -Wlogical-op -Wmissing-noreturn 
  C_NITPICK="$CPP_NITPICK"
  CXX_NITPICK="$C_NITPICK"
