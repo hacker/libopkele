@@ -130,7 +130,7 @@ namespace opkele {
 	;
 	if(r)
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_setopt()",r);
-	if(r=curl_easy_perform(curl))
+	if( (r=curl_easy_perform(curl)) )
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
 	params_t p; p.parse_keyvalues(response);
 	if(p.has_param("assoc_type") && p.get_param("assoc_type")!="HMAC-SHA1")
@@ -290,7 +290,7 @@ namespace opkele {
 	;
 	if(r)
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_setopt()",r);
-	if(r=curl_easy_perform(curl))
+	if( (r=curl_easy_perform(curl)) )
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
 	params_t pp; pp.parse_keyvalues(response);
 	if(pp.has_param("invalidate_handle"))
