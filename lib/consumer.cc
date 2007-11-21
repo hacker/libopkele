@@ -377,7 +377,7 @@ namespace opkele {
 	    throw failed_assertion(OPKELE_CP_ "The location has no openid.server declaration");
     }
 
-    assoc_t consumer_t::find_assoc(const string& server) {
+    assoc_t consumer_t::find_assoc(const string& /* server */) {
 	throw failed_lookup(OPKELE_CP_ "no find_assoc() provided");
     }
 

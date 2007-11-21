@@ -14,13 +14,13 @@ class failed_test : public opkele::exception {
 
 class dummy_consumer_t : public opkele::consumer_t {
     public:
-	virtual opkele::assoc_t store_assoc(const string& server,const string& handle,const opkele::secret_t& secret,int expires_in) {
+	virtual opkele::assoc_t store_assoc(const string& /* server */,const string& /* handle */,const opkele::secret_t& /* secret */,int /* expires_in */) {
 	    throw opkele::not_implemented(OPKELE_CP_ "Not implemented");
 	}
-	virtual opkele::assoc_t retrieve_assoc(const string& server,const string& handle) {
+	virtual opkele::assoc_t retrieve_assoc(const string& /* server */ ,const string& /* handle */) {
 	    throw opkele::not_implemented(OPKELE_CP_ "Not implemented");
 	}
-	virtual void invalidate_assoc(const string& server,const string& handle) {
+	virtual void invalidate_assoc(const string& /* server */,const string& /* handle */) {
 	    throw opkele::not_implemented(OPKELE_CP_ "Not implemented");
 	}
 };

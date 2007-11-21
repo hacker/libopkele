@@ -27,7 +27,7 @@ namespace opkele {
 	return fd.fieldname==fn;
     }
 
-    void sreg_t::checkid_hook(params_t& p,const string& identity) {
+    void sreg_t::checkid_hook(params_t& p,const string& /* identity */) {
 	string fr, fo;
 	for(fields_iterator f=fields_BEGIN;f<fields_END;++f) {
 	    if(f->fieldbit&fields_required) {
@@ -44,7 +44,7 @@ namespace opkele {
 	if(!policy_url.empty()) p["sreg.policy_url"]=policy_url;
     }
 
-    void sreg_t::id_res_hook(const params_t& p,const params_t& sp,const string& identity) {
+    void sreg_t::id_res_hook(const params_t& /* p */,const params_t& sp,const string& /* identity */) {
 	clear();
 	for(fields_iterator f=fields_BEGIN;f<fields_END;++f) {
 	    string fn = "sreg."; fn+=f->fieldname;
@@ -118,7 +118,7 @@ namespace opkele {
 	}
     }
 
-    void sreg_t::setup_response(const params_t& pin,params_t& pout) {
+    void sreg_t::setup_response(const params_t& /* pin */,params_t& /* pout */) {
 	fields_response = (fields_required|fields_optional)&has_fields;
     }
 }
