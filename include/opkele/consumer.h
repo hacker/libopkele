@@ -22,6 +22,8 @@ namespace opkele {
     class consumer_t {
 	public:
 
+	    virtual ~consumer_t() { }
+
 	    /**
 	     * store association. The function should be overridden in the real
 	     * implementation to provide persistent associations store.

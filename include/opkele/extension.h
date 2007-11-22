@@ -15,6 +15,8 @@ namespace opkele {
      */
     class extension_t {
 	public:
+
+	    virtual ~extension_t() { }
 	    /**
 	     * hook called by consumer before submitting data to OpenID server.
 	     * It is supposed to manipulate parameters list.

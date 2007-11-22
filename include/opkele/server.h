@@ -17,6 +17,8 @@ namespace opkele {
     class server_t {
 	public:
 
+	    virtual ~server_t() { }
+
 	    /**
 	     * allocate the new association. The function should be overridden
 	     * in the real implementation to provide persistent assocations

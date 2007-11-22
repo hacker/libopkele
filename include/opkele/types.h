@@ -65,6 +65,8 @@ namespace opkele {
     class association_t {
 	public:
 
+	    virtual ~association_t() { }
+
 	    /**
 	     * retrieve the server with which association was established.
 	     * @return server name
