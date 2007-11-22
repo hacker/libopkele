@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
- <version version="0.3.2" date="">
+ <version version="0.3.2" date="November 22nd, 2007">
   <ni>code cleanup for stricter compiler</ni>
  </version>
  <version version="0.3.1" date="November 20th, 2007">
