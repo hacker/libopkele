@@ -126,6 +126,16 @@ namespace opkele {
 	 * @param rv container for decoded binary
 	 */
 	void decode_base64(const string& data,vector<unsigned char>& rv);
+
+	/**
+	 * Normalize http(s) URI according to RFC3986, section 6. URI is
+	 * expected to have scheme: in front of it.
+	 * @param uri URI
+	 * @return normalized URI
+	 * @throw not_implemented in case of non-httpi(s) URI
+	 * @throw bad_input in case of malformed URI
+	 */
+	string rfc_3986_normalize_uri(const string& uri);
     }
 
 }

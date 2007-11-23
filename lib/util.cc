@@ -1,8 +1,10 @@
 #include <errno.h>
 #include <cassert>
+#include <cctype>
 #include <cstring>
 #include <vector>
 #include <string>
+#include <stack>
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <curl/curl.h>
@@ -158,6 +160,135 @@ namespace opkele {
 		throw failed_conversion(OPKELE_CP_ "failed to strtol()");
 	    return rv;
 	}
+
+	/*
+	 * Normalize URL according to the rules, described in rfc 3986, section 6
+	 *
+	 * - uppercase hext triplets (e.g. %ab -> %AB)
+	 * - lowercase scheme and host
+	 * - decode %-encoded characters, specified as unreserved in rfc 3986, section 2.3,
+	 *   that is - [:alpha:][:digit:]._~-
+	 * - remove dot segments
+	 * - remove empty and default ports
+	 * - if there's no path component, add '/'
+	 */
+	 string rfc_3986_normalize_uri(const string& uri) {
+	     string rv;
+	     string::size_type colon = uri.find(':');
+	     if(colon==string::npos)
+		 throw bad_input(OPKELE_CP_ "No scheme specified in URI");
+	     transform(
+		     uri.begin(), uri.begin()+colon+1,
+		     back_inserter(rv), ::tolower );
+	     bool s;
+	     if(rv=="http:")
+		 s = false;
+	     else if(rv=="https:")
+		 s = true;
+	     else
+		 throw not_implemented(OPKELE_CP_ "Only http(s) URIs can be normalized here");
+	     string::size_type ul = uri.length();
+	     if(ul <= (colon+3))
+		 throw bad_input(OPKELE_CP_ "Unexpected end of URI being normalized encountered");
+	     if(uri[colon+1]!='/' || uri[colon+2]!='/')
+		 throw bad_input(OPKELE_CP_ "Unexpected input in URI being normalized after scheme component");
+	     rv += "//";
+	     string::size_type interesting = uri.find_first_of(":/#?",colon+3);
+	     if(interesting==string::npos) {
+		 transform(
+			 uri.begin()+colon+3,uri.end(),
+			 back_inserter(rv), ::tolower );
+		 rv += '/'; return rv;
+	     }
+	     transform(
+		     uri.begin()+colon+3,uri.begin()+interesting,
+		     back_inserter(rv), ::tolower );
+	     bool qf = false;
+	     char ic = uri[interesting];
+	     if(ic==':') {
+		 string::size_type ni = uri.find_first_of("/#?%",interesting+1);
+		 const char *nptr = uri.data()+interesting+1;
+		 char *eptr = 0;
+		 long port = strtol(nptr,&eptr,10);
+		 if( (port>0) && (port<65535) && port!=(s?443:80) ) {
+		     char tmp[6];
+		     snprintf(tmp,sizeof(tmp),"%d",port);
+		     rv += ':'; rv += tmp;
+		 }
+		 if(ni==string::npos) {
+		     rv += '/'; return rv;
+		 }
+		 interesting = ni;
+	     }else if(ic!='/') {
+		 rv += '/'; rv += ic;
+		 qf = true;
+		 ++interesting;
+	     }
+	     string::size_type n = interesting;
+	     char tmp[3] = { 0,0,0 };
+	     stack<string::size_type> psegs; psegs.push(rv.length());
+	     string pseg;
+	     for(;n<ul;) {
+		 string::size_type unsafe = uri.find_first_of(qf?"%":"%/?#",n);
+		 if(unsafe==string::npos) {
+		     pseg.append(uri,n,ul-n-1); n = ul-1;
+		 }else{
+		     pseg.append(uri,n,unsafe-n);
+		     n = unsafe;
+		 }
+		 char c = uri[n++];
+		 if(c=='%') {
+		     if((n+1)>=ul)
+			 throw bad_input(OPKELE_CP_ "Unexpected end of URI encountered while parsing percent-encoded character");
+		     tmp[0] = uri[n++];
+		     tmp[1] = uri[n++];
+		     if(!( isxdigit(tmp[0]) && isxdigit(tmp[1]) ))
+			 throw bad_input(OPKELE_CP_ "Invalid percent-encoded character in URI being normalized");
+		     int cc = strtol(tmp,0,16);
+		     if( isalpha(cc) || isdigit(cc) || strchr("._~-",cc) )
+			 pseg += cc;
+		     else{
+			 pseg += '%';
+			 pseg += toupper(tmp[0]); pseg += toupper(tmp[1]);
+		     }
+		 }else if(qf) {
+		     rv += pseg; rv += c;
+		     pseg.clear();
+		 }else if(n>=ul || strchr("?/#",c)) {
+		     if(pseg.empty() || pseg==".") {
+		     }else if(pseg=="..") {
+			 if(psegs.size()>1) {
+			     rv.resize(psegs.top()); psegs.pop();
+			 }
+		     }else{
+			 psegs.push(rv.length());
+			 if(c!='/') {
+			     pseg += c;
+			     qf = true;
+			 }
+			 rv += '/'; rv += pseg;
+		     }
+		     if(c=='/' && (n>=ul || strchr("?#",uri[n])) ) {
+			 rv += '/';
+			 if(n<ul)
+			     qf = true;
+		     }else if(strchr("?#",c)) {
+			 if(psegs.size()==1 && psegs.top()==rv.length())
+			     rv += '/';
+			 if(pseg.empty())
+			     rv += c;
+			 qf = true;
+		     }
+		     pseg.clear();
+		 }else{
+		     pseg += c;
+		 }
+	     }
+	     if(!pseg.empty()) {
+		 rv += '/'; rv += pseg;
+	     }
+	     return rv;
+	 }
 
     }
 
