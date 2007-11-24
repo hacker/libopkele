@@ -22,6 +22,7 @@ libopkele_la_SOURCES = \
 		       exception.cc \
 		       extension.cc \
 		       sreg.cc \
-		       extension_chain.cc
+		       extension_chain.cc \
+		       curl.cc
 libopkele_la_LDFLAGS = \
 	-version-info 2:0:0

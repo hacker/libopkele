@@ -16,6 +16,7 @@
 
 namespace opkele {
     using namespace std;
+    using util::curl_t;
 
     class pcre_matches_t {
 	public:
@@ -61,24 +62,6 @@ namespace opkele {
 	    }
     };
 
-    static CURLcode curl_misc_sets(CURL* c) {
-	CURLcode r;
-	(r=curl_easy_setopt(c,CURLOPT_FOLLOWLOCATION,1))
-	|| (r=curl_easy_setopt(c,CURLOPT_MAXREDIRS,5))
-	|| (r=curl_easy_setopt(c,CURLOPT_DNS_CACHE_TIMEOUT,120))
-	|| (r=curl_easy_setopt(c,CURLOPT_DNS_USE_GLOBAL_CACHE,1))
-	|| (r=curl_easy_setopt(c,CURLOPT_USERAGENT,PACKAGE_NAME"/"PACKAGE_SRC_VERSION))
-	|| (r=curl_easy_setopt(c,CURLOPT_TIMEOUT,20))
-#ifdef	DISABLE_CURL_SSL_VERIFYHOST
-	|| (r=curl_easy_setopt(c,CURLOPT_SSL_VERIFYHOST,0))
-#endif
-#ifdef	DISABLE_CURL_SSL_VERIFYPEER
-	|| (r=curl_easy_setopt(c,CURLOPT_SSL_VERIFYPEER,0))
-#endif
-	;
-	return r;
-    }
-
     static size_t _curl_tostring(void *ptr,size_t size,size_t nmemb,void *stream) {
 	string *str = (string*)stream;
 	size_t bytes = size*nmemb;
@@ -101,23 +84,23 @@ namespace opkele {
 	    "&openid.session_type=DH-SHA1"
 	    "&openid.dh_consumer_public=";
 	request += util::url_encode(util::bignum_to_base64(dh->pub_key));
-	util::curl_t curl = curl_easy_init();
+	curl_t curl = curl_t::easy_init();
 	if(!curl)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_init()");
+	    throw exception_curl(OPKELE_CP_ "failed to initialize curl");
 	string response;
 	CURLcode r;
-	(r=curl_misc_sets(curl))
-	|| (r=curl_easy_setopt(curl,CURLOPT_URL,server.c_str()))
-	|| (r=curl_easy_setopt(curl,CURLOPT_POST,1))
-	|| (r=curl_easy_setopt(curl,CURLOPT_POSTFIELDS,request.data()))
-	|| (r=curl_easy_setopt(curl,CURLOPT_POSTFIELDSIZE,request.length()))
-	|| (r=curl_easy_setopt(curl,CURLOPT_WRITEFUNCTION,_curl_tostring))
-	|| (r=curl_easy_setopt(curl,CURLOPT_WRITEDATA,&response))
+	(r=curl.misc_sets())
+	|| (r=curl.easy_setopt(CURLOPT_URL,server.c_str()))
+	|| (r=curl.easy_setopt(CURLOPT_POST,1))
+	|| (r=curl.easy_setopt(CURLOPT_POSTFIELDS,request.data()))
+	|| (r=curl.easy_setopt(CURLOPT_POSTFIELDSIZE,request.length()))
+	|| (r=curl.easy_setopt(CURLOPT_WRITEFUNCTION,_curl_tostring))
+	|| (r=curl.easy_setopt(CURLOPT_WRITEDATA,&response))
 	;
 	if(r)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_setopt()",r);
-	if( (r=curl_easy_perform(curl)) )
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
+	    throw exception_curl(OPKELE_CP_ "failed to set curly options",r);
+	if( (r=curl.easy_perform()) )
+	    throw exception_curl(OPKELE_CP_ "failed to perform curly request",r);
 	params_t p; p.parse_keyvalues(response);
 	if(p.has_param("assoc_type") && p.get_param("assoc_type")!="HMAC-SHA1")
 	    throw bad_input(OPKELE_CP_ "unsupported assoc_type");
@@ -261,23 +244,23 @@ namespace opkele {
 		request += util::url_encode(i->second);
 	    }
 	}
-	util::curl_t curl = curl_easy_init();
+	curl_t curl = curl_t::easy_init();
 	if(!curl)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_init()");
+	    throw exception_curl(OPKELE_CP_ "failed to initialize curl");
 	string response;
 	CURLcode r;
-	(r=curl_misc_sets(curl))
-	|| (r=curl_easy_setopt(curl,CURLOPT_URL,server.c_str()))
-	|| (r=curl_easy_setopt(curl,CURLOPT_POST,1))
-	|| (r=curl_easy_setopt(curl,CURLOPT_POSTFIELDS,request.data()))
-	|| (r=curl_easy_setopt(curl,CURLOPT_POSTFIELDSIZE,request.length()))
-	|| (r=curl_easy_setopt(curl,CURLOPT_WRITEFUNCTION,_curl_tostring))
-	|| (r=curl_easy_setopt(curl,CURLOPT_WRITEDATA,&response))
+	(r=curl.misc_sets())
+	|| (r=curl.easy_setopt(CURLOPT_URL,server.c_str()))
+	|| (r=curl.easy_setopt(CURLOPT_POST,1))
+	|| (r=curl.easy_setopt(CURLOPT_POSTFIELDS,request.data()))
+	|| (r=curl.easy_setopt(CURLOPT_POSTFIELDSIZE,request.length()))
+	|| (r=curl.easy_setopt(CURLOPT_WRITEFUNCTION,_curl_tostring))
+	|| (r=curl.easy_setopt(CURLOPT_WRITEDATA,&response))
 	;
 	if(r)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_setopt()",r);
-	if( (r=curl_easy_perform(curl)) )
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
+	    throw exception_curl(OPKELE_CP_ "failed to set curly options",r);
+	if( (r=curl.easy_perform()) )
+	    throw exception_curl(OPKELE_CP_ "failed to perform curly request",r);
 	params_t pp; pp.parse_keyvalues(response);
 	if(pp.has_param("invalidate_handle"))
 	    invalidate_assoc(server,pp.get_param("invalidate_handle"));
@@ -294,21 +277,21 @@ namespace opkele {
     void consumer_t::retrieve_links(const string& url,string& server,string& delegate) {
 	server.erase();
 	delegate.erase();
-	util::curl_t curl = curl_easy_init();
+	curl_t curl = curl_t::easy_init();
 	if(!curl)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_init()");
+	    throw exception_curl(OPKELE_CP_ "failed to initialize curl");
 	string html;
 	CURLcode r;
-	(r=curl_misc_sets(curl))
-	|| (r=curl_easy_setopt(curl,CURLOPT_URL,url.c_str()))
-	|| (r=curl_easy_setopt(curl,CURLOPT_WRITEFUNCTION,_curl_tostring))
-	|| (r=curl_easy_setopt(curl,CURLOPT_WRITEDATA,&html))
+	(r=curl.misc_sets())
+	|| (r=curl.easy_setopt(CURLOPT_URL,url.c_str()))
+	|| (r=curl.easy_setopt(CURLOPT_WRITEFUNCTION,_curl_tostring))
+	|| (r=curl.easy_setopt(CURLOPT_WRITEDATA,&html))
 	;
 	if(r)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_setopt()",r);
-	r = curl_easy_perform(curl);
+	    throw exception_curl(OPKELE_CP_ "failed to set curly options",r);
+	r = curl.easy_perform();
 	if(r && r!=CURLE_WRITE_ERROR)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
+	    throw exception_curl(OPKELE_CP_ "failed to perform curly request",r);
 	static const char *re_bre = "<\\s*body\\b", *re_hdre = "<\\s*head[^>]*>",
 		     *re_lre = "<\\s*link\\b([^>]+)>",
 		     *re_rre = "\\brel\\s*=\\s*['\"]([^'\"]+)['\"]",
@@ -400,24 +383,24 @@ namespace opkele {
 
     string consumer_t::canonicalize(const string& url) {
 	string rv = normalize(url);
-	util::curl_t curl = curl_easy_init();
+	curl_t curl = curl_t::easy_init();
 	if(!curl)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_init()");
+	    throw exception_curl(OPKELE_CP_ "failed to initialize curl()");
 	string html;
 	CURLcode r;
-	(r=curl_misc_sets(curl))
-	|| (r=curl_easy_setopt(curl,CURLOPT_URL,rv.c_str()))
-	|| (r=curl_easy_setopt(curl,CURLOPT_NOBODY,1))
+	(r=curl.misc_sets())
+	|| (r=curl.easy_setopt(CURLOPT_URL,rv.c_str()))
+	|| (r=curl.easy_setopt(CURLOPT_NOBODY,1))
 	;
 	if(r)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_setopt()",r);
-	r = curl_easy_perform(curl);
+	    throw exception_curl(OPKELE_CP_ "failed to set curly options",r);
+	r = curl.easy_perform();
 	if(r)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_perform()",r);
+	    throw exception_curl(OPKELE_CP_ "failed to perform curly request",r);
 	const char *eu = 0;
-	r = curl_easy_getinfo(curl,CURLINFO_EFFECTIVE_URL,&eu);
+	r = curl.easy_getinfo(CURLINFO_EFFECTIVE_URL,&eu);
 	if(r)
-	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_getinfo(..CURLINFO_EFFECTIVE_URL..)",r);
+	    throw exception_curl(OPKELE_CP_ "failed to get CURLINFO_EFFECTIVE_URL",r);
 	rv = eu;
 	return normalize(rv);
     }

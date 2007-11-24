@@ -1,6 +1,7 @@
 #ifndef __OPKELE_CURL_H
 #define __OPKELE_CURL_H
 
+#include <cassert>
 #include <curl/curl.h>
 
 namespace opkele {
@@ -13,12 +14,22 @@ namespace opkele {
 
 		curl_t() : _c(0) { }
 		curl_t(CURL *c) : _c(c) { }
-		~curl_t() throw() { if(_c) curl_easy_cleanup(_c); }
+		virtual ~curl_t() throw();
 
-		curl_t& operator=(CURL *c) { if(_c) curl_easy_cleanup(_c); _c=c; return *this; }
+		curl_t& operator=(CURL *c);
 
 		operator const CURL*(void) const { return _c; }
 		operator CURL*(void) { return _c; }
+
+		CURLcode misc_sets();
+
+		template<typename PT>
+		    inline CURLcode easy_setopt(CURLoption o,PT p) { assert(_c); return curl_easy_setopt(_c,o,p); }
+		CURLcode easy_perform() { assert(_c); return curl_easy_perform(_c); }
+		template<typename IT>
+		    inline CURLcode easy_getinfo(CURLINFO i,IT p) { assert(_c); return curl_easy_getinfo(_c,i,p); }
+
+		static inline CURL *easy_init() { return curl_easy_init(); }
 	};
 
     }
