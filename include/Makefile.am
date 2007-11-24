@@ -13,4 +13,5 @@ nobase_include_HEADERS = \
 	opkele/xserver.h
 EXTRA_DIST = \
 	opkele/data.h \
-	opkele/util.h
+	opkele/util.h \
+	opkele/curl.h

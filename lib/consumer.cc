@@ -2,13 +2,12 @@
 #include <cassert>
 #include <cstring>
 #include <opkele/util.h>
+#include <opkele/curl.h>
 #include <opkele/exception.h>
 #include <opkele/data.h>
 #include <opkele/consumer.h>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
-#include <curl/curl.h>
-
 #include <iostream>
 
 #include "config.h"
@@ -62,20 +61,6 @@ namespace opkele {
 	    }
     };
 
-    class curl_t {
-	public:
-	    CURL *_c;
-
-	    curl_t() : _c(0) { }
-	    curl_t(CURL *c) : _c(c) { }
-	    ~curl_t() throw() { if(_c) curl_easy_cleanup(_c); }
-
-	    curl_t& operator=(CURL *c) { if(_c) curl_easy_cleanup(_c); _c=c; return *this; }
-
-	    operator const CURL*(void) const { return _c; }
-	    operator CURL*(void) { return _c; }
-    };
-
     static CURLcode curl_misc_sets(CURL* c) {
 	CURLcode r;
 	(r=curl_easy_setopt(c,CURLOPT_FOLLOWLOCATION,1))
@@ -116,7 +101,7 @@ namespace opkele {
 	    "&openid.session_type=DH-SHA1"
 	    "&openid.dh_consumer_public=";
 	request += util::url_encode(util::bignum_to_base64(dh->pub_key));
-	curl_t curl = curl_easy_init();
+	util::curl_t curl = curl_easy_init();
 	if(!curl)
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_init()");
 	string response;
@@ -276,7 +261,7 @@ namespace opkele {
 		request += util::url_encode(i->second);
 	    }
 	}
-	curl_t curl = curl_easy_init();
+	util::curl_t curl = curl_easy_init();
 	if(!curl)
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_init()");
 	string response;
@@ -309,7 +294,7 @@ namespace opkele {
     void consumer_t::retrieve_links(const string& url,string& server,string& delegate) {
 	server.erase();
 	delegate.erase();
-	curl_t curl = curl_easy_init();
+	util::curl_t curl = curl_easy_init();
 	if(!curl)
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_init()");
 	string html;
@@ -415,7 +400,7 @@ namespace opkele {
 
     string consumer_t::canonicalize(const string& url) {
 	string rv = normalize(url);
-	curl_t curl = curl_easy_init();
+	util::curl_t curl = curl_easy_init();
 	if(!curl)
 	    throw exception_curl(OPKELE_CP_ "failed to curl_easy_init()");
 	string html;
