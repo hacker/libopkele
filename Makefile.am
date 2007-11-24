@@ -18,3 +18,10 @@ if HAVE_DOXYGEN
 dox: Doxyfile
 	${DOXYGEN}
 endif
+
+ISSUEFILES = $$(find ${top_srcdir} -type f '(' \
+	-name '*.cc' -or -name '*.h' \
+	')' )
+issues: todo fixme xxx
+todo fixme xxx:
+	@grep --color=auto -in '$@:' ${ISSUEFILES} || true
