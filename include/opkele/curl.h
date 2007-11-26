@@ -30,6 +30,9 @@ namespace opkele {
 		    inline CURLcode easy_getinfo(CURLINFO i,IT p) { assert(_c); return curl_easy_getinfo(_c,i,p); }
 
 		static inline CURL *easy_init() { return curl_easy_init(); }
+
+		virtual size_t write(void *p,size_t s,size_t nm) { return 0; }
+		CURLcode set_write();
 	};
 
     }

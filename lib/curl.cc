@@ -37,6 +37,18 @@ namespace opkele {
 	    return r;
 	}
 
+	static size_t _write(void *p,size_t s,size_t nm,void *stream) {
+	    return ((curl_t*)stream)->write(p,s,nm);
+	}
+
+	CURLcode curl_t::set_write() {
+	    assert(_c);
+	    CURLcode r;
+	    (r = easy_setopt(CURLOPT_WRITEDATA,this))
+	    || (r = easy_setopt(CURLOPT_WRITEFUNCTION,_write));
+	    return r;
+	}
+
     }
 
 }
