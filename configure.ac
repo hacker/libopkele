@@ -66,6 +66,19 @@ LIBCURL_CHECK_CONFIG(,,,[
  AC_MSG_ERROR([no required libcurl library. get one from http://curl.haxx.se/])
 ])
 
+AC_CHECK_HEADER([expat.h],[
+ AC_CHECK_LIB([expat],[XML_ParserCreate],[
+  EXPAT_LIBS=-lexpat
+  EXPAT_CFLAGS=
+  AC_SUBST([EXPAT_LIBS])
+  AC_SUBST([EXPAT_CFLAGS])
+ ],[
+  AC_MSG_ERROR([no required expat library. get one from http://expat.sourceforge.net/])
+ ])
+],[
+ AC_MSG_ERROR([no required expat library. get one from http://expat.sourceforge.net/])
+])
+
 if test -n "$PCRE_LIBS" -a -n "$PCRE_CFLAGS" ; then
  AC_SUBST([PCRE_CFLAGS])
  AC_SUBST([PCRE_LIBS])
