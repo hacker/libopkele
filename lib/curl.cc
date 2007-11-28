@@ -49,6 +49,31 @@ namespace opkele {
 	    return r;
 	}
 
+	static int _progress(void *cp,double dlt,double dln,double ult,double uln) {
+	    return ((curl_t*)cp)->progress(dlt,dln,ult,uln);
+	}
+
+	CURLcode curl_t::set_progress() {
+	    assert(_c);
+	    CURLcode r;
+	    (r = easy_setopt(CURLOPT_PROGRESSDATA,this))
+	    || (r = easy_setopt(CURLOPT_PROGRESSFUNCTION,_progress))
+	    || (r = easy_setopt(CURLOPT_NOPROGRESS,0));
+	    return r;
+	}
+
+	static size_t _header(void *p,size_t s,size_t nm,void *stream) {
+	    return ((curl_t*)stream)->header(p,s,nm);
+	}
+
+	CURLcode curl_t::set_header() {
+	    assert(_c);
+	    CURLcode r;
+	    (r = easy_setopt(CURLOPT_HEADERDATA,this))
+	    || (r=easy_setopt(CURLOPT_HEADERFUNCTION,_header));
+	    return r;
+	}
+
     }
 
 }

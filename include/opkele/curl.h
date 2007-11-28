@@ -33,6 +33,12 @@ namespace opkele {
 
 		virtual size_t write(void *p,size_t s,size_t nm) { return 0; }
 		CURLcode set_write();
+
+		virtual int progress(double dlt,double dln,double ult,double uln) { return 0; }
+		CURLcode set_progress();
+
+		virtual size_t header(void *p,size_t s,size_t nm) { return s*nm; }
+		CURLcode set_header();
 	};
 
     }
