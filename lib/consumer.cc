@@ -344,7 +344,6 @@ namespace opkele {
 			break;
 		    }
 		}
-		if(ns==string::npos) break;
 	    }
 	}
 	if(server.empty())
