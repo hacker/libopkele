@@ -244,7 +244,6 @@ namespace opkele {
 	    if(auth_info.canonical_id.empty()
 		    || auth_info.auth_SEP.xrd_Type.empty() )
 		throw opkele::failed_lookup(OPKELE_CP_ "no OpenID service for XRI found");
-	    return auth_info;
 	}else{
 	    const char *np = nid.c_str();
 	    if( (strncasecmp(np,"http",4) || strncmp(
@@ -271,7 +270,7 @@ namespace opkele {
 	    if(xrds_location.empty()) {
 		if(auth_info.auth_SEP.xrd_Type.empty()) {
 		    if(html_SEP.xrd_URI.empty())
-			throw opkele::failed_lookup(OPKELE_CP_ "no OpenID service discovered");
+			throw opkele::failed_lookup(OPKELE_CP_ "no OpenID 1.0 service discovered");
 		    auth_info.auth_SEP = html_SEP;
 		    auth_info.auth_SEP.xrd_Type.clear(); auth_info.auth_SEP.xrd_Type.insert( STURI_OPENID10 );
 		    auth_info.canonical_id = canonicalized_id;
@@ -279,16 +278,21 @@ namespace opkele {
 		    if(auth_info.canonical_id.empty())
 			auth_info.canonical_id = canonicalized_id;
 		}
-		return auth_info;
 	    }else{
 		discover_service(xrds_location);
-		if(auth_info.auth_SEP.xrd_Type.empty())
-		    throw opkele::failed_lookup(OPKELE_CP_ "no OpenID service found in Yadis document");
-		if(auth_info.canonical_id.empty())
+		if(auth_info.auth_SEP.xrd_Type.empty()) {
+		    if(html_SEP.xrd_URI.empty())
+			throw opkele::failed_lookup(OPKELE_CP_ "no OpenID 1.0 service discovered");
+		    auth_info.auth_SEP = html_SEP;
+		    auth_info.auth_SEP.xrd_Type.clear(); auth_info.auth_SEP.xrd_Type.insert( STURI_OPENID10 );
 		    auth_info.canonical_id = canonicalized_id;
-		return auth_info;
+		}else{
+		    if(auth_info.canonical_id.empty())
+			auth_info.canonical_id = canonicalized_id;
+		}
 	    }
 	}
+	return auth_info;
     }
 
 }
