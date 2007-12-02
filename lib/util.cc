@@ -173,21 +173,29 @@ namespace opkele {
 	 * - if there's no path component, add '/'
 	 */
 	 string rfc_3986_normalize_uri(const string& uri) {
+	     static const char *whitespace = " \t\r\n";
 	     string rv;
-	     string::size_type colon = uri.find(':');
+	     string::size_type ns = uri.find_first_not_of(whitespace);
+	     if(ns==string::npos)
+		 throw bad_input(OPKELE_CP_ "Can't normalize empty URI");
+	     string::size_type colon = uri.find(':',ns);
 	     if(colon==string::npos)
 		 throw bad_input(OPKELE_CP_ "No scheme specified in URI");
 	     transform(
-		     uri.begin(), uri.begin()+colon+1,
+		     uri.begin()+ns, uri.begin()+colon+1,
 		     back_inserter(rv), ::tolower );
 	     bool s;
 	     if(rv=="http:")
 		 s = false;
 	     else if(rv=="https:")
 		 s = true;
+#ifndef NDEBUG
+	     else if(rv=="file:")
+		 s = false;
+#endif /* XXX: or try to make tests work some other way */
 	     else
 		 throw not_implemented(OPKELE_CP_ "Only http(s) URIs can be normalized here");
-	     string::size_type ul = uri.length();
+	     string::size_type ul = uri.find_last_not_of(whitespace)+1;
 	     if(ul <= (colon+3))
 		 throw bad_input(OPKELE_CP_ "Unexpected end of URI being normalized encountered");
 	     if(uri[colon+1]!='/' || uri[colon+2]!='/')
@@ -196,7 +204,7 @@ namespace opkele {
 	     string::size_type interesting = uri.find_first_of(":/#?",colon+3);
 	     if(interesting==string::npos) {
 		 transform(
-			 uri.begin()+colon+3,uri.end(),
+			 uri.begin()+colon+3,uri.begin()+ul,
 			 back_inserter(rv), ::tolower );
 		 rv += '/'; return rv;
 	     }

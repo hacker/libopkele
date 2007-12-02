@@ -24,6 +24,7 @@ libopkele_la_SOURCES = \
 		       extension.cc \
 		       sreg.cc \
 		       extension_chain.cc \
-		       curl.cc expat.cc
+		       curl.cc expat.cc \
+		       openid_service_resolver.cc
 libopkele_la_LDFLAGS = \
 	-version-info 2:0:0
