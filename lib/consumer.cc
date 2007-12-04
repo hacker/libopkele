@@ -184,8 +184,8 @@ namespace opkele {
 	params_t ps;
 	try {
 	    assoc_t assoc = retrieve_assoc(server,pin.get_param("openid.assoc_handle"));
-	    if(assoc->is_expired()) /* TODO: or should I throw some other exception to force programmer fix his implementation? */
-		throw failed_lookup(OPKELE_CP_ "retrieve_assoc() has returned expired handle");
+	    if(assoc->is_expired())
+		throw id_res_expired_on_delivery(OPKELE_CP_ "retrieve_assoc() has returned expired handle");
 	    const string& sigenc = pin.get_param("openid.sig");
 	    vector<unsigned char> sig;
 	    util::decode_base64(sigenc,sig);
@@ -214,7 +214,7 @@ namespace opkele {
 		    0,&md_len);
 	    if(sig.size()!=md_len || memcmp(&(sig.front()),md,md_len))
 		throw id_res_mismatch(OPKELE_CP_ "signature mismatch");
-	}catch(failed_lookup& e) { /* XXX: more specific? */
+	}catch(failed_lookup& e) {
 	    const string& slist = pin.get_param("openid.signed");
 	    string::size_type pp = 0;
 	    params_t p;
