@@ -170,6 +170,15 @@ namespace opkele {
     };
 
     /**
+     * thrown if the association has expired before it could've been verified.
+     */
+    class id_res_expired_on_delivery : public id_res_failed {
+	public:
+	    id_res_expired_on_delivery(OPKELE_E_PARS)
+		: id_res_failed(OPKELE_E_CONS) { }
+    };
+
+    /**
      * openssl malfunction occured
      */
     class exception_openssl : public exception {

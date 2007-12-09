@@ -67,6 +67,11 @@ namespace opkele {
 	     * function should never return an expired or invalidated
 	     * association.
 	     *
+	     * @note
+	     * It may be a good idea to pre-expire associations shortly before
+	     * their time is really up to avoid association expiry in the
+	     * middle of negotiations.
+	     *
 	     * @param server the OpenID server
 	     * @return the auto_ptr<> for the newly allocated association_t object
 	     * @throw failed_lookup in case of absence of the handle
@@ -137,6 +142,7 @@ namespace opkele {
 	     * @throw id_res_setup in case of openid.user_setup_url failure
 	     * (supposedly checkid_immediate only)
 	     * @throw id_res_failed in case of failure
+	     * @throw id_res_expired_on_delivery if the association expired before it could've been verified
 	     * @throw exception in case of other failures
 	     */
 	    virtual void id_res(const params_t& pin,const string& identity="",extension_t *ext=0);

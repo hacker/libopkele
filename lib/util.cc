@@ -221,9 +221,9 @@ namespace opkele {
 		 char *eptr = 0;
 		 long port = strtol(nptr,&eptr,10);
 		 if( (port>0) && (port<65535) && port!=(s?443:80) ) {
-		     char tmp[6];
-		     snprintf(tmp,sizeof(tmp),"%ld",port);
-		     rv += ':'; rv += tmp;
+		     char tmp[8];
+		     snprintf(tmp,sizeof(tmp),":%ld",port);
+		     rv += tmp;
 		 }
 		 if(ni==string::npos) {
 		     rv += '/'; return rv;
