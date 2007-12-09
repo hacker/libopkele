@@ -2,4 +2,4 @@
 /.libs
 /test
 *.o
-/openid_resolve
+/idiscover

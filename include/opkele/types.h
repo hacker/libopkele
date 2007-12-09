@@ -11,6 +11,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <set>
 
 namespace opkele {
     using std::vector;
@@ -18,6 +19,8 @@ namespace opkele {
     using std::map;
     using std::ostream;
     using std::auto_ptr;
+    using std::multimap;
+    using std::set;
 
     /**
      * the OpenID operation mode
@@ -166,6 +169,66 @@ namespace opkele {
      * @param p the parameters
      */
     ostream& operator << (ostream& o,const params_t& p);
+
+    namespace xrd {
+
+	struct priority_compare {
+	    inline bool operator()(long a,long b) const {
+		return (a<0) ? false : (b<0) ? false : (a<b);
+	    }
+	};
+
+	template <typename _DT>
+	    class priority_map : public multimap<long,_DT,priority_compare> {
+		typedef multimap<long,_DT,priority_compare> map_type;
+		public:
+
+		    inline _DT& add(long priority,const _DT& d) {
+			return insert(typename map_type::value_type(priority,d))->second;
+		    }
+	    };
+
+	typedef priority_map<string> canonical_ids_t;
+	typedef priority_map<string> local_ids_t;
+	typedef set<string> types_t;
+	typedef priority_map<string> uris_t;
+
+	class service_t {
+	    public:
+		types_t types;
+		uris_t uris;
+		local_ids_t local_ids;
+
+		void clear() {
+		    types.clear();
+		    uris.clear(); local_ids.clear();
+		}
+	};
+	typedef priority_map<service_t> services_t;
+
+	class XRD_t {
+	    public:
+		time_t expires;
+
+		canonical_ids_t canonical_ids;
+		local_ids_t local_ids;
+		services_t services;
+
+		void clear() {
+		    expires = 0;
+		    canonical_ids.clear(); local_ids.clear();
+		    services.clear();
+		}
+		bool empty() const {
+		    return
+			canonical_ids.empty()
+			&& local_ids.empty()
+			&& services.empty();
+		}
+
+	};
+
+    }
 
 }
 

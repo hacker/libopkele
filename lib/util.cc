@@ -185,21 +185,23 @@ namespace opkele {
 		     uri.begin()+ns, uri.begin()+colon+1,
 		     back_inserter(rv), ::tolower );
 	     bool s;
-	     if(rv=="http:")
-		 s = false;
-	     else if(rv=="https:")
-		 s = true;
-#ifndef NDEBUG
-	     else if(rv=="file:")
-		 s = false;
-#endif /* XXX: or try to make tests work some other way */
-	     else
-		 throw not_implemented(OPKELE_CP_ "Only http(s) URIs can be normalized here");
 	     string::size_type ul = uri.find_last_not_of(whitespace)+1;
 	     if(ul <= (colon+3))
 		 throw bad_input(OPKELE_CP_ "Unexpected end of URI being normalized encountered");
 	     if(uri[colon+1]!='/' || uri[colon+2]!='/')
 		 throw bad_input(OPKELE_CP_ "Unexpected input in URI being normalized after scheme component");
+	     if(rv=="http:")
+		 s = false;
+	     else if(rv=="https:")
+		 s = true;
+	     else{
+		 /* TODO: support more schemes.
+		  * e.g. xri. How do we normalize
+		  * xri?
+		  */
+		 rv.append(uri,colon+1,ul-colon-1);
+		 return rv;
+	     }
 	     rv += "//";
 	     string::size_type interesting = uri.find_first_of(":/#?",colon+3);
 	     if(interesting==string::npos) {

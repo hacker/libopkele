@@ -203,6 +203,25 @@ namespace opkele {
     };
 
     /**
+     * exception thrown in case of failed discovery
+     */
+    class failed_discovery : public exception {
+	public:
+	    failed_discovery(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
+    /**
+     * unsuccessfull xri resolution
+     */
+    class failed_xri_resolution : public failed_discovery {
+	public:
+	    long _code;
+	    failed_xri_resolution(OPKELE_E_PARS,long _c=-1)
+		: failed_discovery(OPKELE_E_CONS), _code(_c) { }
+    };
+
+    /**
      * not implemented (think pure virtual) member function executed, signfies
      * programmer error
      */

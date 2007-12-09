@@ -1,4 +1,4 @@
-noinst_PROGRAMS = test openid_resolve
+noinst_PROGRAMS = test idiscover
 
 DEFAULT_INCLUDES = -I${top_builddir}
 INCLUDES = -I${top_srcdir}/include/ ${KONFORKA_CFLAGS}
@@ -11,5 +11,5 @@ EXTRA_DIST=$(addsuffix .html,$(addprefix html/, \
 	unclosed-head spaced-links spaced-link-attrs 2rels \
 	))
 
-openid_resolve_SOURCES = openid_resolve.cc
-openid_resolve_LDADD = ${top_builddir}/lib/libopkele.la
+idiscover_SOURCES = idiscover.cc
+idiscover_LDADD = ${top_builddir}/lib/libopkele.la

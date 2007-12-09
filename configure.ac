@@ -130,6 +130,15 @@ if $nitpick ; then
  CXXFLAGS="$CXXFLAGS $CXX_NITPICK"
 fi
 
+xri_proxy_url="http://beta.xri.net/"
+AC_MSG_CHECKING([for XRI resolver proxy])
+AC_ARG_ENABLE([xri-proxy],
+ AC_HELP_STRING([--with-xri-proxy=url],[set xri proxy for use when resolving xri identities, default is http://xr_proxy_url]),
+ [ xri_proxy_url="$withval" ]
+)
+AC_MSG_RESULT([$xri_proxy_url])
+AC_DEFINE_UNQUOTED([XRI_PROXY_URL],["$xri_proxy_url"],[XRI proxy resolver URL])
+
 AC_CONFIG_FILES([
  Makefile
   libopkele.pc
