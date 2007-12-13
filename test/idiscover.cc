@@ -36,6 +36,7 @@ int main(int argc,char **argv) {
 		<< "User-supplied ID: " << argv[a] << endl
 		<< "Normalized ID: " << discovery.normalized_id << endl
 		<< "Canonicalized ID: " << discovery.canonicalized_id << endl
+		<< "The identity is " << (discovery.xri_identity?"":"not ") << "an i-name" << endl
 		<< endl
 		<< "CanonicalID: " << discovery.xrd.canonical_ids << endl
 		<< "LocalID: " << discovery.xrd.local_ids << endl

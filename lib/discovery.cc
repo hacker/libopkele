@@ -95,6 +95,7 @@ namespace opkele {
 		string id(identity,fsc,lsc-fsc+1);
 		if(strchr(i_leaders,id[0])) {
 		    result.normalized_id = id;
+		    result.xri_identity = true;
 		    /* TODO: further canonicalize xri identity? Like folding case  or whatever... */
 		    discover_at(
 			    result,
@@ -106,6 +107,7 @@ namespace opkele {
 		    if(result.xrd.canonical_ids.empty())
 			throw opkele::failed_discovery(OPKELE_CP_ "No CanonicalID for XRI identity found");
 		}else{
+		    result.xri_identity = false;
 		    if(id.find("://")==string::npos)
 			id.insert(0,"http://");
 		    string::size_type fp = id.find('#');

@@ -12,6 +12,7 @@ namespace opkele {
     void idiscover(idiscovery_t& result,const string& identity);
 
     struct idiscovery_t {
+	bool xri_identity;
 	string normalized_id;
 	string canonicalized_id;
 	xrd::XRD_t xrd;
