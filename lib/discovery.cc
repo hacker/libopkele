@@ -270,7 +270,7 @@ namespace opkele {
 			    }else if(is_qelement(n,NSURI_XRD "\tLocalID")
 				    || is_qelement(n,NSURI_OPENID10 "\tDelegate") ) {
 				assert(xrd); assert(xrd_service);
-				cdata = &(xrd_service->uris.add(element_priority(a),string()));
+				cdata = &(xrd_service->local_ids.add(element_priority(a),string()));
 			    }else{
 				skipping = 1;
 			    }
