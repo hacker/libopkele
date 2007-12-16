@@ -17,25 +17,7 @@
 namespace opkele {
     using namespace std;
     using util::curl_t;
-
-    template<int lim>
-	class curl_fetch_string_t : public curl_t {
-	    public:
-		curl_fetch_string_t(CURL *c)
-		    : curl_t(c) { }
-		~curl_fetch_string_t() throw() { }
-
-		string response;
-
-		size_t write(void *p,size_t size,size_t nmemb) {
-		    size_t bytes = size*nmemb;
-		    size_t get = min(lim-response.length(),bytes);
-		    response.append((const char *)p,get);
-		    return get;
-		}
-	};
-
-    typedef curl_fetch_string_t<16384> curl_pick_t;
+    using util::curl_pick_t;
 
     class pcre_matches_t {
 	public:

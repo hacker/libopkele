@@ -2,9 +2,13 @@
 #define __OPKELE_CURL_H
 
 #include <cassert>
+#include <string>
+#include <algorithm>
 #include <curl/curl.h>
 
 namespace opkele {
+    using std::min;
+    using std::string;
 
     namespace util {
 
@@ -40,6 +44,26 @@ namespace opkele {
 		virtual size_t header(void* /* p */,size_t s,size_t nm) { return s*nm; }
 		CURLcode set_header();
 	};
+
+	template<int lim>
+	    class curl_fetch_string_t : public curl_t {
+		public:
+		    curl_fetch_string_t(CURL *c)
+			: curl_t(c) { }
+		    ~curl_fetch_string_t() throw() { }
+
+		    string response;
+
+		    size_t write(void *p,size_t size,size_t nmemb) {
+			size_t bytes = size*nmemb;
+			size_t get = min(lim-response.length(),bytes);
+			response.append((const char *)p,get);
+			return get;
+		    }
+	    };
+
+	typedef curl_fetch_string_t<16384> curl_pick_t;
+
 
     }
 
