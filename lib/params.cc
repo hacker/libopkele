@@ -99,6 +99,19 @@ namespace opkele {
 	return rv;
     }
 
+    string params_t::query_string(const char *prefix) const {
+	string rv;
+	for(const_iterator i=begin();i!=end();++i) {
+	    if(!rv.empty())
+		rv += '&';
+	    rv += prefix;
+	    rv += i->first;
+	    rv += '=';
+	    rv += util::url_encode(i->second);
+	}
+	return rv;
+    }
+
     ostream& operator << (ostream& o,const params_t& p) {
 	for(params_t::const_iterator i=p.begin();i!=p.end();++i)
 	    o << i->first << ':' << i->second << '\n';

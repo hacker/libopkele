@@ -14,31 +14,27 @@ namespace opkele {
 	    }
 	};
 
-    void secret_t::enxor_to_base64(const unsigned char *key_sha1,string& rv) const {
-	if(size()!=20)
-	    throw bad_input(OPKELE_CP_ "wrong secret size");
+    void secret_t::enxor_to_base64(const unsigned char *key_d,string& rv) const {
 	vector<unsigned char> tmp;
 	transform(
 		begin(), end(),
-		key_sha1,
+		key_d,
 		back_insert_iterator<vector<unsigned char> >(tmp),
 		bitwise_xor<unsigned char,unsigned char,unsigned char>() );
 	rv = util::encode_base64(&(tmp.front()),tmp.size());
     }
 
-    void secret_t::enxor_from_base64(const unsigned char *key_sha1,const string& b64) {
+    void secret_t::enxor_from_base64(const unsigned char *key_d,const string& b64) {
 	clear();
 	util::decode_base64(b64,*this);
 	transform(
 		begin(), end(),
-		key_sha1,
+		key_d,
 		begin(),
 		bitwise_xor<unsigned char,unsigned char,unsigned char>() );
     }
 
     void secret_t::to_base64(string& rv) const {
-	if(size()!=20)
-	    throw bad_input(OPKELE_CP_ "wrong secret size");
 	rv = util::encode_base64(&(front()),size());
     }
 

@@ -40,16 +40,16 @@ namespace opkele {
 
 	    /**
 	     * xor the secret and hmac together and encode, using base64
-	     * @param key_sha1 pointer to the sha1 digest
+	     * @param key_d pointer to the message digest
 	     * @param rv reference to the return value
 	     */
-	    void enxor_to_base64(const unsigned char *key_sha1,string& rv) const;
+	    void enxor_to_base64(const unsigned char *key_d,string& rv) const;
 	    /**
-	     * decode base64-encoded secret and xor it with the sha1 digest
-	     * @param key_sha1 pointer to the message digest
+	     * decode base64-encoded secret and xor it with the message digest
+	     * @param key_d pointer to the message digest
 	     * @param b64 base64-encoded secret value
 	     */
-	    void enxor_from_base64(const unsigned char *key_sha1,const string& b64);
+	    void enxor_from_base64(const unsigned char *key_d,const string& b64);
 	    /**
 	     * plainly encode to base64 representation
 	     * @param rv reference to the return value
@@ -161,6 +161,14 @@ namespace opkele {
 	     * @return the ready-to-use location
 	     */
 	    string append_query(const string& url,const char *prefix = "openid.") const;
+
+	    /**
+	     * make up a query string suitable for use in GET and POST
+	     * requests.
+	     * @param prefix string to prened to parameter names
+	     * @return query string
+	     */
+	    string query_string(const char *prefix = "openid.") const;
     };
 
     /**
