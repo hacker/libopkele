@@ -184,6 +184,24 @@ namespace opkele {
     };
 
     /**
+     * thown when the user cancelled authentication process.
+     */
+    class id_res_cancel : public id_res_failed {
+	public:
+	    id_res_cancel(OPKELE_E_PARS)
+		: id_res_failed(OPKELE_E_CONS) { }
+    };
+
+    /**
+     * thrown in case of nonce reuse or otherwise imperfect nonce.
+     */
+    class id_res_bad_nonce : public id_res_failed {
+	public:
+	    id_res_bad_nonce(OPKELE_E_PARS)
+		: id_res_failed(OPKELE_E_CONS) { }
+    };
+
+    /**
      * openssl malfunction occured
      */
     class exception_openssl : public exception {
