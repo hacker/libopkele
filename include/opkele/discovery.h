@@ -17,6 +17,7 @@ namespace opkele {
 	string canonicalized_id;
 	xrd::XRD_t xrd;
 
+	idiscovery_t() { }
 	idiscovery_t(const string& i) {
 	    idiscover(*this,i);
 	}
@@ -28,6 +29,11 @@ namespace opkele {
 	    normalized_id.clear(); canonicalized_id.clear();
 	    xrd.clear();
 	}
+
+	idiscovery_t& operator=(const string& i) {
+	    idiscover(*this,i); return *this; }
+	idiscovery_t& operator=(const char *i) {
+	    idiscover(*this,i); return *this; }
     };
 }
 
