@@ -144,7 +144,7 @@ namespace opkele {
 		set_user_data(); set_element_handler();
 		set_character_data_handler();
 
-		xrds_location.clear(); http_content_type.clear();
+		http_content_type.clear();
 		xmode = xm;
 		if(xmode&xmode_html) {
 		    xrds_location.clear();
