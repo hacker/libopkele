@@ -1,0 +1,10 @@
+#ifndef __OPKELE_TR1_MEM_H
+#define __OPKELE_TR1_MEM_H
+
+#include <@OPKELE_TR1_MEM_HEADER@>
+
+namespace opkele {
+    namespace tr1mem = @OPKELE_TR1_MEM_NS@;
+}
+
+#endif /* __OPKELE_TR1_MEM_H */
