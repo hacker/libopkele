@@ -25,7 +25,7 @@ namespace opkele {
 	     * store.
 	     * @param mode the mode of request being processed to base the
 	     * statelessness of the association upon
-	     * @return the auto_ptr<> for the newly allocated association_t object
+	     * @return the assoc_t for the newly allocated association_t object
 	     */
 	    virtual assoc_t alloc_assoc(mode_t mode) = 0;
 	    /**
@@ -33,7 +33,7 @@ namespace opkele {
 	     * the reqal implementation to provide persistent assocations
 	     * store.
 	     * @param h association handle
-	     * @return the auto_ptr<> for the newly allocated association_t object
+	     * @return the assoc_t for the newly allocated association_t object
 	     * @throw failed_lookup in case of failure
 	     */
 	    virtual assoc_t retrieve_assoc(const string& h) = 0;

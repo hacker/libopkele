@@ -31,7 +31,7 @@ namespace opkele {
 	     * @param handle association handle
 	     * @param secret the secret associated with the server and handle
 	     * @param expires_in the number of seconds until the handle is expired
-	     * @return the auto_ptr<> for the newly allocated association_t object
+	     * @return the assoc_t for the newly allocated association_t object
 	     */
 	    virtual assoc_t store_assoc(const string& server,const string& handle,const secret_t& secret,int expires_in) = 0;
 	    /**
@@ -73,7 +73,7 @@ namespace opkele {
 	     * middle of negotiations.
 	     *
 	     * @param server the OpenID server
-	     * @return the auto_ptr<> for the newly allocated association_t object
+	     * @return the assoc_t for the newly allocated association_t object
 	     * @throw failed_lookup in case of absence of the handle
 	     */
 	    virtual assoc_t find_assoc(const string& server);
@@ -93,7 +93,7 @@ namespace opkele {
 	    /**
 	     * perform the associate request to OpenID server.
 	     * @param server the OpenID server
-	     * @return the auto_ptr<> for the newly allocated association_t
+	     * @return the assoc_t for the newly allocated association_t
 	     * object, representing established association
 	     * @throw exception in case of error
 	     */

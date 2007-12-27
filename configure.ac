@@ -26,6 +26,37 @@ AC_MSG_RESULT([$PACKAGE_SRC_VERSION])
 AC_SUBST([PACKAGE_SRC_VERSION])
 AC_DEFINE_UNQUOTED([PACKAGE_SRC_VERSION],["$PACKAGE_SRC_VERSION"],[more or less precise source tree version])
 
+tr1_mem_std="false"
+tr1_mem_boost="false"
+AC_CHECK_SHAREDPTR(std::tr1,tr1/memory,[ tr1_mem_std=true ])
+AC_CHECK_SHAREDPTR(boost,boost/shared_ptr.hpp,[ tr1_mem_boost=true ])
+tr1_mem=""
+AC_ARG_WITH([tr1-memory],
+ AC_HELP_STRING([--with-tr1-memory=<boost|std>],[select tr1/memory (shared_ptr<>) implementation to use]),
+ [ tr1_mem="$withval" ]
+)
+AC_MSG_CHECKING([for tr1/memory implementation to use])
+test -z "$tr1_mem" && $tr1_mem_std && tr1_mem=std
+test -z "$tr1_mem" && $tr1_mem_boost && tr1_mem=boost
+test -z "$tr1_mem" && AC_MSG_RESULT([none found]) || AC_MSG_RESULT([$tr1_mem])
+case "$tr1_mem" in
+ std)
+  $tr1_mem_std || AC_MSG_ERROR([std implementation requested, but not found])
+  OPKELE_TR1_MEM_NS=std::tr1
+  OPKELE_TR1_MEM_HEADER=tr1/memory
+  ;;
+ boost)
+  $tr1_mem_boost || AC_MSG_ERROR([boost implementation requested, but not found])
+  OPKELE_TR1_MEM_NS=boost
+  OPKELE_TR1_MEM_HEADER=boost/shared_ptr.hpp
+  ;;
+ *)
+  AC_MSG_ERROR([no shared_ptr<> implementation found])
+  ;;
+esac
+AC_SUBST([OPKELE_TR1_MEM_NS])
+AC_SUBST([OPKELE_TR1_MEM_HEADER])
+
 PKG_CHECK_MODULES([OPENSSL],[openssl],,[
  AC_MSG_ERROR([no openssl library found. get one from http://www.openssl.org/])
 ])
@@ -144,6 +175,7 @@ AC_CONFIG_FILES([
   libopkele.pc
   Doxyfile
  include/Makefile
+  include/opkele/tr1-mem.h
  lib/Makefile
  test/Makefile
 ])

@@ -12,7 +12,8 @@ nobase_include_HEADERS = \
 	opkele/xconsumer.h \
 	opkele/xserver.h \
 	opkele/discovery.h \
-	opkele/uris.h
+	opkele/uris.h \
+	opkele/tr1-mem.h
 EXTRA_DIST = \
 	opkele/data.h \
 	opkele/curl.h opkele/expat.h \

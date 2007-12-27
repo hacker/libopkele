@@ -163,4 +163,21 @@ AC_DEFUN([AC_WITH_PCREPP],[
  fi
 ])
 
+dnl AC_CHECK_SHAREDPTR(NS,HEADER[,ACTION-IF-FOUND[,ACTION-IF-NOT-FOUND]])
+AC_DEFUN([AC_CHECK_SHAREDPTR],[
+ AC_LANG_PUSH([C++])
+ AC_MSG_CHECKING([for $1::shared_ptr<> in $2])
+ AC_COMPILE_IFELSE([
+  #include <$2>
+  int main(int c,char**v) { $1::shared_ptr<int> spi(new int(0)); return *spi; }
+ ],[
+  AC_MSG_RESULT([found])
+  $3
+ ],[
+  AC_MSG_RESULT([not found])
+  $4
+ ])
+ AC_LANG_POP([C++])
+])
+
 m4_include([acinclude.d/libcurl.m4])

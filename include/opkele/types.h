@@ -10,15 +10,14 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <memory>
 #include <set>
+#include <opkele/tr1-mem.h>
 
 namespace opkele {
     using std::vector;
     using std::string;
     using std::map;
     using std::ostream;
-    using std::auto_ptr;
     using std::multimap;
     using std::set;
 
@@ -108,9 +107,9 @@ namespace opkele {
     };
 
     /**
-     * the auto_ptr<> for association_t object type
+     * the shared_ptr<> for association_t object type
      */
-    typedef auto_ptr<association_t> assoc_t;
+    typedef tr1mem::shared_ptr<association_t> assoc_t;
 
     /**
      * request/response parameters map
