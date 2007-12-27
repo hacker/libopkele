@@ -38,7 +38,11 @@ AC_ARG_WITH([tr1-memory],
 AC_MSG_CHECKING([for tr1/memory implementation to use])
 test -z "$tr1_mem" && $tr1_mem_std && tr1_mem=std
 test -z "$tr1_mem" && $tr1_mem_boost && tr1_mem=boost
-test -z "$tr1_mem" && AC_MSG_RESULT([none found]) || AC_MSG_RESULT([$tr1_mem])
+if test -z "$tr1_mem" ; then
+ AC_MSG_RESULT([none found])
+else
+ AC_MSG_RESULT([$tr1_mem])
+fi
 case "$tr1_mem" in
  std)
   $tr1_mem_std || AC_MSG_ERROR([std implementation requested, but not found])
