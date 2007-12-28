@@ -40,7 +40,7 @@ namespace opkele {
 		fo += f->fieldname;
 	    }
 	}
-	p["sreg.ns"] = OIURI_SREG11;
+	p["ns.sreg"] = OIURI_SREG11;
 	if(!fr.empty()) p["sreg.required"]=fr;
 	if(!fo.empty()) p["sreg.optional"]=fo;
 	if(!policy_url.empty()) p["sreg.policy_url"]=policy_url;
