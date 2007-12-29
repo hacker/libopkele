@@ -164,7 +164,7 @@ namespace opkele {
 	/*
 	 * Normalize URL according to the rules, described in rfc 3986, section 6
 	 *
-	 * - uppercase hext triplets (e.g. %ab -> %AB)
+	 * - uppercase hex triplets (e.g. %ab -> %AB)
 	 * - lowercase scheme and host
 	 * - decode %-encoded characters, specified as unreserved in rfc 3986, section 2.3,
 	 *   that is - [:alpha:][:digit:]._~-
