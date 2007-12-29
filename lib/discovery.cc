@@ -104,6 +104,7 @@ namespace opkele {
 				"XRI resolution failed with '"+status_string+"' message",status_code);
 		    if(result.xrd.canonical_ids.empty())
 			throw opkele::failed_discovery(OPKELE_CP_ "No CanonicalID for XRI identity found");
+		    result.canonicalized_id = result.xrd.canonical_ids.begin()->second;
 		}else{
 		    result.xri_identity = false;
 		    if(id.find("://")==string::npos)
