@@ -1,5 +1,3 @@
-#include <iostream>
-using namespace std;
 #include <list>
 #include <opkele/curl.h>
 #include <opkele/expat.h>
@@ -231,7 +229,6 @@ namespace opkele {
 		}else{
 		    int pt_s = pt_stack.size();
 		    if(pt_s==1) {
-			/* TODO: xrd:XRD/xrd:Expires */
 			if(is_qelement(n,NSURI_XRD "\tCanonicalID")) {
 			    assert(xrd);
 			    cdata = &(xrd->canonical_ids.add(element_priority(a),string()));
@@ -253,6 +250,10 @@ namespace opkele {
 				    }
 				}
 			    }
+			}else if(is_qelement(n,NSURI_XRD "\tExpires")) {
+			    assert(xrd);
+			    cdata_buf.clear();
+			    cdata = &cdata_buf;
 			}else if(xmode&xmode_html) {
 			    html_start_element(n,a);
 			}else{
@@ -305,6 +306,9 @@ namespace opkele {
 			if(status_code!=100)
 			    skipping = -1;
 		    }
+		}else if(is_qelement(n,NSURI_XRD "\tExpires")) {
+		    assert(xrd);
+		    xrd->expires = util::w3c_to_time(cdata_buf);
 		}else if((xmode&xmode_html) && is_element(n,"head")) {
 		    skipping = -1;
 		}
