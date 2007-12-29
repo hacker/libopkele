@@ -114,22 +114,32 @@ namespace opkele {
 	}
 
 	time_t w3c_to_time(const string& w) {
+	    int fraction;
 	    struct tm tm_t;
 	    memset(&tm_t,0,sizeof(tm_t));
-	    if(
+	    if( (
+			sscanf(
+			    w.c_str(),
+			    "%04d-%02d-%02dT%02d:%02d:%02dZ",
+			    &tm_t.tm_year,&tm_t.tm_mon,&tm_t.tm_mday,
+			    &tm_t.tm_hour,&tm_t.tm_min,&tm_t.tm_sec
+			    ) != 6
+		) && (
 		    sscanf(
 			w.c_str(),
-			"%04d-%02d-%02dT%02d:%02d:%02dZ",
+			"%04d-%02d-%02dT%02d:%02d:%02d.%03dZ",
 			&tm_t.tm_year,&tm_t.tm_mon,&tm_t.tm_mday,
-			&tm_t.tm_hour,&tm_t.tm_min,&tm_t.tm_sec
-		    ) != 6 )
+			&tm_t.tm_hour,&tm_t.tm_min,&tm_t.tm_sec,
+			&fraction
+			) != 7
+		    ) )
 		throw failed_conversion(OPKELE_CP_ "failed to sscanf()");
 	    tm_t.tm_mon--;
 	    tm_t.tm_year-=1900;
 	    time_t rv = mktime(&tm_t);
 	    if(rv==(time_t)-1)
 		throw failed_conversion(OPKELE_CP_ "failed to mktime()");
-	    return rv;
+	    return rv-timezone;
 	}
 
 	/*
