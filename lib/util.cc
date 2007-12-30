@@ -305,7 +305,8 @@ namespace opkele {
 		 }
 	     }
 	     if(!pseg.empty()) {
-		 rv += '/'; rv += pseg;
+		 if(!qf) rv += '/';
+		 rv += pseg;
 	     }
 	     return rv;
 	 }
