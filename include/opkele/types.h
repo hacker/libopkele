@@ -205,10 +205,12 @@ namespace opkele {
 		types_t types;
 		uris_t uris;
 		local_ids_t local_ids;
+		string provider_id;
 
 		void clear() {
 		    types.clear();
 		    uris.clear(); local_ids.clear();
+		    provider_id.clear();
 		}
 	};
 	typedef priority_map<service_t> services_t;
@@ -220,11 +222,13 @@ namespace opkele {
 		canonical_ids_t canonical_ids;
 		local_ids_t local_ids;
 		services_t services;
+		string provider_id;
 
 		void clear() {
 		    expires = 0;
 		    canonical_ids.clear(); local_ids.clear();
 		    services.clear();
+		    provider_id.clear();
 		}
 		bool empty() const {
 		    return

@@ -236,6 +236,9 @@ namespace opkele {
 			}else if(is_qelement(n,NSURI_XRD "\tLocalID")) {
 			    assert(xrd);
 			    cdata = &(xrd->local_ids.add(element_priority(a),string()));
+			}else if(is_qelement(n,NSURI_XRD "\tProviderID")) {
+			    assert(xrd);
+			    cdata = &(xrd->provider_id);
 			}else if(is_qelement(n,NSURI_XRD "\tService")) {
 			    assert(xrd);
 			    xrd_service = &(xrd->services.add(element_priority(a),
@@ -273,6 +276,9 @@ namespace opkele {
 				    || is_qelement(n,NSURI_OPENID10 "\tDelegate") ) {
 				assert(xrd); assert(xrd_service);
 				cdata = &(xrd_service->local_ids.add(element_priority(a),string()));
+			    }else if(is_qelement(n,NSURI_XRD "\tProviderID")) {
+				    assert(xrd); assert(xrd_service);
+				    cdata = &(xrd_service->provider_id);
 			    }else{
 				skipping = 1;
 			    }
