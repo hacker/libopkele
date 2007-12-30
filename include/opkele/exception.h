@@ -24,9 +24,13 @@
  */
 # define OPKELE_CP_ CODEPOINT,
 /**
+ * open function-try-block
+ */
+# define OPKELE_FUNC_TRY try
+/**
  * the simple rethrow of konforka-based exception
  */
-# define OPKELE_RETHROW catch(konforka::exception& e) { e.see(CODEPOINT); throw }
+# define OPKELE_RETHROW catch(konforka::exception& e) { e.see(CODEPOINT); throw; }
 #else /* OPKELE_HAVE_KONFORKA */
 # include <exception>
 # include <string>
@@ -43,6 +47,10 @@
  * the dummy placeholder for konforka exception codepoint specification
  */
 # define OPKELE_CP_
+/**
+ * the dummy define for the opening function-try-block
+ */
+# define OPKELE_FUNC_TRY
 /**
  * the dummy define for the konforka-based rethrow of exception
  */
