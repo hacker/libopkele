@@ -21,7 +21,8 @@ ostream& operator<<(ostream& o,const opkele::xrd::service_t s) {
 	    ostream_iterator<string>(o," "));
     o << endl
 	<< " URI: " << s.uris << endl
-	<< " LocalID: " << s.local_ids << endl;
+	<< " LocalID: " << s.local_ids << endl
+	<< " ProviderID: " << s.provider_id << endl;
     o << "}";
 }
 
@@ -42,6 +43,7 @@ int main(int argc,char **argv) {
 	    clog << endl
 		<< "CanonicalID: " << discovery.xrd.canonical_ids << endl
 		<< "LocalID: " << discovery.xrd.local_ids << endl
+		<< "ProviderID: " << discovery.xrd.provider_id << endl
 		<< "Services: " << discovery.xrd.services << endl;
 	}
     }catch(exception& e) {
