@@ -77,13 +77,10 @@ namespace opkele {
 	public:
 #           ifdef OPKELE_HAVE_KONFORKA
 	    explicit
-		exception(const string& fi,const string& fu,int l,const string& w)
-		    : konforka::exception(fi,fu,l,w) { }
+		exception(const string& fi,const string& fu,int l,const string& w);
 #           else /* OPKELE_HAVE_KONFORKA */
 	    string _what;
-	    explicit
-		exception(const string& w)
-		    : _what(w) { } 
+	    explicit exception(const string& w);
 	    virtual ~exception() throw();
 	    virtual const char * what() const throw();
 #           endif /* OPKELE_HAVE_KONFORKA */

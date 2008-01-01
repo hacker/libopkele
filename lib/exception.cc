@@ -1,17 +1,33 @@
 #include <openssl/err.h>
 #include <curl/curl.h>
 #include <opkele/exception.h>
+#include <opkele/debug.h>
 
 namespace opkele {
 
 #   ifndef OPKELE_HAVE_KONFORKA
+
+    exception::exception(const string& w)
+	: _what(w)
+    {
+	DOUT_("throwing exception(\""<<w<<"\")");
+    }
 
     exception::~exception() throw() {
     }
     const char *exception::what() const throw() {
 	return _what.c_str();
     }
+
+#   else
     
+    exception::exception(const string& fi,const string& fu,int l,const string& w)
+	: konforka::exception(fi,fu,l,w)
+    {
+	DOUT_("throwing exception(\""<<w<<"\")");
+	DOUT_(" from "<<fi<<':'<<fu<<':'<<l);
+    }
+
 #   endif
 
     exception_openssl::exception_openssl(OPKELE_E_PARS)
