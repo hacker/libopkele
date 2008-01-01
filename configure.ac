@@ -165,6 +165,18 @@ if $nitpick ; then
  CXXFLAGS="$CXXFLAGS $CXX_NITPICK"
 fi
 
+ndebug=true
+AC_ARG_ENABLE([debug],
+ AC_HELP_STRING([--enable-debug],[enable debugging code]),
+ [ test "$enableval" = "no" || ndebug=false ]
+)
+if $ndebug ; then
+ CPPFLAGS_DEBUG="-DNDEBUG"
+else
+ CPPFLAGS_DEBUG=""
+fi
+AC_SUBST([CPPFLAGS_DEBUG])
+
 xri_proxy_url="http://beta.xri.net/"
 AC_MSG_CHECKING([for XRI resolver proxy])
 AC_ARG_ENABLE([xri-proxy],

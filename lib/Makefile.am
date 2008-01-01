@@ -1,5 +1,6 @@
 lib_LTLIBRARIES = libopkele.la
 
+AM_CPPFLAGS = ${CPPFLAGS_DEBUG}
 DEFAULT_INCLUDES = -I${top_builddir}
 INCLUDES = \
 	   -I${top_srcdir}/include/ \
