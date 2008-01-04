@@ -161,7 +161,7 @@ namespace opkele {
     class id_res_setup : public id_res_failed {
 	public:
 	    string setup_url;
-	    id_res_setup(OPKELE_E_PARS,const string& su)
+	    id_res_setup(OPKELE_E_PARS,const string& su="")
 		: id_res_failed(OPKELE_E_CONS), setup_url(su) { }
 	    ~id_res_setup() throw() { }
     };
@@ -198,6 +198,24 @@ namespace opkele {
     class id_res_bad_nonce : public id_res_failed {
 	public:
 	    id_res_bad_nonce(OPKELE_E_PARS)
+		: id_res_failed(OPKELE_E_CONS) { }
+    };
+
+    /**
+     * thrown if return_to didn't pass verification
+     */
+    class id_res_bad_return_to : public id_res_failed {
+	public:
+	    id_res_bad_return_to(OPKELE_E_PARS)
+		: id_res_failed(OPKELE_E_CONS) { }
+    };
+
+    /**
+     * thrown if OP isn't authorized to make an assertion
+     */
+    class id_res_unauthorized : public id_res_failed {
+	public:
+	    id_res_unauthorized(OPKELE_E_PARS)
 		: id_res_failed(OPKELE_E_CONS) { }
     };
 
@@ -269,6 +287,16 @@ namespace opkele {
     class internal_error : public exception {
 	public:
 	    internal_error(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
+    /**
+     * thrown in case of unsupported parameter encountered (e.g. unsupported
+     * association type).
+     */
+    class unsupported : public exception {
+	public:
+	    unsupported(OPKELE_E_PARS)
 		: exception(OPKELE_E_CONS) { }
     };
 
