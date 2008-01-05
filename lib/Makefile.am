@@ -7,12 +7,12 @@ INCLUDES = \
 	   ${KONFORKA_CFLAGS} \
 	   ${OPENSSL_CFLAGS} \
 	   ${LIBCURL_CPPFLAGS} \
-	   ${PCRE_CFLAGS} ${EXPAT_CFLAGS}
+	   ${PCRE_CFLAGS} ${EXPAT_CFLAGS} ${TIDY_CFLAGS}
 libopkele_la_LIBADD = \
 	${LIBCURL} \
 	${PCRE_LIBS} ${EXPAT_LIBS} \
 	${OPENSSL_LIBS} \
-	${KONFORKA_LIBS}
+	${KONFORKA_LIBS} ${TIDY_LIBS}
 
 libopkele_la_SOURCES = \
 		       params.cc \

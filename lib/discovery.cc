@@ -5,6 +5,7 @@
 #include <opkele/discovery.h>
 #include <opkele/exception.h>
 #include <opkele/util.h>
+#include <opkele/tidy.h>
 #include <opkele/debug.h>
 
 #include "config.h"
@@ -19,6 +20,7 @@ namespace opkele {
 
     static const char *whitespace = " \t\r\n";
     static const char *i_leaders = "=@+$!(";
+    static const size_t max_html = 16384;
 
     static inline bool is_qelement(const XML_Char *n,const char *qen) {
 	return !strcasecmp(n,qen);
@@ -61,6 +63,8 @@ namespace opkele {
 	    typedef list<string> pt_stack_t;
 	    pt_stack_t pt_stack;
 	    int skipping;
+	    bool parser_choked;
+	    string save_html;
 
 	    XRD_t *xrd;
 	    service_t *xrd_service;
@@ -140,25 +144,62 @@ namespace opkele {
 		if(r)
 		    throw exception_curl(OPKELE_CP_ "failed to set culry urlie",r);
 
-		(*(expat_t*)this) = parser_create_ns();
-		set_user_data(); set_element_handler();
-		set_character_data_handler();
-
 		http_content_type.clear();
 		xmode = xm;
+		prepare_to_parse();
 		if(xmode&xmode_html) {
 		    xrds_location.clear();
-		    html_openid1.clear(); html_openid2.clear();
+		    save_html.clear();
+		    save_html.reserve(max_html);
 		}
 		xrd = &result.xrd;
-		cdata = 0; xrd_service = 0; skipping = 0;
-		status_code = 100; status_string.clear();
 
 		r = easy_perform();
 		if(r && r!=CURLE_WRITE_ERROR)
 		    throw exception_curl(OPKELE_CP_ "failed to perform curly request",r);
 
-		parse(0,0,true);
+		if(!parser_choked) {
+		    parse(0,0,true);
+		}else{
+		    /* TODO: do not bother if we've seen xml */
+		    try {
+			util::tidy_doc_t td = util::tidy_doc_t::create();
+			if(!td)
+			    throw exception_tidy(OPKELE_CP_ "failed to create htmltidy document");
+#ifndef NDEBUG
+			td.opt_set(TidyQuiet,false);
+			td.opt_set(TidyShowWarnings,false);
+			td.opt_set(TidyForceOutput,true);
+			td.opt_set(TidyXhtmlOut,true);
+			td.opt_set(TidyDoctypeMode,TidyDoctypeOmit);
+			td.opt_set(TidyMark,false);
+#endif /* NDEBUG */
+			if(td.parse_string(save_html)<=0)
+			    throw exception_tidy(OPKELE_CP_ "tidy failed to parse document");
+			if(td.clean_and_repair()<=0)
+			    throw exception_tidy(OPKELE_CP_ "tidy failed to clean and repair");
+			util::tidy_buf_t tide;
+			if(td.save_buffer(tide)<=0)
+			    throw exception_tidy(OPKELE_CP_ "tidy failed to save buffer");
+			prepare_to_parse();
+			parse(tide.c_str(),tide.size(),true);
+		    }catch(exception_tidy& et) { }
+		}
+		save_html.clear();
+	    }
+
+	    void prepare_to_parse() {
+		(*(expat_t*)this) = parser_create_ns();
+		set_user_data(); set_element_handler();
+		set_character_data_handler();
+
+		if(xmode&xmode_html) {
+		    html_openid1.clear(); html_openid2.clear();
+		    parser_choked = false;
+		}
+
+		cdata = 0; xrd_service = 0; skipping = 0;
+		status_code = 100; status_string.clear();
 	    }
 
 	    void html2xrd(XRD_t& x) {
@@ -173,13 +214,25 @@ namespace opkele {
 	    }
 
 	    size_t write(void *p,size_t s,size_t nm) {
-		if(skipping<0) return 0;
 		/* TODO: limit total size */
 		size_t bytes = s*nm;
-		bool rp = parse((const char *)p,bytes,false);
+		const char *inbuf = (const char*)p;
+		if(xmode&xmode_html) {
+		    size_t mbts = save_html.capacity()-save_html.size();
+		    size_t bts = 0;
+		    if(mbts>0) {
+			bts = (bytes>mbts)?mbts:bytes;
+			save_html.append(inbuf,bts);
+		    }
+		    if(skipping<0) return bts;
+		}
+		if(skipping<0) return 0;
+		bool rp = parse(inbuf,bytes,false);
 		if(!rp) {
+		    parser_choked = true;
 		    skipping = -1;
-		    bytes = 0;
+		    if(!(xmode&xmode_html))
+			bytes = 0;
 		}
 		return bytes;
 	    }
