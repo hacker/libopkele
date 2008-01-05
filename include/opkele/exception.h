@@ -253,6 +253,17 @@ namespace opkele {
     };
 
     /**
+     * htmltidy related error occured
+     */
+    class exception_tidy : public exception {
+	public:
+	    int _rc;
+	    exception_tidy(OPKELE_E_PARS);
+	    exception_tidy(OPKELE_E_PARS,int r);
+	    ~exception_tidy() throw() { }
+    };
+
+    /**
      * exception thrown in case of failed discovery
      */
     class failed_discovery : public exception {

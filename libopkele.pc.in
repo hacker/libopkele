@@ -7,5 +7,5 @@ Name: libopkele
 Description: C++ implementation of OpenID protocol
 Version: @VERSION@
 Requires: openssl libpcre @KONFORKA_KONFORKA@
-Cflags: -I${includedir} @LIBCURL_CPPFLAGS@ @PCRE_CFLAGS@ @EXPAT_CFLAGS@
-Libs: -L${libdir} -lopkele @LIBCURL@ @PCRE_LIBS@ @EXPAT_LIBS@
+Cflags: -I${includedir} @LIBCURL_CPPFLAGS@ @PCRE_CFLAGS@ @EXPAT_CFLAGS@ @TIDY_CFLAGS@
+Libs: -L${libdir} -lopkele @LIBCURL@ @PCRE_LIBS@ @EXPAT_LIBS@ @TIDY_LIBS@

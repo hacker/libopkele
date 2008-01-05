@@ -114,6 +114,19 @@ AC_CHECK_HEADER([expat.h],[
  AC_MSG_ERROR([no required expat library. get one from http://expat.sourceforge.net/])
 ])
 
+AC_CHECK_HEADER([tidy.h],[
+ AC_CHECK_LIB([tidy],[tidyParseBuffer],[
+  TIDY_LIBS=-ltidy
+  TIDY_CFLAGS=
+  AC_SUBST([TIDY_LIBS])
+  AC_SUBST([TIDY_CFLAGS])
+ ],[
+  AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.nt/])
+ ])
+],[
+ AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.nt/])
+])
+
 if test -n "$PCRE_LIBS" -a -n "$PCRE_CFLAGS" ; then
  AC_SUBST([PCRE_CFLAGS])
  AC_SUBST([PCRE_LIBS])

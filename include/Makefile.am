@@ -16,6 +16,6 @@ nobase_include_HEADERS = \
 	opkele/tr1-mem.h
 EXTRA_DIST = \
 	opkele/data.h \
-	opkele/curl.h opkele/expat.h \
+	opkele/curl.h opkele/expat.h opkele/tidy.h \
 	opkele/util.h \
 	opkele/debug.h

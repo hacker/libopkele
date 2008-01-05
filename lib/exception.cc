@@ -42,4 +42,10 @@ namespace opkele {
 	: exception_network(OPKELE_E_CONS_ w+" ["+curl_easy_strerror(e)+']'),
 	_error(e), _curl_string(curl_easy_strerror(e)) { }
 
+    exception_tidy::exception_tidy(OPKELE_E_PARS)
+	: exception(OPKELE_E_CONS), _rc(0) { }
+    exception_tidy::exception_tidy(OPKELE_E_PARS,int r)
+	: exception(OPKELE_E_CONS),
+	_rc(r) { }
+
 }
