@@ -169,11 +169,11 @@ namespace opkele {
 #ifndef NDEBUG
 			td.opt_set(TidyQuiet,false);
 			td.opt_set(TidyShowWarnings,false);
+#endif /* NDEBUG */
 			td.opt_set(TidyForceOutput,true);
 			td.opt_set(TidyXhtmlOut,true);
 			td.opt_set(TidyDoctypeMode,TidyDoctypeOmit);
 			td.opt_set(TidyMark,false);
-#endif /* NDEBUG */
 			if(td.parse_string(save_html)<=0)
 			    throw exception_tidy(OPKELE_CP_ "tidy failed to parse document");
 			if(td.clean_and_repair()<=0)
