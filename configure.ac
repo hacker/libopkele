@@ -121,10 +121,10 @@ AC_CHECK_HEADER([tidy.h],[
   AC_SUBST([TIDY_LIBS])
   AC_SUBST([TIDY_CFLAGS])
  ],[
-  AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.nt/])
+  AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.net/])
  ])
 ],[
- AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.nt/])
+ AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.net/])
 ])
 
 if test -n "$PCRE_LIBS" -a -n "$PCRE_CFLAGS" ; then
