@@ -23,10 +23,8 @@ namespace opkele {
 
 		inline bool parse(const char *s,int len,bool final=false) {
 		    assert(_x);
-		    return XML_Parse(_x,s,len,final); }
-		enum XML_Status stop_parser(bool resumable=false) {
-		    assert(_x);
-		    return XML_StopParser(_x,resumable); }
+		    return XML_Parse(_x,s,len,final);
+		}
 
 		virtual void start_element(const XML_Char *n,const XML_Char **a) { }
 		virtual void end_element(const XML_Char *n) { }

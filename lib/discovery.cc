@@ -283,7 +283,7 @@ namespace opkele {
 		    }else if(xmode&xmode_html) {
 			html_start_element(n,a);
 		    }else{
-			skipping = -1; stop_parser();
+			skipping = -1;
 		    }
 		}else{
 		    int pt_s = pt_stack.size();
@@ -368,15 +368,14 @@ namespace opkele {
 		    if(is_qelement(pt_stack.back().c_str(),n)) {
 			assert(cdata==&status_string);
 			pt_stack.pop_back();
-			if(status_code!=100) {
-			    skipping = -1; stop_parser();
-			}
+			if(status_code!=100)
+			    skipping = -1;
 		    }
 		}else if(is_qelement(n,NSURI_XRD "\tExpires")) {
 		    assert(xrd);
 		    xrd->expires = util::w3c_to_time(cdata_buf);
 		}else if((xmode&xmode_html) && is_element(n,"head")) {
-		    skipping = -1; stop_parser();
+		    skipping = -1;
 		}
 		cdata = 0;
 	    }
@@ -433,7 +432,7 @@ namespace opkele {
 			    html_openid2.local_ids.add(-1,href);
 		    }
 		}else if(is_element(n,"body")) {
-		    skipping = -1; stop_parser();
+		    skipping = -1;
 		}
 	    }
 
