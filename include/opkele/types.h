@@ -181,7 +181,7 @@ namespace opkele {
 
 	struct priority_compare {
 	    inline bool operator()(long a,long b) const {
-		return (a<0) ? false : (b<0) ? false : (a<b);
+		return (a<0) ? false : (b<0) ? true : (a<b);
 	    }
 	};
 
