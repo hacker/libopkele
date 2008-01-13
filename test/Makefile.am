@@ -1,7 +1,7 @@
 noinst_PROGRAMS = test
 
 DEFAULT_INCLUDES = -I${top_builddir}
-INCLUDES = -I${top_srcdir}/include/ ${KONFORKA_CFLAGS}
+INCLUDES = -I${top_srcdir}/include/ ${KONFORKA_CFLAGS} ${LIBCURL_CPPFLAGS}
 
 test_SOURCES = test.cc
 test_LDADD = ${top_builddir}/lib/libopkele.la
