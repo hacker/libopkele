@@ -6,6 +6,7 @@
 #define NSURI_OPENID10		"http://openid.net/xmlns/1.0"
 
 #define OIURI_OPENID20		"http://specs.openid.net/auth/2.0"
+#define OIURI_SREG10		"http://openid.net/sreg/1.0"
 #define OIURI_SREG11		"http://openid.net/extensions/sreg/1.1"
 
 #define STURI_OPENID10		"http://openid.net/signon/1.0"
