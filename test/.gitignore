@@ -3,3 +3,5 @@
 /test
 *.o
 /idiscover
+/RP.cgi
+/RP-db.cc

@@ -5,25 +5,16 @@
 using namespace std;
 #include <opkele/exception.h>
 #include <opkele/discovery.h>
+#include <opkele/util.h>
 
-template<typename _PDT>
-    ostream& operator<<(ostream& o,const opkele::xrd::priority_map<_PDT>& pm) {
-	for(typename opkele::xrd::priority_map<_PDT>::const_iterator i=pm.begin();
-		i!=pm.end();++i)
-	    o << ' ' << i->second << '[' << i->first << ']';
+namespace opkele {
+    ostream& operator<<(ostream& o,const opkele::openid_endpoint_t& oep) {
+	o
+	    << " URI:        " << oep.uri << endl
+	    << " Claimed ID: " << oep.claimed_id << endl
+	    << " Local ID:   " << oep.local_id << endl;
 	return o;
     }
-
-ostream& operator<<(ostream& o,const opkele::xrd::service_t s) {
-    o << "{" << endl
-	<< " Type: ";
-    copy(s.types.begin(),s.types.end(),
-	    ostream_iterator<string>(o," "));
-    o << endl
-	<< " URI: " << s.uris << endl
-	<< " LocalID: " << s.local_ids << endl
-	<< " ProviderID: " << s.provider_id << endl;
-    o << "}";
 }
 
 int main(int argc,char **argv) {
@@ -31,23 +22,18 @@ int main(int argc,char **argv) {
 	if(argc<2)
 	    throw opkele::exception(OPKELE_CP_ "Please, give me something to resolve");
 	for(int a=1;a<argc;++a) {
-	    opkele::idiscovery_t discovery(argv[a]);
-	    clog
-		<< "===============================================================" << endl
+	    cout << "==============================================================" << endl
 		<< "User-supplied ID: " << argv[a] << endl
-		<< "Normalized ID: " << discovery.normalized_id << endl
-		<< "Canonicalized ID: " << discovery.canonicalized_id << endl
-		<< "The identity is " << (discovery.xri_identity?"":"not ") << "an i-name" << endl;
-	    if(discovery.xrd.expires)
-		clog << "Information expires in " << discovery.xrd.expires-time(0) << " seconds" << endl;
-	    clog << endl
-		<< "CanonicalID: " << discovery.xrd.canonical_ids << endl
-		<< "LocalID: " << discovery.xrd.local_ids << endl
-		<< "ProviderID: " << discovery.xrd.provider_id << endl
-		<< "Services: " << discovery.xrd.services << endl;
+		<< "Endpoints:" << endl
+		<< " --" << endl;
+	    string normalized = opkele::idiscover(
+			ostream_iterator<opkele::openid_endpoint_t>(cout," --\n")
+		     ,argv[a]);
+	    cout << "Normalized ID:   " << normalized << endl;
 	}
     }catch(exception& e) {
-	cerr << "oops: " << e.what() << endl;
+	cerr << "oops, caught " << opkele::util::abi_demangle(typeid(e).name()) << endl
+	    << " .what(): " << e.what() << endl;
 	_exit(1);
     }
     _exit(0);
