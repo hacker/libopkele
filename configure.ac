@@ -1,4 +1,4 @@
-AC_INIT([libopkele], [0.4], [libopkele-bugs@klever.net])
+AC_INIT([libopkele], [1.1.99.0], [libopkele-bugs@klever.net])
 AC_CONFIG_SRCDIR([include/opkele/opkele-config.h])
 AC_CONFIG_HEADERS([config.h include/opkele/acconfig.h])
 AM_INIT_AUTOMAKE([dist-bzip2])
@@ -60,6 +60,41 @@ case "$tr1_mem" in
 esac
 AC_SUBST([OPKELE_TR1_MEM_NS])
 AC_SUBST([OPKELE_TR1_MEM_HEADER])
+
+AC_MSG_CHECKING([for deprecated attribute support])
+AC_COMPILE_IFELSE([
+  int __attribute__((deprecated)) deprecated_function();
+ ],[
+  AC_MSG_RESULT([yes])
+  AC_DEFINE([OPKELE_DEPRECATE],[__attribute__((deprecated))],[deprecated function attribute])
+ ],[
+  AC_MSG_RESULT([no])
+  AC_DEFINE([OPKELE_DEPRECATE],,[deprecated function attribute])
+ ]
+)
+
+AC_LANG_PUSH([C++])
+AC_MSG_CHECKING([for abi::__cxa_demangle])
+AC_COMPILE_IFELSE([
+  #include <typeinfo>
+  using namespace std;
+  #include <cxxabi.h>
+  int main(int c,char **v) {
+   int dstat;
+   char *demangled = abi::__cxa_demangle(typeid(dstat).name(),0,0,&dstat);
+   return 0;
+  }
+ ],[
+  AC_MSG_RESULT([yes])
+  AC_DEFINE([HAVE_DEMANGLE],,[defined if abi::__cxa_demangle is available])
+ ],[
+  AC_MSG_RESULT([no])
+ ]
+)
+AC_LANG_POP([C++])
+
+
+
 
 PKG_CHECK_MODULES([OPENSSL],[openssl],,[
  AC_MSG_ERROR([no openssl library found. get one from http://www.openssl.org/])
@@ -137,6 +172,13 @@ else
  ])
 fi
 
+PKG_CHECK_MODULES([SQLITE3],[sqlite3],[have_sqlite3=true],[have_sqlite3=false])
+AM_CONDITIONAL([HAVE_SQLITE3],[$have_sqlite3])
+PKG_CHECK_MODULES([KINGATE],[kingate-plaincgi],[have_kingate=true],[have_kingate=false])
+AM_CONDITIONAL([HAVE_KINGATE],[$have_kingate])
+PKG_CHECK_MODULES([UUID],[uuid],[have_uuid=true],[have_uuid=false])
+AM_CONDITIONAL([HAVE_UUID],[$have_uuid])
+
 curl_ssl_verify_host="true"
 AC_ARG_ENABLE([ssl-verify-host],
  AC_HELP_STRING([--disable-ssl-verify-host],[disable cURL cert/host relationships verification]),
@@ -190,10 +232,10 @@ else
 fi
 AC_SUBST([CPPFLAGS_DEBUG])
 
-xri_proxy_url="http://beta.xri.net/"
+xri_proxy_url="https://xri.net/"
 AC_MSG_CHECKING([for XRI resolver proxy])
 AC_ARG_ENABLE([xri-proxy],
- AC_HELP_STRING([--with-xri-proxy=url],[set xri proxy for use when resolving xri identities, default is http://xr_proxy_url]),
+ AC_HELP_STRING([--with-xri-proxy=url],[set xri proxy for use when resolving xri identities, default is https://xri.net/]),
  [ xri_proxy_url="$withval" ]
 )
 AC_MSG_RESULT([$xri_proxy_url])
