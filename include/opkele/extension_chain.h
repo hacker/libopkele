@@ -28,9 +28,9 @@ namespace opkele {
 	     */
 	    extension_chain_t(extension_t *e) { push_back(e); }
 
-	    virtual void checkid_hook(params_t& p,const string& identity);
-	    virtual void id_res_hook(const params_t& p,const params_t& sp,const string& identity);
-	    virtual void checkid_hook(const params_t& pin,params_t& pout);
+	    virtual void checkid_hook(basic_openid_message& om);
+	    virtual void id_res_hook(const basic_openid_message& om,const basic_openid_message& sp);
+	    virtual void checkid_hook(const basic_openid_message& inm,basic_openid_message& oum);
     };
 
 }

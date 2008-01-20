@@ -109,7 +109,7 @@ namespace opkele {
 	pout["exipres_in"] = "120";
 	pout["signed"]="mode,identity,return_to";
 	if(ext) ext->checkid_hook(pin,pout);
-	pout.sign(assoc->secret(),pout["sig"],pout["signed"]);
+	pout["sig"] = util::base64_signature(assoc,pout);
     }
 
     void server_t::check_authentication(const params_t& pin,params_t& pout) {

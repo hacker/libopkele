@@ -11,6 +11,8 @@
 #include <string>
 #include <map>
 #include <set>
+#include <list>
+#include <opkele/iterator.h>
 #include <opkele/tr1-mem.h>
 
 namespace opkele {
@@ -20,6 +22,9 @@ namespace opkele {
     using std::ostream;
     using std::multimap;
     using std::set;
+    using std::list;
+    using std::iterator;
+    using std::forward_iterator_tag;
 
     /**
      * the OpenID operation mode
@@ -111,10 +116,63 @@ namespace opkele {
      */
     typedef tr1mem::shared_ptr<association_t> assoc_t;
 
+    class basic_openid_message {
+	public:
+	    typedef list<string> fields_t;
+	    typedef util::forward_iterator_proxy<
+		string,const string&,const string*
+		> fields_iterator;
+
+	    basic_openid_message() { }
+	    basic_openid_message(const basic_openid_message& x);
+	    void copy_to(basic_openid_message& x) const;
+
+	    virtual bool has_field(const string& n) const = 0;
+	    virtual const string& get_field(const string& n) const = 0;
+
+	    virtual bool has_ns(const string& uri) const;
+	    virtual string get_ns(const string& uri) const;
+
+	    virtual fields_iterator fields_begin() const = 0;
+	    virtual fields_iterator fields_end() const = 0;
+
+	    virtual string append_query(const string& url) const;
+	    virtual string query_string() const;
+
+
+	    virtual void reset_fields();
+	    virtual void set_field(const string& n,const string& v);
+	    virtual void reset_field(const string& n);
+
+	    virtual void from_keyvalues(const string& kv);
+
+	    void add_to_signed(const string& fields);
+	    string find_ns(const string& uri,const char *pfx) const;
+	    string allocate_ns(const string& uri,const char *pfx);
+    };
+
+    class openid_message_t : public basic_openid_message, public map<string,string> {
+	public:
+	    openid_message_t() { }
+	    openid_message_t(const basic_openid_message& x)
+		: basic_openid_message(x) { }
+
+	    void copy_to(basic_openid_message& x) const;
+
+	    bool has_field(const string& n) const;
+	    const string& get_field(const string& n) const;
+	    virtual fields_iterator fields_begin() const;
+	    virtual fields_iterator fields_end() const;
+
+	    void reset_fields();
+	    void set_field(const string& n,const string& v);
+	    void reset_field(const string& n);
+    };
+
     /**
      * request/response parameters map
      */
-    class params_t : public map<string,string> {
+    class params_t : public openid_message_t {
 	public:
 
 	    /**
@@ -122,124 +180,27 @@ namespace opkele {
 	     * @param n the parameter name
 	     * @return true if yes
 	     */
-	    bool has_param(const string& n) const;
+	    bool has_param(const string& n) const {
+		return has_field(n); }
 	    /**
 	     * retrieve the parameter (const version)
 	     * @param n the parameter name
 	     * @return the parameter value
 	     * @throw failed_lookup if there is no such parameter
 	     */
-	    const string& get_param(const string& n) const;
-	    /**
-	     * retrieve the parameter.
-	     * @param n the parameter name
-	     * @return the parameter value
-	     * @throw failed_lookup if there is no such parameter
-	     */
-	    string& get_param(const string& n);
+	    const string& get_param(const string& n) const {
+		return get_field(n); }
 
 	    /**
 	     * parse the OpenID key/value data.
 	     * @param kv the OpenID key/value data
 	     */
-	    void parse_keyvalues(const string& kv);
-	    /**
-	     * sign the fields.
-	     * @param secret the secret used for signing
-	     * @param sig reference to the string, containing base64-encoded
-	     * result
-	     * @param slist the comma-separated list of fields to sign
-	     * @param prefix the string to prepend to parameter names
-	     */
-	    void sign(secret_t secret,string& sig,const string& slist,const char *prefix=0) const;
+	    void parse_keyvalues(const string& kv) {
+		from_keyvalues(kv); }
 
-	    /**
-	     * append parameters to the URL as a GET-request parameters.
-	     * @param url the base URL
-	     * @param prefix the string to prepend to parameter names
-	     * @return the ready-to-use location
-	     */
-	    string append_query(const string& url,const char *prefix = "openid.") const;
+	    string append_query(const string& url,const char *prefix="openid.") const;
 
-	    /**
-	     * make up a query string suitable for use in GET and POST
-	     * requests.
-	     * @param prefix string to prened to parameter names
-	     * @return query string
-	     */
-	    string query_string(const char *prefix = "openid.") const;
     };
-
-    /**
-     * dump the key/value pairs for the parameters to the stream.
-     * @param o output stream
-     * @param p the parameters
-     */
-    ostream& operator << (ostream& o,const params_t& p);
-
-    namespace xrd {
-
-	struct priority_compare {
-	    inline bool operator()(long a,long b) const {
-		return (a<0) ? false : (b<0) ? true : (a<b);
-	    }
-	};
-
-	template <typename _DT>
-	    class priority_map : public multimap<long,_DT,priority_compare> {
-		typedef multimap<long,_DT,priority_compare> map_type;
-		public:
-
-		    inline _DT& add(long priority,const _DT& d) {
-			return insert(typename map_type::value_type(priority,d))->second;
-		    }
-	    };
-
-	typedef priority_map<string> canonical_ids_t;
-	typedef priority_map<string> local_ids_t;
-	typedef set<string> types_t;
-	typedef priority_map<string> uris_t;
-
-	class service_t {
-	    public:
-		types_t types;
-		uris_t uris;
-		local_ids_t local_ids;
-		string provider_id;
-
-		void clear() {
-		    types.clear();
-		    uris.clear(); local_ids.clear();
-		    provider_id.clear();
-		}
-	};
-	typedef priority_map<service_t> services_t;
-
-	class XRD_t {
-	    public:
-		time_t expires;
-
-		canonical_ids_t canonical_ids;
-		local_ids_t local_ids;
-		services_t services;
-		string provider_id;
-
-		void clear() {
-		    expires = 0;
-		    canonical_ids.clear(); local_ids.clear();
-		    services.clear();
-		    provider_id.clear();
-		}
-		bool empty() const {
-		    return
-			canonical_ids.empty()
-			&& local_ids.empty()
-			&& services.empty();
-		}
-
-	};
-
-    }
 
 }
 

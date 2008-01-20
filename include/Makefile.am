@@ -1,5 +1,8 @@
-nobase_include_HEADERS = \
+NODIST_HEADERS_ = \
 	opkele/acconfig.h \
+	opkele/tr1-mem.h
+
+nobase_include_HEADERS = \
 	opkele/opkele-config.h \
 	opkele/types.h \
 	opkele/association.h \
@@ -11,11 +14,19 @@ nobase_include_HEADERS = \
 	opkele/extension_chain.h \
 	opkele/xconsumer.h \
 	opkele/xserver.h \
-	opkele/discovery.h \
 	opkele/uris.h \
-	opkele/tr1-mem.h
-EXTRA_DIST = \
+	opkele/tr1-mem.h \
+	opkele/basic_rp.h \
+	opkele/prequeue_rp.h \
+	opkele/iterator.h \
+	${NODIST_HEADERS_}
+
+noinst_HEADERS = \
 	opkele/data.h \
 	opkele/curl.h opkele/expat.h opkele/tidy.h \
 	opkele/util.h \
-	opkele/debug.h
+	opkele/debug.h \
+	opkele/discovery.h
+
+dist-hook:
+	rm -f $(addprefix ${distdir}/,${NODIST_HEADERS_})

@@ -6,6 +6,7 @@
 #include <vector>
 #include <openssl/bn.h>
 #include <openssl/dh.h>
+#include <opkele/types.h>
 
 namespace opkele {
     using std::string;
@@ -136,6 +137,13 @@ namespace opkele {
 	 * @throw bad_input in case of malformed URI
 	 */
 	string rfc_3986_normalize_uri(const string& uri);
+
+	string& strip_uri_fragment_part(string& uri);
+
+	string abi_demangle(const char* mn);
+
+	string base64_signature(const assoc_t& assoc,const basic_openid_message& om);
+
     }
 
 }

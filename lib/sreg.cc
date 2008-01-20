@@ -28,7 +28,7 @@ namespace opkele {
 	return fd.fieldname==fn;
     }
 
-    void sreg_t::checkid_hook(params_t& p,const string& /* identity */) {
+    void sreg_t::checkid_hook(basic_openid_message& om) {
 	string fr, fo;
 	for(fields_iterator f=fields_BEGIN;f<fields_END;++f) {
 	    if(f->fieldbit&fields_required) {
@@ -40,19 +40,30 @@ namespace opkele {
 		fo += f->fieldname;
 	    }
 	}
-	p["ns.sreg"] = OIURI_SREG11;
-	if(!fr.empty()) p["sreg.required"]=fr;
-	if(!fo.empty()) p["sreg.optional"]=fo;
-	if(!policy_url.empty()) p["sreg.policy_url"]=policy_url;
+	string pfx = om.allocate_ns(OIURI_SREG11,"sreg");
+	if(!fr.empty()) om.set_field(pfx+".required",fr);
+	if(!fo.empty()) om.set_field(pfx+".optional",fo);
+	if(!policy_url.empty()) om.set_field(pfx+".policy_url",policy_url);
     }
 
-    void sreg_t::id_res_hook(const params_t& /* p */,const params_t& sp,const string& /* identity */) {
+    void sreg_t::id_res_hook(const basic_openid_message& om,const basic_openid_message& sp) {
 	clear();
+	string pfx;
+	try {
+	    pfx = om.find_ns(OIURI_SREG11,"sreg");
+	}catch(failed_lookup& fl) {
+	    try {
+		pfx = om.find_ns(OIURI_SREG10,"sreg");
+	    }catch(failed_lookup& fl) {
+		return;
+	    }
+	}
+	pfx += '.';
 	for(fields_iterator f=fields_BEGIN;f<fields_END;++f) {
-	    string fn = "sreg."; fn+=f->fieldname;
-	    if(!sp.has_param(fn)) continue;
+	    string fn = pfx; fn+=f->fieldname;
+	    if(!sp.has_field(fn)) continue;
 	    has_fields |= f->fieldbit;
-	    response[f->fieldbit]=sp.get_param(fn);
+	    response[f->fieldbit]=sp.get_field(fn);
 	}
     }
 
@@ -94,33 +105,36 @@ namespace opkele {
 	return rv;
     }
 
-    void sreg_t::checkid_hook(const params_t& pin,params_t& pout) {
+    void sreg_t::checkid_hook(const basic_openid_message& inm,basic_openid_message& oum) {
+	string ins = inm.find_ns(OIURI_SREG11,"sreg");
 	fields_optional = 0; fields_required = 0; policy_url.erase();
 	fields_response = 0;
 	try {
-	    string fl = pin.get_param("openid.sreg.required");
+	    string fl = inm.get_field(ins+".required");
 	    fields_required = fields_list_to_bitmask(fl);
 	}catch(failed_lookup&) { }
 	try {
-	    string fl = pin.get_param("openid.sreg.optional");
+	    string fl = inm.get_field(ins+".optional");
 	    fields_optional = fields_list_to_bitmask(fl);
 	}catch(failed_lookup&) { }
 	try {
-	    policy_url = pin.get_param("openid.sreg.policy_url");
+	    policy_url = inm.get_field(ins+".policy_url");
 	}catch(failed_lookup&) { }
-        setup_response(pin,pout);
+        setup_response(inm,oum);
+	string ons = oum.allocate_ns(OIURI_SREG11,"sreg");
 	fields_response &= has_fields;
+	string signeds = "ns."+ons;
 	for(fields_iterator f=fields_BEGIN;f<fields_END;++f) {
 	    if(!(f->fieldbit&fields_response)) continue;
-	    if(!pout["signed"].empty())
-		pout["signed"] +=',';
-	    string pn = "sreg."; pn += f->fieldname;
-	    pout["signed"] += pn;
-	    pout[pn] = get_field(f->fieldbit);
+	    signeds +=',';
+	    string pn = ons; pn += '.'; pn += f->fieldname;
+	    signeds += pn;
+	    oum.set_field(pn,get_field(f->fieldbit));
 	}
+	oum.add_to_signed(signeds);
     }
 
-    void sreg_t::setup_response(const params_t& /* pin */,params_t& /* pout */) {
+    void sreg_t::setup_response(const basic_openid_message& /* inm */,basic_openid_message& /* oum */) {
 	fields_response = (fields_required|fields_optional)&has_fields;
     }
 }

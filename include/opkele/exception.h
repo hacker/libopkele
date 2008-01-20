@@ -311,6 +311,25 @@ namespace opkele {
 		: exception(OPKELE_E_CONS) { }
     };
 
+    /**
+     * thrown by associations store related functions in case of dumb RP.
+     */
+    class dumb_RP : public exception {
+	public:
+	    dumb_RP(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
+    /**
+     * thrown by endpoint-queue related function if endpoint is being
+     * accessed but there's no endpoint available.
+     */
+    class no_endpoint : public exception {
+	public:
+	    no_endpoint(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
 }
 
 #endif /* __OPKELE_EXCEPTION_H */

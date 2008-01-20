@@ -7,9 +7,15 @@
 #include <stack>
 #include <openssl/bio.h>
 #include <openssl/evp.h>
+#include <openssl/hmac.h>
 #include <curl/curl.h>
 #include "opkele/util.h"
 #include "opkele/exception.h"
+
+#include <config.h>
+#ifdef HAVE_DEMANGLE
+# include <cxxabi.h>
+#endif
 
 namespace opkele {
     using namespace std;
@@ -205,8 +211,7 @@ namespace opkele {
 	     else if(rv=="https:")
 		 s = true;
 	     else{
-		 /* TODO: support more schemes.
-		  * e.g. xri. How do we normalize
+		 /* TODO: support more schemes.  e.g. xri. How do we normalize
 		  * xri?
 		  */
 		 rv.append(uri,colon+1,ul-colon-1);
@@ -310,6 +315,68 @@ namespace opkele {
 	     }
 	     return rv;
 	 }
+
+	string& strip_uri_fragment_part(string& u) {
+	    string::size_type q = u.find('?'), f = u.find('#');
+	    if(q==string::npos) {
+		if(f!=string::npos)
+		    u.erase(f);
+	    }else{
+		if(f!=string::npos) {
+		    if(f<q)
+			u.erase(f,q-f);
+		    else
+			u.erase(f);
+		}
+	    }
+	    return u;
+	}
+
+	string abi_demangle(const char *mn) {
+#ifndef HAVE_DEMANGLE
+	    return mn;
+#else /* !HAVE_DEMANGLE */
+	    int dstat;
+	    char *demangled = abi::__cxa_demangle(mn,0,0,&dstat);
+	    if(dstat)
+		return mn;
+	    string rv = demangled;
+	    free(demangled);
+	    return rv;
+#endif /* !HAVE_DEMANGLE */
+	}
+
+	string base64_signature(const assoc_t& assoc,const basic_openid_message& om) {
+	    const string& slist = om.get_field("signed");
+	    string kv;
+	    string::size_type p=0;
+	    while(true) {
+		string::size_type co = slist.find(',',p);
+		string f = (co==string::npos)
+		    ?slist.substr(p):slist.substr(p,co-p);
+		kv += f;
+		kv += ':';
+		kv += om.get_field(f);
+		kv += '\n';
+		if(co==string::npos) break;
+		p = co+1;
+	    }
+	    const secret_t& secret = assoc->secret();
+	    const EVP_MD *evpmd;
+	    const string& at = assoc->assoc_type();
+	    if(at=="HMAC-SHA256")
+		evpmd = EVP_sha256();
+	    else if(at=="HMAC-SHA1")
+		evpmd = EVP_sha1();
+	    else
+		throw unsupported(OPKELE_CP_ "unknown association type");
+	    unsigned int md_len = 0;
+	    unsigned char *md = HMAC(evpmd,
+		    &(secret.front()),secret.size(),
+		    (const unsigned char*)kv.data(),kv.length(),
+		    0,&md_len);
+	    return encode_base64(md,md_len);
+	}
 
     }
 

@@ -17,6 +17,7 @@ namespace opkele {
 	public:
 
 	    virtual ~extension_t() { }
+
 	    /**
 	     * hook called by consumer before submitting data to OpenID server.
 	     * It is supposed to manipulate parameters list.
@@ -27,7 +28,7 @@ namespace opkele {
 	     * @see consumer_t::checkid_immediate
 	     * @see consumer_t::checkid_setup
 	     */
-	    virtual void checkid_hook(params_t& p,const string& identity);
+	    virtual void checkid_hook(basic_openid_message& om);
 	    /**
 	     * hook called by consumer after identity information received from
 	     * OpenID server is verified.
@@ -39,7 +40,7 @@ namespace opkele {
 	     * empty which means - extract one from parameters
 	     * @see consumer_t::id_res
 	     */
-	    virtual void id_res_hook(const params_t& p,const params_t& sp,const string& identity);
+	    virtual void id_res_hook(const basic_openid_message& om,const basic_openid_message& sp);
 
 	    /**
 	     * hook called by server before returning information to consumer.
@@ -51,7 +52,7 @@ namespace opkele {
 	     * @see server_t::checkid_immediate
 	     * @see server_t::checkid_setup
 	     */
-	    virtual void checkid_hook(const params_t& pin,params_t& pout);
+	    virtual void checkid_hook(const basic_openid_message& inm,basic_openid_message& oum);
 
 	    /**
 	     * Casts the object to pointer to itself. For convenient passing

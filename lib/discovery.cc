@@ -18,9 +18,26 @@ namespace opkele {
     using xrd::XRD_t;
     using xrd::service_t;
 
+    /* TODO: the whole discovery thing needs cleanup and optimization due to
+     * many changes of concept. */
+
     static const char *whitespace = " \t\r\n";
     static const char *i_leaders = "=@+$!(";
     static const size_t max_html = 16384;
+
+    static const struct service_type_t {
+	const char *uri;
+	const char *forceid;
+    } service_types[] = {
+	{ STURI_OPENID20_OP, IDURI_SELECT20 },
+	{ STURI_OPENID20, 0 },
+	{ STURI_OPENID11, 0 },
+	{ STURI_OPENID10, 0 }
+    };
+    enum {
+	st_index_1 = 2, st_index_2 = 1
+    };
+
 
     static inline bool is_qelement(const XML_Char *n,const char *qen) {
 	return !strcasecmp(n,qen);
@@ -48,7 +65,7 @@ namespace opkele {
 	    string xri_proxy;
 
 	    enum {
-		xmode_html = 1, xmode_xrd = 2
+		xmode_html = 1, xmode_xrd = 2, xmode_cid = 4
 	    };
 	    int xmode;
 
@@ -84,11 +101,12 @@ namespace opkele {
 		}
 	    ~idigger_t() throw() { }
 
-	    void discover(idiscovery_t& result,const string& identity) {
-		result.clear();
+	    string discover(endpoint_discovery_iterator& oi,const string& identity) {
+		string rv;
+		idiscovery_t idis;
 		string::size_type fsc = identity.find_first_not_of(whitespace);
 		if(fsc==string::npos)
-		    throw bad_input(OPKELE_CP_ "whtiespace-only identity");
+		    throw bad_input(OPKELE_CP_ "whitespace-only identity");
 		string::size_type lsc = identity.find_last_not_of(whitespace);
 		assert(lsc!=string::npos);
 		if(!strncasecmp(identity.c_str()+fsc,"xri://",sizeof("xri://")-1))
@@ -96,22 +114,51 @@ namespace opkele {
 		if((fsc+1)>=lsc)
 		    throw bad_input(OPKELE_CP_ "not a character of importance in identity");
 		string id(identity,fsc,lsc-fsc+1);
+		idis.clear();
 		if(strchr(i_leaders,id[0])) {
-		    result.normalized_id = id;
-		    result.xri_identity = true;
-		    /* TODO: further canonicalize xri identity? Like folding case  or whatever... */
-		    discover_at(
-			    result,
-			    xri_proxy + util::url_encode(id)+
-			    "?_xrd_r=application/xrd+xml;sep=false", xmode_xrd);
-		    if(status_code!=100)
-			throw failed_xri_resolution(OPKELE_CP_
-				"XRI resolution failed with '"+status_string+"' message",status_code);
-		    if(result.xrd.canonical_ids.empty())
-			throw opkele::failed_discovery(OPKELE_CP_ "No CanonicalID for XRI identity found");
-		    result.canonicalized_id = result.xrd.canonical_ids.begin()->second;
+		    /* TODO: further normalize xri identity? Like folding case
+		     * or whatever... */
+		    rv = idis.normalized_id = id;
+		    idis.xri_identity = true;
+		    set<string> cids;
+		    for(const struct service_type_t *st=service_types;
+			    st<&service_types[sizeof(service_types)/sizeof(*service_types)];++st) {
+			idis.clear();
+			discover_at( idis,
+				xri_proxy + util::url_encode(id)+
+				"?_xrd_t="+util::url_encode(st->uri)+
+				"&_xrd_r=application/xrd%2Bxml"
+				";sep=true;refs=true",
+				xmode_xrd );
+			if(status_code==241) continue;
+			if(status_code!=100)
+			    throw failed_xri_resolution(OPKELE_CP_
+				    "XRI resolution failed with '"+status_string+"' message"
+				    ", while looking for SEP with type '"+st->uri+"'", status_code);
+			if(idis.xrd.canonical_ids.empty())
+			    throw opkele::failed_discovery(OPKELE_CP_ "No CanonicalID found for XRI identity found");
+			string cid = idis.xrd.canonical_ids.begin()->second;
+			if(cids.find(cid)==cids.end()) {
+			    cids.insert(cid);
+			    idis.clear();
+			    discover_at( idis,
+				    xri_proxy + util::url_encode(id)+
+				    "?_xrd_t="+util::url_encode(st->uri)+
+				    "&_xrd_r=application/xrd%2Bxml"
+				    ";sep=true;refs=true",
+				    xmode_xrd );
+			    if(status_code==241) continue;
+			    if(status_code!=100)
+				throw failed_xri_resolution(OPKELE_CP_
+					"XRI resolution failed with '"+status_string+"' message"
+					", while looking for SEP with type '"+st->uri+"'"
+					" on canonical id", status_code);
+			}
+			idis.canonicalized_id = cid;
+			queue_endpoints(oi,idis,st);
+		    }
 		}else{
-		    result.xri_identity = false;
+		    idis.xri_identity = false;
 		    if(id.find("://")==string::npos)
 			id.insert(0,"http://");
 		    string::size_type fp = id.find('#');
@@ -122,24 +169,33 @@ namespace opkele {
 			else if(qp>fp)
 			    id.erase(fp,qp-fp);
 		    }
-		    result.normalized_id = util::rfc_3986_normalize_uri(id);
-		    discover_at(result,id,xmode_html|xmode_xrd);
+		    rv = idis.normalized_id = util::rfc_3986_normalize_uri(id);
+		    discover_at(idis,id,xmode_html|xmode_xrd);
 		    const char * eu = 0;
 		    CURLcode r = easy_getinfo(CURLINFO_EFFECTIVE_URL,&eu);
 		    if(r)
 			throw exception_curl(OPKELE_CP_ "failed to get CURLINFO_EFFECTIVE_URL",r);
-		    result.canonicalized_id = util::rfc_3986_normalize_uri(eu); /* XXX: strip fragment part? */
+		    string cid = util::strip_uri_fragment_part( idis.canonicalized_id = util::rfc_3986_normalize_uri(eu) );
 		    if(xrds_location.empty()) {
-			html2xrd(result.xrd);
+			html2xrd(oi,idis);
 		    }else{
-			discover_at(result,xrds_location,xmode_xrd);
-			if(result.xrd.empty())
-			    html2xrd(result.xrd);
+			idis.clear();
+			idis.canonicalized_id = cid;
+			discover_at(idis,xrds_location,xmode_xrd);
+			if(idis.xrd.empty())
+			    html2xrd(oi,idis);
+			else{
+			    for(const service_type_t *st=service_types;
+				    st<&service_types[sizeof(service_types)/sizeof(*service_types)];++st)
+				queue_endpoints(oi,idis,st);
+			}
 		    }
 		}
+		return rv;
 	    }
 
-	    void discover_at(idiscovery_t& result,const string& url,int xm) {
+	    void discover_at(idiscovery_t& idis,const string& url,int xm) {
+		DOUT_("Doing discovery at " << url);
 		CURLcode r = easy_setopt(CURLOPT_URL,url.c_str());
 		if(r)
 		    throw exception_curl(OPKELE_CP_ "failed to set culry urlie",r);
@@ -152,7 +208,7 @@ namespace opkele {
 		    save_html.clear();
 		    save_html.reserve(max_html);
 		}
-		xrd = &result.xrd;
+		xrd = &idis.xrd;
 
 		r = easy_perform();
 		if(r && r!=CURLE_WRITE_ERROR)
@@ -199,17 +255,21 @@ namespace opkele {
 		}
 
 		cdata = 0; xrd_service = 0; skipping = 0;
+		pt_stack.clear();
 		status_code = 100; status_string.clear();
 	    }
 
-	    void html2xrd(XRD_t& x) {
-		if(!html_openid1.uris.empty()) {
-		    html_openid1.types.insert(STURI_OPENID11);
-		    x.services.add(-1,html_openid1);
-		}
+	    void html2xrd(endpoint_discovery_iterator& oi,idiscovery_t& id) {
+		XRD_t& x = id.xrd;
 		if(!html_openid2.uris.empty()) {
 		    html_openid2.types.insert(STURI_OPENID20);
 		    x.services.add(-1,html_openid2);
+		    queue_endpoints(oi,id,&service_types[st_index_2]);
+		}
+		if(!html_openid1.uris.empty()) {
+		    html_openid1.types.insert(STURI_OPENID11);
+		    x.services.add(-1,html_openid1);
+		    queue_endpoints(oi,id,&service_types[st_index_1]);
 		}
 	    }
 
@@ -310,7 +370,8 @@ namespace opkele {
 					pt_stack.push_back(n);
 					break;
 				    }
-				}
+				}else
+				    ++a;
 			    }
 			}else if(is_qelement(n,NSURI_XRD "\tExpires")) {
 			    assert(xrd);
@@ -436,11 +497,41 @@ namespace opkele {
 		}
 	    }
 
+	    void queue_endpoints(endpoint_discovery_iterator& oi,
+		    const idiscovery_t &id,
+		    const service_type_t *st) {
+		openid_endpoint_t ep;
+		ep.claimed_id = id.canonicalized_id;
+		for(xrd::services_t::const_iterator isvc=id.xrd.services.begin();
+			isvc!=id.xrd.services.end(); ++isvc) {
+		    const xrd::service_t svc = isvc->second;
+		    if(svc.types.find(st->uri)==svc.types.end()) continue;
+		    for(xrd::uris_t::const_iterator iu=svc.uris.begin();iu!=svc.uris.end();++iu) {
+			ep.uri = iu->second;
+			if(st->forceid) {
+			    ep.local_id = ep.claimed_id = st->forceid;
+			    *(oi++) = ep;
+			}else{
+			    if(svc.local_ids.empty()) {
+				ep.local_id = ep.claimed_id;
+				*(oi++) = ep;
+			    }else{
+				for(xrd::local_ids_t::const_iterator ilid=svc.local_ids.begin();
+					ilid!=svc.local_ids.end(); ++ilid) {
+				    ep.local_id = ilid->second;
+				    *(oi++) = ep;
+				}
+			    }
+			}
+		    }
+		}
+	    }
+
     };
 
-    void idiscover(idiscovery_t& result,const string& identity) {
+    string idiscover(endpoint_discovery_iterator oi,const string& identity) {
 	idigger_t idigger;
-	idigger.discover(result,identity);
+	return idigger.discover(oi,identity);
     }
 
 }

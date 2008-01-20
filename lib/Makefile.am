@@ -3,7 +3,7 @@ lib_LTLIBRARIES = libopkele.la
 AM_CPPFLAGS = ${CPPFLAGS_DEBUG}
 DEFAULT_INCLUDES = -I${top_builddir}
 INCLUDES = \
-	   -I${top_srcdir}/include/ \
+	   -I${top_builddir}/include/ -I${top_srcdir}/include/ \
 	   ${KONFORKA_CFLAGS} \
 	   ${OPENSSL_CFLAGS} \
 	   ${LIBCURL_CPPFLAGS} \
@@ -26,6 +26,9 @@ libopkele_la_SOURCES = \
 		       sreg.cc \
 		       extension_chain.cc \
 		       curl.cc expat.cc \
-		       discovery.cc
+		       discovery.cc \
+		       basic_rp.cc \
+		       prequeue_rp.cc \
+		       openid_message.cc
 libopkele_la_LDFLAGS = \
 	-version-info 2:0:0

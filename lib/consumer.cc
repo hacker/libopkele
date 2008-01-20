@@ -154,7 +154,7 @@ namespace opkele {
 	    string ah = associate(server)->handle();
 	    p["assoc_handle"] = ah;
 	}
-	if(ext) ext->checkid_hook(p,identity);
+	if(ext) ext->checkid_hook(p);
 	return p.append_query(server);
     }
 
@@ -222,7 +222,7 @@ namespace opkele {
 		throw id_res_failed(OPKELE_CP_ "failed to check_authentication()");
 	    }
 	}
-	if(ext) ext->id_res_hook(pin,ps,identity);
+	if(ext) ext->id_res_hook(pin,ps);
     }
 
     void consumer_t::check_authentication(const string& server,const params_t& p) {

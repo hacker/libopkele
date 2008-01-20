@@ -138,15 +138,15 @@ namespace opkele {
 	    /**
 	     * Implementation of consumer's checkid hook
 	     */
-	    virtual void checkid_hook(params_t& p,const string& identity);
+	    virtual void checkid_hook(basic_openid_message& om);
 	    /**
 	     * Implementation of consumer's id_res hook
 	     */
-	    virtual void id_res_hook(const params_t& p,const params_t& sp,const string& identity);
+	    virtual void id_res_hook(const basic_openid_message& om,const basic_openid_message& sp);
 	    /**
 	     * Implementation of server's checkid_hook
 	     */
-	    virtual void checkid_hook(const params_t& pin,params_t& pout);
+	    virtual void checkid_hook(const basic_openid_message& inm,basic_openid_message& oum);
 
 	    /**
 	     * Check and see if we have value for some particular field.
@@ -195,7 +195,7 @@ namespace opkele {
 	     * @param pout output request parameters without "openid." prefix.
 	     * @see checkid_hook(const params_t&,params_t&)
 	     */
-	    virtual void setup_response(const params_t& pin,params_t& pout);
+	    virtual void setup_response(const basic_openid_message& inm,basic_openid_message& oum);
 
     };
 }

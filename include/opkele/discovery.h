@@ -3,13 +3,87 @@
 
 #include <string>
 #include <opkele/types.h>
+#include <opkele/basic_rp.h>
 
 namespace opkele {
     using std::string;
 
-    struct idiscovery_t;
+    namespace xrd {
 
-    void idiscover(idiscovery_t& result,const string& identity);
+	struct priority_compare {
+	    inline bool operator()(long a,long b) const {
+		return (a<0) ? false : (b<0) ? true : (a<b);
+	    }
+	};
+
+	template <typename _DT>
+	    class priority_map : public multimap<long,_DT,priority_compare> {
+		typedef multimap<long,_DT,priority_compare> map_type;
+		public:
+
+		    inline _DT& add(long priority,const _DT& d) {
+			return insert(typename map_type::value_type(priority,d))->second;
+		    }
+
+		    bool has_value(const _DT& d) const {
+			for(typename map_type::const_iterator i=this->begin();i!=this->end();++i)
+			    if(i->second==d) return true;
+			return false;
+		    }
+	    };
+
+	typedef priority_map<string> canonical_ids_t;
+	typedef priority_map<string> local_ids_t;
+	typedef set<string> types_t;
+	typedef priority_map<string> uris_t;
+
+	class service_t {
+	    public:
+		types_t types;
+		uris_t uris;
+		local_ids_t local_ids;
+		string provider_id;
+
+		void clear() {
+		    types.clear();
+		    uris.clear(); local_ids.clear();
+		    provider_id.clear();
+		}
+	};
+	typedef priority_map<service_t> services_t;
+
+	class XRD_t {
+	    public:
+		time_t expires;
+
+		canonical_ids_t canonical_ids;
+		local_ids_t local_ids;
+		services_t services;
+		string provider_id;
+
+		void clear() {
+		    expires = 0;
+		    canonical_ids.clear(); local_ids.clear();
+		    services.clear();
+		    provider_id.clear();
+		}
+		bool empty() const {
+		    return
+			canonical_ids.empty()
+			&& local_ids.empty()
+			&& services.empty();
+		}
+
+	};
+
+    }
+
+    typedef util::output_iterator_proxy<openid_endpoint_t>
+	endpoint_discovery_iterator;
+
+    string idiscover(
+	    endpoint_discovery_iterator oi,
+	    const string& identity);
 
     struct idiscovery_t {
 	bool xri_identity;
@@ -18,22 +92,12 @@ namespace opkele {
 	xrd::XRD_t xrd;
 
 	idiscovery_t() { }
-	idiscovery_t(const string& i) {
-	    idiscover(*this,i);
-	}
-	idiscovery_t(const char *i) {
-	    idiscover(*this,i);
-	}
 
 	void clear() {
 	    normalized_id.clear(); canonicalized_id.clear();
 	    xrd.clear();
 	}
 
-	idiscovery_t& operator=(const string& i) {
-	    idiscover(*this,i); return *this; }
-	idiscovery_t& operator=(const char *i) {
-	    idiscover(*this,i); return *this; }
     };
 }
 
