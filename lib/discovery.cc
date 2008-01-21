@@ -59,6 +59,15 @@ namespace opkele {
 	    }
 	return -1;
     }
+    /* TODO: ideally all attributes should be
+     * retrieved in one run */
+    static const char *element_attr(const XML_Char **a, const char *at) {
+	for(;*a;++a)
+	    if(!strcasecmp(*(a++),at)) {
+		return *a;
+	    }
+	return 0;
+    }
 
     class idigger_t : public util::curl_t, public util::expat_t {
 	public:
@@ -118,8 +127,7 @@ namespace opkele {
 		if(strchr(i_leaders,id[0])) {
 		    /* TODO: further normalize xri identity? Like folding case
 		     * or whatever... */
-		    rv = idis.normalized_id = id;
-		    idis.xri_identity = true;
+		    rv = id;
 		    set<string> cids;
 		    for(const struct service_type_t *st=service_types;
 			    st<&service_types[sizeof(service_types)/sizeof(*service_types)];++st) {
@@ -155,6 +163,7 @@ namespace opkele {
 					" on canonical id", status_code);
 			}
 			idis.canonicalized_id = cid;
+			idis.normalized_id = rv; idis.xri_identity = true;
 			queue_endpoints(oi,idis,st);
 		    }
 		}else{
@@ -195,7 +204,6 @@ namespace opkele {
 	    }
 
 	    void discover_at(idiscovery_t& idis,const string& url,int xm) {
-		DOUT_("Doing discovery at " << url);
 		CURLcode r = easy_setopt(CURLOPT_URL,url.c_str());
 		if(r)
 		    throw exception_curl(OPKELE_CP_ "failed to set culry urlie",r);
@@ -390,7 +398,9 @@ namespace opkele {
 				cdata = &cdata_buf;
 			    }else if(is_qelement(n,NSURI_XRD "\tURI")) {
 				assert(xrd); assert(xrd_service);
-				cdata = &(xrd_service->uris.add(element_priority(a),string()));
+				const char *append = element_attr(a,"append");
+				xrd::uri_t& uri = xrd_service->uris.add(element_priority(a),xrd::uri_t("",append?append:""));
+				cdata = &uri.uri;
 			    }else if(is_qelement(n,NSURI_XRD "\tLocalID")
 				    || is_qelement(n,NSURI_OPENID10 "\tDelegate") ) {
 				assert(xrd); assert(xrd_service);
@@ -484,11 +494,11 @@ namespace opkele {
 			    ns = s;
 			}
 			if(rel=="openid.server")
-			    html_openid1.uris.add(-1,href);
+			    html_openid1.uris.add(-1,xrd::uri_t(href));
 			else if(rel=="openid.delegate")
 			    html_openid1.local_ids.add(-1,href);
 			else if(rel=="openid2.provider")
-			    html_openid2.uris.add(-1,href);
+			    html_openid2.uris.add(-1,xrd::uri_t(href));
 			else if(rel=="openid2.local_id")
 			    html_openid2.local_ids.add(-1,href);
 		    }
@@ -507,7 +517,12 @@ namespace opkele {
 		    const xrd::service_t svc = isvc->second;
 		    if(svc.types.find(st->uri)==svc.types.end()) continue;
 		    for(xrd::uris_t::const_iterator iu=svc.uris.begin();iu!=svc.uris.end();++iu) {
-			ep.uri = iu->second;
+			ep.uri = iu->second.uri;
+			if(id.xri_identity) {
+			    if(iu->second.append=="qxri") {
+				ep.uri += id.normalized_id;
+			    } /* TODO: else handle other append attribute values */
+			}
 			if(st->forceid) {
 			    ep.local_id = ep.claimed_id = st->forceid;
 			    *(oi++) = ep;

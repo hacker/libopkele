@@ -35,7 +35,15 @@ namespace opkele {
 	typedef priority_map<string> canonical_ids_t;
 	typedef priority_map<string> local_ids_t;
 	typedef set<string> types_t;
-	typedef priority_map<string> uris_t;
+	struct uri_t {
+	    string uri;
+	    string append;
+
+	    uri_t() { }
+	    uri_t(const string& u) : uri(u) { }
+	    uri_t(const string& u,const string& a) : uri(u), append(a) { }
+	};
+	typedef priority_map<uri_t> uris_t;
 
 	class service_t {
 	    public:
