@@ -13,7 +13,8 @@ namespace opkele {
 	    secret_t& secret, const basic_openid_message& om,
 	    const char *exp_assoc, const char *exp_sess,
 	    util::dh_t& dh,
-	    size_t d_len, unsigned char *(*d_fun)(const unsigned char*,size_t,unsigned char*) ) try {
+	    size_t d_len, unsigned char *(*d_fun)(const unsigned char*,size_t,unsigned char*),
+	    size_t exp_s_len) try {
 	if(om.get_field("assoc_type")!=exp_assoc || om.get_field("session_type")!=exp_sess)
 	    throw bad_input(OPKELE_CP_ "Unexpected associate response");
 	util::bignum_t s_pub = util::base64_to_bignum(om.get_field("dh_server_public"));
@@ -26,6 +27,8 @@ namespace opkele {
 	    (*(--ckptr))=0; ++cklen; }
 	unsigned char key_digest[d_len];
 	secret.enxor_from_base64((*d_fun)(ckptr,cklen,key_digest),om.get_field("enc_mac_key"));
+	if(secret.size()!=exp_s_len)
+	    throw bad_input(OPKELE_CP_ "Secret length isn't consistent with association type");
     }catch(opkele::failed_lookup& ofl) {
 	throw bad_input(OPKELE_CP_ "Incoherent response from OP");
     } OPKELE_RETHROW
@@ -73,7 +76,7 @@ namespace opkele {
 	    direct_request(res,req,OP);
 	    dh_get_secret( secret, res,
 		    "HMAC-SHA256", "DH-SHA256",
-		    dh, SHA256_DIGEST_LENGTH, SHA256 );
+		    dh, SHA256_DIGEST_LENGTH, SHA256, SHA256_DIGEST_LENGTH );
 	    expires_in = util::string_to_long(res.get_field("expires_in"));
 	}catch(exception& e) {
 	    try {
@@ -82,7 +85,7 @@ namespace opkele {
 		direct_request(res,req,OP);
 		dh_get_secret( secret, res,
 			"HMAC-SHA1", "DH-SHA1",
-			dh, SHA_DIGEST_LENGTH, SHA1 );
+			dh, SHA_DIGEST_LENGTH, SHA1, SHA_DIGEST_LENGTH );
 		expires_in = util::string_to_long(res.get_field("expires_in"));
 	    }catch(bad_input& e) {
 		throw dumb_RP(OPKELE_CP_ "OP failed to supply an association");
