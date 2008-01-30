@@ -30,6 +30,7 @@ namespace opkele {
      * the OpenID operation mode
      */
     typedef enum _mode_t {
+	mode_unknown = 0,
 	mode_associate,
 	mode_checkid_immediate,
 	mode_checkid_setup,
@@ -145,6 +146,7 @@ namespace opkele {
 	    virtual void reset_field(const string& n);
 
 	    virtual void from_keyvalues(const string& kv);
+	    virtual void to_keyvalues(ostream& o) const;
 
 	    void add_to_signed(const string& fields);
 	    string find_ns(const string& uri,const char *pfx) const;
