@@ -278,28 +278,11 @@ namespace opkele {
 	if(ext) ext->id_res_hook(om,signeds);
     }
 
-    class check_auth_message_proxy : public basic_openid_message {
-	public:
-	    const basic_openid_message& x;
-
-	    check_auth_message_proxy(const basic_openid_message& xx) : x(xx) { }
-
-	    bool has_field(const string& n) const { return x.has_field(n); }
-	    const string& get_field(const string& n) const {
-		static const string checkauthmode="check_authentication";
-		return (n=="mode")?checkauthmode:x.get_field(n); }
-	    bool has_ns(const string& uri) const {return x.has_ns(uri); }
-	    string get_ns(const string& uri) const { return x.get_ns(uri); }
-	    fields_iterator fields_begin() const {
-		return x.fields_begin(); }
-	    fields_iterator fields_end() const {
-		return x.fields_end(); }
-    };
-
     void basic_RP::check_authentication(const string& OP,
 	    const basic_openid_message& om){
 	openid_message_t res;
-	direct_request(res,check_auth_message_proxy(om),OP);
+	static const string checkauthmode = "check_authentication";
+	direct_request(res,util::change_mode_message_proxy(om,checkauthmode),OP);
 	if(res.has_field("is_valid")) {
 	    if(res.get_field("is_valid")=="true") {
 		if(res.has_field("invalidate_handle"))

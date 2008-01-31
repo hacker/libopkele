@@ -144,6 +144,24 @@ namespace opkele {
 
 	string base64_signature(const assoc_t& assoc,const basic_openid_message& om);
 
+	class change_mode_message_proxy : public basic_openid_message {
+	    public:
+		const basic_openid_message& x;
+		const string& mode;
+
+		change_mode_message_proxy(const basic_openid_message& xx,const string& m) : x(xx), mode(m) { }
+
+		bool has_field(const string& n) const { return x.has_field(n); }
+		const string& get_field(const string& n) const {
+		    return (n=="mode")?mode:x.get_field(n); }
+		bool has_ns(const string& uri) const {return x.has_ns(uri); }
+		string get_ns(const string& uri) const { return x.get_ns(uri); }
+		fields_iterator fields_begin() const {
+		    return x.fields_begin(); }
+		fields_iterator fields_end() const {
+		    return x.fields_end(); }
+	};
+
     }
 
 }
