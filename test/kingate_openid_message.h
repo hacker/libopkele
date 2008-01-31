@@ -90,8 +90,9 @@ class kingate_openid_message_t : public opkele::basic_openid_message {
 
 	bool has_field(const string& n) const {
 	    return gw.has_param("openid."+n); }
-	const string& get_field(const string& n) const {
-	    return gw.get_param("openid."+n); }
+	const string& get_field(const string& n) const try {
+	    return gw.get_param("openid."+n); }catch(kingate::exception_notfound& nf) {
+		throw opkele::failed_lookup(OPKELE_CP_ nf.what()); }
 
 	fields_iterator fields_begin() const {
 	    return
