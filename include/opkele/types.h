@@ -148,6 +148,8 @@ namespace opkele {
 	    virtual void from_keyvalues(const string& kv);
 	    virtual void to_keyvalues(ostream& o) const;
 
+	    virtual void to_htmlhiddens(ostream& o) const;
+
 	    void add_to_signed(const string& fields);
 	    string find_ns(const string& uri,const char *pfx) const;
 	    string allocate_ns(const string& uri,const char *pfx);
