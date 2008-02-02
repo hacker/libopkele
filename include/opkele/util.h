@@ -145,6 +145,14 @@ namespace opkele {
 	 */
 	string rfc_3986_normalize_uri(const string& uri);
 
+	/**
+	 * Match URI against realm
+	 * @param uri URI to match
+	 * @param realm realm to match against
+	 * @return true if URI matches realm
+	 */
+	bool uri_matches_realm(const string& uri,const string& realm);
+
 	string& strip_uri_fragment_part(string& uri);
 
 	string abi_demangle(const char* mn);

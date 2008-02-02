@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <stack>
+#include <algorithm>
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
@@ -349,6 +350,35 @@ namespace opkele {
 		}
 	    }
 	    return u;
+	}
+
+	bool uri_matches_realm(const string& uri,const string& realm) {
+	    string nrealm = opkele::util::rfc_3986_normalize_uri(realm);
+	    string nu = opkele::util::rfc_3986_normalize_uri(uri);
+	    string::size_type pr = nrealm.find("://");
+	    string::size_type pu = nu.find("://");
+	    assert(!(pr==string::npos || pu==string::npos));
+	    pr += sizeof("://")-1;
+	    pu += sizeof("://")-1;
+	    if(!strncmp(nrealm.c_str()+pr,"*.",2)) {
+		pr = nrealm.find('.',pr);
+		pu = nu.find('.',pu);
+		assert(pr!=string::npos);
+		if(pu==string::npos)
+		    return false;
+		// TODO: check for overgeneralized realm
+	    }
+	    string::size_type lr = nrealm.length();
+	    string::size_type lu = nu.length();
+	    if( (lu-pu) < (lr-pr) )
+		return false;
+	    pair<const char*,const char*> mp = mismatch(
+		    nrealm.c_str()+pr,nrealm.c_str()+lr,
+		    nu.c_str()+pu);
+	    if( (*(mp.first-1))!='/'
+		    && !strchr("/?#",*mp.second) )
+		return false;
+	    return true;
 	}
 
 	string abi_demangle(const char *mn) {
