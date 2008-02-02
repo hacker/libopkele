@@ -1,5 +1,6 @@
 #include <time.h>
 #include <cassert>
+#include <algorithm>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
 #include <opkele/data.h>
@@ -9,6 +10,8 @@
 #include <opkele/uris.h>
 
 namespace opkele {
+    using std::pair;
+    using std::mismatch;
 
     void basic_op::reset_vars() {
 	assoc.reset();
@@ -315,6 +318,39 @@ namespace opkele {
     }catch(failed_check_authentication& ) {
 	oum.set_field("is_valid","false");
 	return oum;
+    }
+
+    void basic_op::verify_return_to() {
+	string nrealm = opkele::util::rfc_3986_normalize_uri(realm);
+	if(nrealm.find('#')!=string::npos)
+	    throw opkele::bad_realm(OPKELE_CP_ "authentication realm contains URI fragment");
+	string nrt = opkele::util::rfc_3986_normalize_uri(return_to);
+	string::size_type pr = nrealm.find("://");
+	string::size_type prt = nrt.find("://");
+	assert(!(pr==string::npos || prt==string::npos));
+	pr += sizeof("://")-1;
+	prt += sizeof("://")-1;
+	if(!strncmp(nrealm.c_str()+pr,"*.",2)) {
+	    pr = nrealm.find('.',pr);
+	    prt = nrt.find('.',prt);
+	    assert(pr!=string::npos);
+	    if(prt==string::npos)
+		throw bad_return_to(
+			OPKELE_CP_ "return_to URL doesn't match realm");
+	    // TODO: check for overgeneralized realm
+	}
+	string::size_type lr = nrealm.length();
+	string::size_type lrt = nrt.length();
+	if( (lrt-prt) < (lr-pr) )
+	    throw bad_return_to(
+		    OPKELE_CP_ "return_to URL doesn't match realm");
+	pair<const char*,const char*> mp = mismatch(
+		nrealm.c_str()+pr,nrealm.c_str()+lr,
+		nrt.c_str()+prt);
+	if( (*(mp.first-1))!='/'
+		&& !strchr("/?#",*mp.second) )
+	    throw bad_return_to(
+		    OPKELE_CP_ "return_to URL doesn't match realm");
     }
 
 }

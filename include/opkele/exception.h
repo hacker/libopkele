@@ -357,6 +357,15 @@ namespace opkele {
 		: exception(OPKELE_E_CONS) { }
     };
 
+    /**
+     * thrown if return_to URL doesn't match realm
+     */
+    class bad_return_to : public exception {
+	public:
+	    bad_return_to(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
 }
 
 #endif /* __OPKELE_EXCEPTION_H */
