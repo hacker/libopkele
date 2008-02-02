@@ -100,6 +100,13 @@ namespace opkele {
 	string url_encode(const string& str);
 
 	/**
+	 * Make string suitable for using as x(ht)ml attribute.
+	 * @param str string to escape
+	 * @return escaped string
+	 */
+	string attr_escape(const string& str);
+
+	/**
 	 * Convert number to string
 	 * @param l number
 	 * @return string representation

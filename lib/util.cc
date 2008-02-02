@@ -161,6 +161,25 @@ namespace opkele {
 	    return rv;
 	}
 
+	string attr_escape(const string& str) {
+	    static const char *unsafechars = "<>&\n\"'";
+	    string rv;
+	    string::size_type p=0;
+	    while(true) {
+		string::size_type us = str.find_first_of(unsafechars,p);
+		if(us==string::npos) {
+		    if(p!=str.length())
+			rv.append(str,p,str.length()-p);
+		    return rv;
+		}
+		rv.append(str,p,us-p);
+		rv += "&#";
+		rv += long_to_string((long)str[us]);
+		rv += ';';
+		p = us+1;
+	    }
+	}
+
 	string long_to_string(long l) {
 	    char rv[32];
 	    int r=snprintf(rv,sizeof(rv),"%ld",l);
