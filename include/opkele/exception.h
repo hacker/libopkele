@@ -330,6 +330,33 @@ namespace opkele {
 		: exception(OPKELE_E_CONS) { }
     };
 
+    /**
+     * thrown while processing OpenID request in OP. Signifies invalid realm
+     */
+    class bad_realm : public exception {
+	public:
+	    bad_realm(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
+    /**
+     * thrown when attempting to retrieve return_to of one-way request
+     */
+    class no_return_to : public exception {
+	public:
+	    no_return_to(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
+    /**
+     * thrown when querying identity of non-identity related request
+     */
+    class non_identity : public exception {
+	public:
+	    non_identity(OPKELE_E_PARS)
+		: exception(OPKELE_E_CONS) { }
+    };
+
 }
 
 #endif /* __OPKELE_EXCEPTION_H */

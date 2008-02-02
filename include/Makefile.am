@@ -19,6 +19,7 @@ nobase_include_HEADERS = \
 	opkele/basic_rp.h \
 	opkele/prequeue_rp.h \
 	opkele/iterator.h \
+	opkele/basic_op.h \
 	${NODIST_HEADERS_}
 
 noinst_HEADERS = \

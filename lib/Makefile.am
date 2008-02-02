@@ -29,6 +29,7 @@ libopkele_la_SOURCES = \
 		       discovery.cc \
 		       basic_rp.cc \
 		       prequeue_rp.cc \
-		       openid_message.cc
+		       openid_message.cc \
+		       basic_op.cc
 libopkele_la_LDFLAGS = \
 	-version-info 2:0:0
