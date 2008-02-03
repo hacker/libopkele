@@ -6,6 +6,7 @@
  * @brief various types declarations
  */
 
+#include <cstring>
 #include <ostream>
 #include <vector>
 #include <string>
@@ -204,6 +205,23 @@ namespace opkele {
 
 	    string append_query(const string& url,const char *prefix="openid.") const;
 
+    };
+
+    struct openid_endpoint_t {
+	string uri;
+	string claimed_id;
+	string local_id;
+
+	openid_endpoint_t() { }
+	openid_endpoint_t(const string& u,const string& cid,const string& lid)
+	    : uri(u), claimed_id(cid), local_id(lid) { }
+
+	bool operator==(const openid_endpoint_t& x) const {
+	    return uri==x.uri && local_id==x.local_id; }
+	bool operator<(const openid_endpoint_t& x) const {
+	    int c;
+	    return (c=strcmp(uri.c_str(),x.uri.c_str()))
+		? (c<0) : (strcmp(local_id.c_str(),x.local_id.c_str())<0); }
     };
 
 }
