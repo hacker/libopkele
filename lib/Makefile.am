@@ -27,9 +27,8 @@ libopkele_la_SOURCES = \
 		       extension_chain.cc \
 		       curl.cc expat.cc \
 		       discovery.cc \
-		       basic_rp.cc \
-		       prequeue_rp.cc \
+		       basic_rp.cc prequeue_rp.cc \
 		       openid_message.cc \
-		       basic_op.cc
+		       basic_op.cc verify_op.cc
 libopkele_la_LDFLAGS = \
 	-version-info 2:0:0
