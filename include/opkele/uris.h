@@ -13,6 +13,7 @@
 #define STURI_OPENID11		"http://openid.net/signon/1.1"
 #define STURI_OPENID20		"http://specs.openid.net/auth/2.0/signon"
 #define STURI_OPENID20_OP	"http://specs.openid.net/auth/2.0/server"
+#define STURI_OPENID20_RT	"http://specs.openid.net/auth/2.0/return_to"
 
 #define IDURI_SELECT20		"http://specs.openid.net/auth/2.0/identifier_select"
 
