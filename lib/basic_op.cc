@@ -185,6 +185,7 @@ namespace opkele {
 		if(openid2)
 		    throw bad_input(OPKELE_CP_
 			    "claimed_id and identity must be either both present or both absent");
+		claimed_id = identity;
 	    }
 	}catch(failed_lookup&) {
 	    if(openid2 && inm.has_field("claimed_id"))
