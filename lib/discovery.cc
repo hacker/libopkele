@@ -28,7 +28,7 @@ namespace opkele {
     static const struct service_type_t {
 	const char *uri;
 	const char *forceid;
-    } service_types[] = {
+    } op_service_types[] = {
 	{ STURI_OPENID20_OP, IDURI_SELECT20 },
 	{ STURI_OPENID20, 0 },
 	{ STURI_OPENID11, 0 },
@@ -74,7 +74,8 @@ namespace opkele {
 	    string xri_proxy;
 
 	    enum {
-		xmode_html = 1, xmode_xrd = 2, xmode_cid = 4
+		xmode_html = 1, xmode_xrd = 2, xmode_cid = 4,
+		xmode_noredirs = 8
 	    };
 	    int xmode;
 
@@ -110,6 +111,20 @@ namespace opkele {
 		}
 	    ~idigger_t() throw() { }
 
+	    void yadiscover(endpoint_discovery_iterator oi,const string& yurl,const char **types,bool redirs) {
+		idiscovery_t idis;
+		idis.xri_identity = false;
+		discover_at(idis,yurl,xmode_html|xmode_xrd|(redirs?0:xmode_noredirs));
+		if(!xrds_location.empty()) {
+		    idis.clear();
+		    discover_at(idis,xrds_location,xmode_xrd);
+		}
+		idis.normalized_id = idis.canonicalized_id = yurl;
+		service_type_t st;
+		for(st.uri=*types;*types;st.uri=*(++types))
+		    queue_endpoints(oi,idis,&st);
+	    }
+
 	    string discover(endpoint_discovery_iterator& oi,const string& identity) {
 		string rv;
 		idiscovery_t idis;
@@ -129,8 +144,8 @@ namespace opkele {
 		     * or whatever... */
 		    rv = id;
 		    set<string> cids;
-		    for(const struct service_type_t *st=service_types;
-			    st<&service_types[sizeof(service_types)/sizeof(*service_types)];++st) {
+		    for(const struct service_type_t *st=op_service_types;
+			    st<&op_service_types[sizeof(op_service_types)/sizeof(*op_service_types)];++st) {
 			idis.clear();
 			discover_at( idis,
 				xri_proxy + util::url_encode(id)+
@@ -194,8 +209,8 @@ namespace opkele {
 			if(idis.xrd.empty())
 			    html2xrd(oi,idis);
 			else{
-			    for(const service_type_t *st=service_types;
-				    st<&service_types[sizeof(service_types)/sizeof(*service_types)];++st)
+			    for(const service_type_t *st=op_service_types;
+				    st<&op_service_types[sizeof(op_service_types)/sizeof(*op_service_types)];++st)
 				queue_endpoints(oi,idis,st);
 			}
 		    }
@@ -204,9 +219,11 @@ namespace opkele {
 	    }
 
 	    void discover_at(idiscovery_t& idis,const string& url,int xm) {
-		CURLcode r = easy_setopt(CURLOPT_URL,url.c_str());
+		CURLcode r = easy_setopt(CURLOPT_MAXREDIRS, (xm&xmode_noredirs)?0:5);
 		if(r)
-		    throw exception_curl(OPKELE_CP_ "failed to set culry urlie",r);
+		    throw exception_curl(OPKELE_CP_ "failed to set curly maxredirs option");
+		if( (r=easy_setopt(CURLOPT_URL,url.c_str())) )
+		    throw exception_curl(OPKELE_CP_ "failed to set curly urlie",r);
 
 		http_content_type.clear();
 		xmode = xm;
@@ -272,12 +289,12 @@ namespace opkele {
 		if(!html_openid2.uris.empty()) {
 		    html_openid2.types.insert(STURI_OPENID20);
 		    x.services.add(-1,html_openid2);
-		    queue_endpoints(oi,id,&service_types[st_index_2]);
+		    queue_endpoints(oi,id,&op_service_types[st_index_2]);
 		}
 		if(!html_openid1.uris.empty()) {
 		    html_openid1.types.insert(STURI_OPENID11);
 		    x.services.add(-1,html_openid1);
-		    queue_endpoints(oi,id,&service_types[st_index_1]);
+		    queue_endpoints(oi,id,&op_service_types[st_index_1]);
 		}
 	    }
 
@@ -547,6 +564,14 @@ namespace opkele {
     string idiscover(endpoint_discovery_iterator oi,const string& identity) {
 	idigger_t idigger;
 	return idigger.discover(oi,identity);
+    }
+
+    void yadiscover(endpoint_discovery_iterator oi,const string& yurl,const char **types,bool redirs) try {
+	idigger_t idigger;
+	idigger.yadiscover(oi,yurl,types,redirs);
+    }catch(exception_curl& ec) {
+	if(redirs || ec._error!=CURLE_TOO_MANY_REDIRECTS)
+	    throw;
     }
 
 }

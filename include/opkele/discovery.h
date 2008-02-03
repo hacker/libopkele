@@ -3,7 +3,6 @@
 
 #include <string>
 #include <opkele/types.h>
-#include <opkele/basic_rp.h>
 
 namespace opkele {
     using std::string;
@@ -92,6 +91,10 @@ namespace opkele {
     string idiscover(
 	    endpoint_discovery_iterator oi,
 	    const string& identity);
+    void yadiscover(
+	    endpoint_discovery_iterator oi,
+	    const string& yurl,
+	    const char **types, bool redirs=false);
 
     struct idiscovery_t {
 	bool xri_identity;
