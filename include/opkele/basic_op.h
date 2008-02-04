@@ -40,7 +40,8 @@ namespace opkele {
 		    const basic_openid_message& inm);
 
 	    void checkid_(const basic_openid_message& inm,extension_t *ext=0);
-	    basic_openid_message& id_res(basic_openid_message& om);
+	    basic_openid_message& id_res(basic_openid_message& om,
+		    extension_t *ext=0);
 	    basic_openid_message& cancel(basic_openid_message& om);
 	    basic_openid_message& error(basic_openid_message& om,
 		    const string& error,const string& contact,

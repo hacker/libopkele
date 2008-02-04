@@ -6,6 +6,7 @@
  * @brief extensions framework basics
  */
 
+#include <opkele/opkele-config.h>
 #include <opkele/types.h>
 
 namespace opkele {
@@ -19,39 +20,33 @@ namespace opkele {
 	    virtual ~extension_t() { }
 
 	    /**
-	     * hook called by consumer before submitting data to OpenID server.
-	     * It is supposed to manipulate parameters list.
-	     * @param p parameters about to be submitted to server
-	     * @param identity identity being verified. It may differ from the
-	     * one available in parameters list in case of delegation
-	     * @see consumer_t::checkid_
-	     * @see consumer_t::checkid_immediate
-	     * @see consumer_t::checkid_setup
+	     * hook called by RP before submitting the message to OP.
+	     * @param om openid message to be submit
 	     */
-	    virtual void checkid_hook(basic_openid_message& om);
-	    /**
-	     * hook called by consumer after identity information received from
-	     * OpenID server is verified.
-	     * @param p parameters received from server
-	     * @param sp signed parameters received from server with 'openid.'
-	     * leader stripped
-	     * @param identity identity confirmed. May differ from the one
-	     * available in parameters list in case of delegation. May also be
-	     * empty which means - extract one from parameters
-	     * @see consumer_t::id_res
-	     */
-	    virtual void id_res_hook(const basic_openid_message& om,const basic_openid_message& sp);
+	    virtual void rp_checkid_hook(basic_openid_message& om);
 
 	    /**
-	     * hook called by server before returning information to consumer.
-	     * The hook may manipulate output parameters. It is important to
-	     * note that modified pout["signed"] is used for signing response.
-	     * @param pin request parameters list with "openid." prefix
-	     * @param pout response parameters list without "openid." prefix
-	     * @see server_t::checkid_
-	     * @see server_t::checkid_immediate
-	     * @see server_t::checkid_setup
+	     * hook called by RP after verifying information received from OP.
+	     * @param om openid message received
+	     * @param sp signed part of the message
 	     */
+	    virtual void rp_id_res_hook(const basic_openid_message& om,
+		    const basic_openid_message& sp);
+
+	    /**
+	     * hook called by OP after parsing incoming message
+	     * @param inm message received from RP
+	     */
+	    virtual void op_checkid_hook(const basic_openid_message& inm);
+	    /**
+	     * hook called by OP before signing the reply to RP
+	     * @param oum message to be sent to RP
+	     */
+	    virtual void op_id_res_hook(basic_openid_message& oum);
+
+	    virtual void checkid_hook(basic_openid_message& om) OPKELE_DEPRECATE;
+	    virtual void id_res_hook(const basic_openid_message& om,
+		    const basic_openid_message& sp) OPKELE_DEPRECATE;
 	    virtual void checkid_hook(const basic_openid_message& inm,basic_openid_message& oum);
 
 	    /**

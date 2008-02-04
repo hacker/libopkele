@@ -28,7 +28,7 @@ namespace opkele {
 	return fd.fieldname==fn;
     }
 
-    void sreg_t::checkid_hook(basic_openid_message& om) {
+    void sreg_t::rp_checkid_hook(basic_openid_message& om) {
 	string fr, fo;
 	for(fields_iterator f=fields_BEGIN;f<fields_END;++f) {
 	    if(f->fieldbit&fields_required) {
@@ -46,7 +46,11 @@ namespace opkele {
 	if(!policy_url.empty()) om.set_field(pfx+".policy_url",policy_url);
     }
 
-    void sreg_t::id_res_hook(const basic_openid_message& om,const basic_openid_message& sp) {
+    void sreg_t::checkid_hook(basic_openid_message& om) {
+	rp_checkid_hook(om); }
+
+    void sreg_t::rp_id_res_hook(const basic_openid_message& om,
+	    const basic_openid_message& sp) {
 	clear();
 	string pfx;
 	try {
@@ -66,6 +70,10 @@ namespace opkele {
 	    response[f->fieldbit]=sp.get_field(fn);
 	}
     }
+
+    void sreg_t::id_res_hook(const basic_openid_message& om,
+	    const basic_openid_message& sp) {
+	rp_id_res_hook(om,sp); }
 
     const string& sreg_t::get_field(fieldbit_t fb) const {
 	response_t::const_iterator i = response.find(fb);
@@ -105,7 +113,7 @@ namespace opkele {
 	return rv;
     }
 
-    void sreg_t::checkid_hook(const basic_openid_message& inm,basic_openid_message& oum) {
+    void sreg_t::op_checkid_hook(const basic_openid_message& inm) {
 	string ins = inm.find_ns(OIURI_SREG11,"sreg");
 	fields_optional = 0; fields_required = 0; policy_url.erase();
 	fields_response = 0;
@@ -120,7 +128,9 @@ namespace opkele {
 	try {
 	    policy_url = inm.get_field(ins+".policy_url");
 	}catch(failed_lookup&) { }
-        setup_response(inm,oum);
+    }
+
+    void sreg_t::op_id_res_hook(basic_openid_message& oum) {
 	string ons = oum.allocate_ns(OIURI_SREG11,"sreg");
 	fields_response &= has_fields;
 	string signeds = "ns."+ons;
@@ -134,7 +144,17 @@ namespace opkele {
 	oum.add_to_signed(signeds);
     }
 
+    void sreg_t::checkid_hook(const basic_openid_message& inm,
+	    basic_openid_message& oum) {
+	op_checkid_hook(inm);
+        setup_response(inm,oum);
+	op_id_res_hook(oum);
+    }
+
     void sreg_t::setup_response(const basic_openid_message& /* inm */,basic_openid_message& /* oum */) {
+	setup_response();
+    }
+    void sreg_t::setup_response() {
 	fields_response = (fields_required|fields_optional)&has_fields;
     }
 }

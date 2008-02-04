@@ -14,6 +14,7 @@ using namespace std;
 #include <opkele/association.h>
 #include <opkele/debug.h>
 #include <opkele/verify_op.h>
+#include <opkele/sreg.h>
 
 #include "sqlite.h"
 #include "kingate_openid_message.h"
@@ -269,7 +270,8 @@ int main(int argc,char *argv[]) {
 	    example_op_t OP(gw);
 	    if(gw.get_param("hts_id")!=OP.htc.get_value())
 		throw opkele::exception(OPKELE_CP_ "toying around, huh?");
-	    OP.checkid_(inm,0);
+	    opkele::sreg_t sreg;
+	    OP.checkid_(inm,sreg);
 	    OP.cookie_header(cout);
 	    opkele::openid_message_t om;
 	    if(op=="id_res") {
@@ -278,9 +280,13 @@ int main(int argc,char *argv[]) {
 		if(OP.is_id_select()) {
 		    OP.select_identity( get_self_url(gw), get_self_url(gw) );
 		}
+		sreg.set_field(opkele::sreg_t::field_nickname,"anonymous");
+		sreg.set_field(opkele::sreg_t::field_fullname,"Ann O'Nymus");
+		sreg.set_field(opkele::sreg_t::field_gender,"F");
+		sreg.setup_response();
 		cout <<
 		    "Status: 302 Going back to RP with id_res\n"
-		    "Location: " << OP.id_res(om).append_query(OP.get_return_to())
+		    "Location: " << OP.id_res(om,sreg).append_query(OP.get_return_to())
 		    << "\n\n";
 	    }else{
 		cout <<

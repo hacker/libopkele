@@ -193,9 +193,11 @@ namespace opkele {
 		    "claimed_id and identity must be either both present or both absent");
 	}
 	verify_return_to();
+	if(ext) ext->op_checkid_hook(inm);
     }
 
-    basic_openid_message& basic_op::id_res(basic_openid_message& om) {
+    basic_openid_message& basic_op::id_res(basic_openid_message& om,
+	    extension_t *ext) {
 	assert(assoc);
 	assert(!return_to.empty());
 	assert(!is_id_select());
@@ -224,6 +226,7 @@ namespace opkele {
 	}
 	om.set_field("assoc_handle",assoc->handle());
 	om.add_to_signed(ats);
+	if(ext) ext->op_id_res_hook(om);
 	om.set_field("sig",util::base64_signature(assoc,om));
 	return om;
     }

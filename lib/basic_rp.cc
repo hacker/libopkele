@@ -129,7 +129,7 @@ namespace opkele {
 		rv.set_field("assoc_handle",associate(ep.uri)->handle());
 	    }catch(dumb_RP& drp) { }
 	} OPKELE_RETHROW
-	if(ext) ext->checkid_hook(rv);
+	if(ext) ext->rp_checkid_hook(rv);
 	return rv;
     }
 
@@ -275,7 +275,7 @@ namespace opkele {
 	    }
 
 	}
-	if(ext) ext->id_res_hook(om,signeds);
+	if(ext) ext->rp_id_res_hook(om,signeds);
     }
 
     void basic_RP::check_authentication(const string& OP,

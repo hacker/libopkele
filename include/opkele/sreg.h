@@ -135,18 +135,17 @@ namespace opkele {
 	    sreg_t(long fr=fields_NONE,long fo=fields_NONE,const string& pu="")
 		: fields_required(fr), fields_optional(fo), policy_url(pu), has_fields(0) { }
 
-	    /**
-	     * Implementation of consumer's checkid hook
-	     */
+	    virtual void rp_checkid_hook(basic_openid_message& om);
+	    virtual void rp_id_res_hook(const basic_openid_message& om,
+		    const basic_openid_message& sp);
+	    virtual void op_checkid_hook(const basic_openid_message& inm);
+	    virtual void op_id_res_hook(basic_openid_message& oum);
+
 	    virtual void checkid_hook(basic_openid_message& om);
-	    /**
-	     * Implementation of consumer's id_res hook
-	     */
-	    virtual void id_res_hook(const basic_openid_message& om,const basic_openid_message& sp);
-	    /**
-	     * Implementation of server's checkid_hook
-	     */
-	    virtual void checkid_hook(const basic_openid_message& inm,basic_openid_message& oum);
+	    virtual void id_res_hook(const basic_openid_message& om,
+		    const basic_openid_message& sp);
+	    virtual void checkid_hook(const basic_openid_message& inm,
+		    basic_openid_message& oum);
 
 	    /**
 	     * Check and see if we have value for some particular field.
@@ -191,11 +190,13 @@ namespace opkele {
 	     * as we have. The function is supposed to set the data and
 	     * fields_response.
 	     * @see fields_response
-	     * @param pin input request parameters with "openid." prefix
-	     * @param pout output request parameters without "openid." prefix.
-	     * @see checkid_hook(const params_t&,params_t&)
+	     * @param inm incoming openid message
+	     * @param oum outgoing openid message
 	     */
-	    virtual void setup_response(const basic_openid_message& inm,basic_openid_message& oum);
+	    virtual void setup_response(const basic_openid_message& inm,
+		    basic_openid_message& oum);
+
+	    virtual void setup_response();
 
     };
 }
