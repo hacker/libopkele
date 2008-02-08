@@ -10,30 +10,103 @@ namespace opkele {
 
     class basic_OP {
 	public:
+	    /**
+	     * The request mode for the request being processed
+	     */
 	    mode_t mode;
+	    /**
+	     * association used in transaction. reset in case of dumb operation
+	     */
 	    assoc_t assoc;
+	    /**
+	     * true if the request is openid2 request
+	     */
 	    bool openid2;
+	    /**
+	     * The return_to RP endpoint
+	     */
 	    string return_to;
+	    /**
+	     * The realm we authenticate for
+	     */
 	    string realm;
+	    /**
+	     * Claimed identifier
+	     */
 	    string claimed_id;
+	    /**
+	     * The OP-Local identifier
+	     */
 	    string identity;
+	    /**
+	     * The invalidate handle for the reply request
+	     */
 	    string invalidate_handle;
 
 	    void reset_vars();
 
+	    /**
+	     * @name Request information access
+	     * Setting and retrieval of the information pertaining to the request being processed
+	     * @{
+	     */
+	    /**
+	     * Check if the RP expects us to get back to them.
+	     * @return true if RP supplied return_to URL
+	     */
 	    bool has_return_to() const;
+	    /**
+	     * Find out where the RP is waiting for us.
+	     * @return the return_to URL supplied
+	     * @throw no_return_to if no return_to is supplied with the request
+	     */
 	    const string& get_return_to() const;
 
+	    /**
+	     * Find out what realm we are authenticating user for
+	     * @return the realm
+	     */
 	    const string& get_realm() const;
 
+	    /**
+	     * Check if request is about identity
+	     * @return true if so
+	     */
 	    bool has_identity() const;
+	    /**
+	     * Get claimed identifier supplied with the request
+	     * @return claimed identifier
+	     * @throw non_identity if request is not about identity
+	     */
 	    const string& get_claimed_id() const;
+	    /**
+	     * Get the identity (OP-Local identifier) being confirmed
+	     * @return identity
+	     * @throw non_identity if request is not about identity
+	     */
 	    const string& get_identity() const;
 
+	    /**
+	     * Is identifier supposed to be selected on our side?
+	     * @return true if identity is a special identifier select URI
+	     */
 	    bool is_id_select() const;
 
-	    void select_identity(const string& c,const string& i);
-	    void set_claimed_id(const string& c);
+	    /**
+	     * Select the identity for identifier select request
+	     * @param cid claimed identifier
+	     * @param lid local identifier
+	     */
+	    void select_identity(const string& cid,const string& lid);
+	    /**
+	     * Set claimed identifier (for instance if it's supposed to have
+	     * fragment part)
+	     * @param cid claimed identifier
+	     */
+	    void set_claimed_id(const string& cid);
+	    /**
+	     * @}
+	     */
 
 	    /** @name OpenID operations
 	     * @{
