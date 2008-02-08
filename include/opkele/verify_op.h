@@ -5,7 +5,7 @@
 
 namespace opkele {
 
-    class verify_op : public basic_op {
+    class verify_op : public basic_OP {
 	public:
 
 	void verify_return_to();

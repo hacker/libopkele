@@ -33,7 +33,7 @@ namespace opkele {
     };
 
     void verify_op::verify_return_to() {
-	basic_op::verify_return_to();
+	basic_OP::verify_return_to();
 	try {
 	    RP_verifier rpv(return_to);
 	    string drealm = realm;

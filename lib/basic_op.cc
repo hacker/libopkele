@@ -10,55 +10,55 @@
 
 namespace opkele {
 
-    void basic_op::reset_vars() {
+    void basic_OP::reset_vars() {
 	assoc.reset();
 	return_to.clear(); realm.clear();
 	claimed_id.clear(); identity.clear();
 	invalidate_handle.clear();
     }
 
-    bool basic_op::has_return_to() const {
+    bool basic_OP::has_return_to() const {
 	return !return_to.empty();
     }
-    const string& basic_op::get_return_to() const {
+    const string& basic_OP::get_return_to() const {
 	if(return_to.empty())
 	    throw no_return_to(OPKELE_CP_ "No return_to URL provided with request");
 	return return_to;
     }
 
-    const string& basic_op::get_realm() const {
+    const string& basic_OP::get_realm() const {
 	assert(!realm.empty());
 	return realm;
     }
 
-    bool basic_op::has_identity() const {
+    bool basic_OP::has_identity() const {
 	return !identity.empty();
     }
-    const string& basic_op::get_claimed_id() const {
+    const string& basic_OP::get_claimed_id() const {
 	if(claimed_id.empty())
 	    throw non_identity(OPKELE_CP_ "attempting to retrieve claimed_id of non-identity related request");
 	assert(!identity.empty());
 	return claimed_id;
     }
-    const string& basic_op::get_identity() const {
+    const string& basic_OP::get_identity() const {
 	if(identity.empty())
 	    throw non_identity(OPKELE_CP_ "attempting to retrieve identity of non-identity related request");
 	assert(!claimed_id.empty());
 	return identity;
     }
 
-    bool basic_op::is_id_select() const {
+    bool basic_OP::is_id_select() const {
 	return identity==IDURI_SELECT20;
     }
 
-    void basic_op::select_identity(const string& c,const string& i) {
+    void basic_OP::select_identity(const string& c,const string& i) {
 	claimed_id = c; identity = i;
     }
-    void basic_op::set_claimed_id(const string& c) {
+    void basic_OP::set_claimed_id(const string& c) {
 	claimed_id = c;
     }
 
-    basic_openid_message& basic_op::associate(
+    basic_openid_message& basic_OP::associate(
 	    basic_openid_message& oum,
 	    const basic_openid_message& inm) try {
 	assert(inm.get_field("mode")=="associate");
@@ -131,7 +131,7 @@ namespace opkele {
 	return oum;
     }
 
-    void basic_op::checkid_(const basic_openid_message& inm,
+    void basic_OP::checkid_(const basic_openid_message& inm,
 	    extension_t *ext) {
 	reset_vars();
 	string mode = inm.get_field("mode");
@@ -193,7 +193,7 @@ namespace opkele {
 	if(ext) ext->op_checkid_hook(inm);
     }
 
-    basic_openid_message& basic_op::id_res(basic_openid_message& om,
+    basic_openid_message& basic_OP::id_res(basic_openid_message& om,
 	    extension_t *ext) {
 	assert(!return_to.empty());
 	assert(!is_id_select());
@@ -218,7 +218,7 @@ namespace opkele {
 	}
 	om.set_field("return_to",return_to);
 	string nonce = w3timestr;
-	om.set_field("response_nonce",alloc_nonce(nonce,assoc->stateless()));
+	om.set_field("response_nonce",alloc_nonce(nonce));
 	if(!invalidate_handle.empty()) {
 	    om.set_field("invalidate_handle",invalidate_handle);
 	    ats += ",invalidate_handle";
@@ -230,14 +230,14 @@ namespace opkele {
 	return om;
     }
 
-    basic_openid_message& basic_op::cancel(basic_openid_message& om) {
+    basic_openid_message& basic_OP::cancel(basic_openid_message& om) {
 	assert(!return_to.empty());
 	om.set_field("ns",OIURI_OPENID20);
 	om.set_field("mode","cancel");
 	return om;
     }
 
-    basic_openid_message& basic_op::error(basic_openid_message& om,
+    basic_openid_message& basic_OP::error(basic_openid_message& om,
 	    const string& error,const string& contact,
 	    const string& reference ) {
 	assert(!return_to.empty());
@@ -249,7 +249,7 @@ namespace opkele {
 	return om;
     }
 
-    basic_openid_message& basic_op::setup_needed(
+    basic_openid_message& basic_OP::setup_needed(
 	    basic_openid_message& oum,const basic_openid_message& inm) {
 	assert(mode==mode_checkid_immediate);
 	assert(!return_to.empty());
@@ -266,7 +266,7 @@ namespace opkele {
 	return oum;
     }
 
-    basic_openid_message& basic_op::check_authentication(
+    basic_openid_message& basic_OP::check_authentication(
 	    basic_openid_message& oum,
 	    const basic_openid_message& inm) try {
 	assert(inm.get_field("mode")=="check_authentication");
@@ -320,7 +320,7 @@ namespace opkele {
 	return oum;
     }
 
-    void basic_op::verify_return_to() {
+    void basic_OP::verify_return_to() {
 	if(realm.find('#')!=string::npos)
 	    throw opkele::bad_realm(OPKELE_CP_ "authentication realm contains URI fragment");
 	if(!util::uri_matches_realm(return_to,realm))

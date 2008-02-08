@@ -161,7 +161,7 @@ class example_op_t : public opkele::verify_op {
 			strtol(T.get(1,3,nc),0,0) ));
 	}
 
-	string& alloc_nonce(string& nonce,bool stateless) {
+	string& alloc_nonce(string& nonce) {
 	    uuid_t uuid; uuid_generate(uuid);
 	    nonce += opkele::util::encode_base64(uuid,sizeof(uuid));
 	    sqlite3_mem_t<char*>
