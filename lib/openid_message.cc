@@ -15,8 +15,8 @@ namespace opkele {
 	    const basic_openid_message& from;
 	    basic_openid_message& to;
 
-	    __om_copier(basic_openid_message& to,const basic_openid_message& from)
-		: from(from), to(to) {
+	    __om_copier(basic_openid_message& t,const basic_openid_message& f)
+		: from(f), to(t) {
 		    to.reset_fields();
 		}
 
@@ -37,8 +37,8 @@ namespace opkele {
 	    const basic_openid_message& om;
 	    const string& uri;
 
-	    __om_ns_finder(const basic_openid_message& om,
-		    const string& uri) : om(om), uri(uri) { }
+	    __om_ns_finder(const basic_openid_message& m,
+		    const string& u) : om(m), uri(u) { }
 
 	    result_type operator()(argument_type f) {
 		return
@@ -65,16 +65,16 @@ namespace opkele {
     struct __om_query_builder : public unary_function<const string&,void> {
 	public:
 	    const basic_openid_message& om;
-	    string& rv;
 	    bool first;
+	    string& rv;
 
-	    __om_query_builder(string& rv,const basic_openid_message& om)
-		: om(om), first(true), rv(rv) {
+	    __om_query_builder(string& r,const basic_openid_message& m)
+		: om(m), first(true), rv(r) {
 		    for_each(om.fields_begin(),om.fields_end(),*this);
 		}
-	    __om_query_builder(string& rv,const basic_openid_message& om,const string& url)
-		: om(om), first(true), rv(rv) {
-		    rv = url;
+	    __om_query_builder(string& r,const basic_openid_message& m,const string& u)
+		: om(m), first(true), rv(r) {
+		    rv = u;
 		    if(rv.find('?')==string::npos)
 			rv += '?';
 		    else
@@ -105,10 +105,10 @@ namespace opkele {
     void basic_openid_message::reset_fields() {
 	throw not_implemented(OPKELE_CP_ "reset_fields() not implemented");
     }
-    void basic_openid_message::set_field(const string& n,const string& v) {
+    void basic_openid_message::set_field(const string&,const string&) {
 	throw not_implemented(OPKELE_CP_ "set_field() not implemented");
     }
-    void basic_openid_message::reset_field(const string& n) {
+    void basic_openid_message::reset_field(const string&) {
 	throw not_implemented(OPKELE_CP_ "reset_field() not implemented");
     }
 
@@ -147,8 +147,8 @@ namespace opkele {
 	    const basic_openid_message& om;
 	    ostream& os;
 
-	    __om_kv_outputter(const basic_openid_message& om,ostream& os)
-		: om(om), os(os) { }
+	    __om_kv_outputter(const basic_openid_message& m,ostream& s)
+		: om(m), os(s) { }
 
 	    result_type operator()(argument_type f) {
 		os << f << ':' << om.get_field(f) << '\n';
@@ -164,8 +164,8 @@ namespace opkele {
 	    const basic_openid_message& om;
 	    ostream& os;
 
-	    __om_html_outputter(const basic_openid_message& om,ostream& os)
-		: om(om), os(os) { }
+	    __om_html_outputter(const basic_openid_message& m,ostream& s)
+		: om(m), os(s) { }
 
 	    result_type operator()(argument_type f) {
 		os <<

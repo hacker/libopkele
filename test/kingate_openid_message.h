@@ -57,8 +57,8 @@ class cut_prefix_filterator : public opkele::util::basic_filterator<IT> {
 	mutable string tmp;
 
 	cut_prefix_filterator() { }
-	cut_prefix_filterator(const IT& bi,const IT&ei,const string& pfx)
-	    : opkele::util::basic_filterator<IT>(bi,ei), pfx(pfx) {
+	cut_prefix_filterator(const IT& _bi,const IT&_ei,const string& p)
+	    : opkele::util::basic_filterator<IT>(_bi,_ei), pfx(p) {
 		this->prepare();
 	    }
 

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
 #include <opkele/basic_rp.h>
@@ -25,7 +26,8 @@ namespace opkele {
 	    throw exception_openssl(OPKELE_CP_ "failed to DH_compute_key()");
 	if(cklen && (*ckptr)&0x80) {
 	    (*(--ckptr))=0; ++cklen; }
-	unsigned char key_digest[d_len];
+	assert(d_len<=SHA256_DIGEST_LENGTH);
+	unsigned char key_digest[SHA256_DIGEST_LENGTH];
 	secret.enxor_from_base64((*d_fun)(ckptr,cklen,key_digest),om.get_field("enc_mac_key"));
 	if(secret.size()!=exp_s_len)
 	    throw bad_input(OPKELE_CP_ "Secret length isn't consistent with association type");
@@ -78,7 +80,7 @@ namespace opkele {
 		    "HMAC-SHA256", "DH-SHA256",
 		    dh, SHA256_DIGEST_LENGTH, SHA256, SHA256_DIGEST_LENGTH );
 	    expires_in = util::string_to_long(res.get_field("expires_in"));
-	}catch(exception& e) {
+	}catch(exception&) {
 	    try {
 		req.set_field("assoc_type","HMAC-SHA1");
 		req.set_field("session_type","DH-SHA1");
@@ -87,7 +89,7 @@ namespace opkele {
 			"HMAC-SHA1", "DH-SHA1",
 			dh, SHA_DIGEST_LENGTH, SHA1, SHA_DIGEST_LENGTH );
 		expires_in = util::string_to_long(res.get_field("expires_in"));
-	    }catch(bad_input& e) {
+	    }catch(bad_input&) {
 		throw dumb_RP(OPKELE_CP_ "OP failed to supply an association");
 	    }
 	}
@@ -234,7 +236,7 @@ namespace opkele {
 	    static const char *mustsign[] = {
 		"op_endpoint", "return_to", "response_nonce", "assoc_handle",
 		"claimed_id", "identity" };
-	    for(int ms=0;ms<(sizeof(mustsign)/sizeof(*mustsign));++ms) {
+	    for(size_t ms=0;ms<(sizeof(mustsign)/sizeof(*mustsign));++ms) {
 		if(om.has_field(mustsign[ms]) && !signeds.has_field(mustsign[ms]))
 		    throw bad_input(OPKELE_CP_ string("Field '")+mustsign[ms]+"' is not signed against the specs");
 	    }

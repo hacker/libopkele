@@ -46,6 +46,8 @@ namespace opkele {
 	     */
 	    string invalidate_handle;
 
+	    virtual ~basic_OP() { }
+
 	    void reset_vars();
 
 	    /**

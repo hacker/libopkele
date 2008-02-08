@@ -126,6 +126,7 @@ namespace opkele {
 		> fields_iterator;
 
 	    basic_openid_message() { }
+	    virtual ~basic_openid_message() { }
 	    basic_openid_message(const basic_openid_message& x);
 	    void copy_to(basic_openid_message& x) const;
 

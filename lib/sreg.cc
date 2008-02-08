@@ -55,12 +55,10 @@ namespace opkele {
 	string pfx;
 	try {
 	    pfx = om.find_ns(OIURI_SREG11,"sreg");
-	}catch(failed_lookup& fl) {
+	}catch(failed_lookup&) {
 	    try {
 		pfx = om.find_ns(OIURI_SREG10,"sreg");
-	    }catch(failed_lookup& fl) {
-		return;
-	    }
+	    }catch(failed_lookup&) { return; }
 	}
 	pfx += '.';
 	for(fields_iterator f=fields_BEGIN;f<fields_END;++f) {

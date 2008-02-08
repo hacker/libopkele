@@ -55,7 +55,7 @@ namespace opkele {
 	public:
 	    prequeue_RP& rp;
 
-	    endpoint_queuer(prequeue_RP& rp) : rp(rp) { }
+	    endpoint_queuer(prequeue_RP& r) : rp(r) { }
 
 	    endpoint_queuer& operator*() { return *this; }
 	    endpoint_queuer& operator=(const openid_endpoint_t& oep) {
@@ -71,7 +71,7 @@ namespace opkele {
 	end_queueing();
     }
 
-    void prequeue_RP::set_normalized_id(const string& nid) {
+    void prequeue_RP::set_normalized_id(const string&) {
     }
 
     const string prequeue_RP::get_normalized_id() const {

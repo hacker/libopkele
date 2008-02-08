@@ -11,7 +11,7 @@ namespace opkele {
 
     void extension_t::op_checkid_hook(const basic_openid_message&) {
 	throw not_implemented(OPKELE_CP_ "OP checkid_* hook not implemented"); }
-    void extension_t::op_id_res_hook(basic_openid_message& om) {
+    void extension_t::op_id_res_hook(basic_openid_message&) {
 	throw not_implemented(OPKELE_CP_ "OP id_res hook not implemented"); }
 
 

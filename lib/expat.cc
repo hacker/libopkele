@@ -13,6 +13,7 @@ namespace opkele {
 	    if(_x)
 		XML_ParserFree(_x);
 	    _x = x;
+	    return *this;
 	}
 
 	static void _start_element(void* ud,const XML_Char *n,const XML_Char **a) {

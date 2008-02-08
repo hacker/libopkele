@@ -66,9 +66,6 @@ namespace opkele {
 	util::bignum_t c_pub;
 	unsigned char key_digest[SHA256_DIGEST_LENGTH];
 	size_t d_len = 0;
-	enum {
-	    sess_cleartext, sess_dh_sha1, sess_dh_sha256
-	} st = sess_cleartext;
 	string sts = inm.get_field("session_type");
 	string ats = inm.get_field("assoc_type");
 	if(sts=="DH-SHA1" || sts=="DH-SHA256") {
@@ -98,19 +95,19 @@ namespace opkele {
 		throw internal_error(OPKELE_CP_ "I thought I knew the session type");
 	}else
 	    throw unsupported(OPKELE_CP_ "Unsupported session_type");
-	assoc_t assoc;
+	assoc_t a;
 	if(ats=="HMAC-SHA1")
-	    assoc = alloc_assoc(ats,SHA_DIGEST_LENGTH,true);
+	    a = alloc_assoc(ats,SHA_DIGEST_LENGTH,true);
 	else if(ats=="HMAC-SHA256")
-	    assoc = alloc_assoc(ats,SHA256_DIGEST_LENGTH,true);
+	    a = alloc_assoc(ats,SHA256_DIGEST_LENGTH,true);
 	else
 	    throw unsupported(OPKELE_CP_ "Unsupported assoc_type");
 	oum.reset_fields();
 	oum.set_field("ns",OIURI_OPENID20);
-	oum.set_field("assoc_type",assoc->assoc_type());
-	oum.set_field("assoc_handle",assoc->handle());
+	oum.set_field("assoc_type",a->assoc_type());
+	oum.set_field("assoc_handle",a->handle());
 	oum.set_field("expires_in",util::long_to_string(assoc->expires_in()));
-	secret_t secret = assoc->secret();
+	secret_t secret = a->secret();
 	if(sts=="DH-SHA1" || sts=="DH-SHA256") {
 	    if(d_len != secret.size())
 		throw bad_input(OPKELE_CP_ "Association secret and session MAC are not of the same size");
@@ -134,10 +131,10 @@ namespace opkele {
     void basic_OP::checkid_(const basic_openid_message& inm,
 	    extension_t *ext) {
 	reset_vars();
-	string mode = inm.get_field("mode");
-	if(mode=="checkid_setup")
+	string modestr = inm.get_field("mode");
+	if(modestr=="checkid_setup")
 	    mode = mode_checkid_setup;
-	else if(mode=="checkid_immediate")
+	else if(modestr=="checkid_immediate")
 	    mode = mode_checkid_immediate;
 	else
 	    throw bad_input(OPKELE_CP_ "Invalid checkid_* mode");
@@ -238,14 +235,14 @@ namespace opkele {
     }
 
     basic_openid_message& basic_OP::error(basic_openid_message& om,
-	    const string& error,const string& contact,
+	    const string& err,const string& contact,
 	    const string& reference ) {
 	assert(!return_to.empty());
 	om.set_field("ns",OIURI_OPENID20);
 	om.set_field("mode","error");
-	om.set_field("error",error);
-	om.set_field("contact",contact);
-	om.set_field("reference",reference);
+	om.set_field("error",err);
+	if(!contact.empty()) om.set_field("contact",contact);
+	if(!reference.empty()) om.set_field("reference",reference);
 	return om;
     }
 

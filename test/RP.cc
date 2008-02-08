@@ -58,8 +58,8 @@ class example_rp_t : public opkele::prequeue_RP {
 	int ordinal;
 	kingate::cgi_gateway& gw;
 
-	example_rp_t(kingate::cgi_gateway& gw)
-	: ordinal(0), have_eqtop(false), gw(gw), as_id(-1) {
+	example_rp_t(kingate::cgi_gateway& g)
+	: as_id(-1), ordinal(0), gw(g), have_eqtop(false)  {
 	    try {
 		htc = gw.cookies.get_cookie("ht_session");
 		as_id = opkele::util::string_to_long(gw.get_param("asid"));
@@ -351,7 +351,7 @@ class example_rp_t : public opkele::prequeue_RP {
 #endif
 };
 
-int main(int argc,char *argv[]) {
+int main(int,char **) {
     try {
 	kingate::plaincgi_interface ci;
 	kingate::cgi_gateway gw(ci);

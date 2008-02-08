@@ -26,12 +26,11 @@ namespace opkele {
 	    public:
 		IT i;
 
-		output_iterator_proxy_impl(const IT& i) : i(i) { }
+		output_iterator_proxy_impl(const IT& _i) : i(_i) { }
 		basic_output_iterator_proxy_impl<T>* dup() const {
 		    return new output_iterator_proxy_impl<IT,T>(i); }
 		basic_output_iterator_proxy_impl<T>& operator=(const T& x) {
-		    (*i) = x;
-		}
+		    (*i) = x; return *this; }
 	};
 
 	template<typename T>
@@ -51,7 +50,7 @@ namespace opkele {
 
 		output_iterator_proxy& operator*() { return *this; }
 		output_iterator_proxy& operator=(const T& x) {
-		    (**I) = x; }
+		    (**I) = x; return *this; }
 
 		output_iterator_proxy& operator++() { return *this; }
 		output_iterator_proxy& operator++(int) { return *this; }
@@ -77,7 +76,7 @@ namespace opkele {
 	    public:
 		IT i;
 
-		forward_iterator_proxy_impl(const IT& i) : i(i) { }
+		forward_iterator_proxy_impl(const IT& _i) : i(_i) { }
 
 		virtual basic_forward_iterator_proxy_impl<typename IT::value_type,typename IT::reference,typename IT::pointer>* dup() const {
 		    return new forward_iterator_proxy_impl<IT>(i); }
@@ -136,8 +135,8 @@ namespace opkele {
 		    bool empty;
 
 		    basic_filterator() : empty(true) { }
-		    basic_filterator(const IT& bi,const IT& ei)
-			: it(bi), ei(ei) { empty = (bi==ei); }
+		    basic_filterator(const IT& _bi,const IT& _ei)
+			: it(_bi), ei(_ei) { empty = (it==ei); }
 		    basic_filterator(const basic_filterator<IT>& x)
 			: it(x.it), ei(x.ei), empty(x.empty) { }
 		    virtual ~basic_filterator() { }
@@ -185,9 +184,9 @@ namespace opkele {
 		    bool empty;
 
 		    map_keys_iterator() : empty(true) { }
-		    map_keys_iterator(const IT& bi,
-			    const IT& ei)
-			: it(bi), ei(ei) { empty = (bi==ei); }
+		    map_keys_iterator(const IT& _bi,
+			    const IT& _ei)
+			: it(_bi), ei(_ei) { empty = (it==ei); }
 		    map_keys_iterator(const self_type& x)
 			: it(x.it), ei(x.ei), empty(x.empty) { }
 

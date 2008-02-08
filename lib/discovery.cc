@@ -330,7 +330,7 @@ namespace opkele {
 		    xrds_location.clear(); http_content_type.clear();
 		}else if(colon) {
 		    const char *hv = ++colon;
-		    int hnl = colon-h;
+		    size_t hnl = colon-h;
 		    int rb;
 		    for(rb = bytes-hnl-1;rb>0 && isspace(*hv);++hv,--rb);
 		    while(rb>0 && isspace(hv[rb-1])) --rb;

@@ -15,8 +15,8 @@ namespace opkele {
 
     class RP_verifier : public iterator<output_iterator_tag,openid_endpoint_t,void> {
 	public:
-	    int seen;
 	    const string& return_to;
+	    int seen;
 
 	    RP_verifier(const string& rt)
 		: return_to(rt), seen(0) { }
@@ -29,7 +29,7 @@ namespace opkele {
 	    }
 
 	    RP_verifier& operator++() { ++seen; return *this; }
-	    RP_verifier& operator++(int) { +seen; return *this; }
+	    RP_verifier& operator++(int) { ++seen; return *this; }
     };
 
     void verify_OP::verify_return_to() {

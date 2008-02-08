@@ -26,29 +26,29 @@ namespace opkele {
 		    return XML_Parse(_x,s,len,final);
 		}
 
-		virtual void start_element(const XML_Char *n,const XML_Char **a) { }
-		virtual void end_element(const XML_Char *n) { }
+		virtual void start_element(const XML_Char * /* n */,const XML_Char ** /* a */) { }
+		virtual void end_element(const XML_Char * /* n */) { }
 		void set_element_handler();
 
-		virtual void character_data(const XML_Char *s,int l) { }
+		virtual void character_data(const XML_Char * /* s */,int /* l */) { }
 		void set_character_data_handler();
 
-		virtual void processing_instruction(const XML_Char *t,const XML_Char *d) { }
+		virtual void processing_instruction(const XML_Char * /* t */,const XML_Char * /* d */) { }
 		void set_processing_instruction_handler();
 
-		virtual void comment(const XML_Char *d) { }
+		virtual void comment(const XML_Char * /* d */) { }
 		void set_comment_handler();
 
 		virtual void start_cdata_section() { }
 		virtual void end_cdata_section() { }
 		void set_cdata_section_handler();
 
-		virtual void default_handler(const XML_Char *s,int l) { }
+		virtual void default_handler(const XML_Char * /* s */,int /* l */) { }
 		void set_default_handler();
 		void set_default_handler_expand();
 
-		virtual void start_namespace_decl(const XML_Char *p,const XML_Char *u) { }
-		virtual void end_namespace_decl(const XML_Char *p) { }
+		virtual void start_namespace_decl(const XML_Char * /* p */,const XML_Char * /* u */) { }
+		virtual void end_namespace_decl(const XML_Char * /* p */) { }
 		void set_namespace_decl_handler();
 
 		inline enum XML_Error get_error_code() {

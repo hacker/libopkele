@@ -59,8 +59,8 @@ class example_op_t : public opkele::verify_OP {
 	kingate::cookie htc;
 
 
-	example_op_t(kingate::cgi_gateway& gw)
-	: gw(gw) {
+	example_op_t(kingate::cgi_gateway& g)
+	: gw(g) {
 	    try {
 		htc = gw.cookies.get_cookie("htop_session");
 		sqlite3_mem_t<char*> S = sqlite3_mprintf(
@@ -200,7 +200,7 @@ class example_op_t : public opkele::verify_OP {
 
 };
 
-int main(int argc,char *argv[]) {
+int main(int,char **) {
     try {
 	kingate::plaincgi_interface ci;
 	kingate::cgi_gateway gw(ci);
@@ -244,8 +244,8 @@ int main(int argc,char *argv[]) {
 	    op.clear();
 	    message = "logged out";
 	}
-	string om;
-	try { om = gw.get_param("openid.mode"); }catch(kingate::exception_notfound&) { }
+	string omode;
+	try { omode = gw.get_param("openid.mode"); }catch(kingate::exception_notfound&) { }
 	if(op=="xrds") {
 	    cout <<
 		"Content-type: application/xrds+xml\n\n"
@@ -295,14 +295,14 @@ int main(int argc,char *argv[]) {
 		    << "\n\n";
 	    }
 	    om.to_keyvalues(clog);
-	}else if(om=="associate") {
+	}else if(omode=="associate") {
 	    kingate_openid_message_t inm(gw);
 	    opkele::openid_message_t oum;
 	    example_op_t OP(gw);
 	    OP.associate(oum,inm);
 	    cout << "Content-type: text/plain\n\n";
 	    oum.to_keyvalues(cout);
-	}else if(om=="checkid_setup") {
+	}else if(omode=="checkid_setup") {
 	    kingate_openid_message_t inm(gw);
 	    example_op_t OP(gw);
 	    OP.checkid_(inm,0);
@@ -336,7 +336,7 @@ int main(int argc,char *argv[]) {
 		  "</form>"
 		 "</body>"
 		"</html>";
-	}else if(om=="check_authentication") {
+	}else if(omode=="check_authentication") {
 	    kingate_openid_message_t inm(gw);
 	    example_op_t OP(gw);
 	    opkele::openid_message_t oum;
