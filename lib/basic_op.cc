@@ -144,10 +144,7 @@ namespace opkele {
 	try {
 	    assoc = retrieve_assoc(invalidate_handle=inm.get_field("assoc_handle"));
 	    invalidate_handle.clear();
-	}catch(failed_lookup&) {
-	    // no handle specified or no valid assoc found, go dumb
-	    assoc = alloc_assoc("HMAC-SHA256",SHA256_DIGEST_LENGTH,true);
-	}
+	}catch(failed_lookup&) { }
 	try {
 	    openid2 = (inm.get_field("ns")==OIURI_OPENID20);
 	}catch(failed_lookup&) { openid2 = false; }
@@ -198,9 +195,11 @@ namespace opkele {
 
     basic_openid_message& basic_op::id_res(basic_openid_message& om,
 	    extension_t *ext) {
-	assert(assoc);
 	assert(!return_to.empty());
 	assert(!is_id_select());
+	if(!assoc) {
+	    assoc = alloc_assoc("HMAC-SHA256",SHA256_DIGEST_LENGTH,true);
+	}
 	time_t now = time(0);
 	struct tm gmt; gmtime_r(&now,&gmt);
 	char w3timestr[24];
