@@ -44,10 +44,18 @@ namespace opkele {
 	     */
 	    virtual void op_id_res_hook(basic_openid_message& oum);
 
+	    /**
+	     * @name deprecated hooks, used by the deprecated consumer_t and
+	     * server_t implementations
+	     * @{
+	     */
 	    virtual void checkid_hook(basic_openid_message& om) OPKELE_DEPRECATE;
 	    virtual void id_res_hook(const basic_openid_message& om,
 		    const basic_openid_message& sp) OPKELE_DEPRECATE;
 	    virtual void checkid_hook(const basic_openid_message& inm,basic_openid_message& oum);
+	    /**
+	     * @}
+	     */
 
 	    /**
 	     * Casts the object to pointer to itself. For convenient passing

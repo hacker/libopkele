@@ -8,6 +8,9 @@
 namespace opkele {
     using std::string;
 
+    /**
+     * Implementation of basic OP functionality
+     */
     class basic_OP {
 	public:
 	    /**
