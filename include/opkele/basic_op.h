@@ -182,7 +182,7 @@ namespace opkele {
 	     * return_to URI matches the realm
 	     * @throw bad_realm in case of invalid realm
 	     * @throw bad_return_to if return_to doesn't match the realm
-	     * @see verify_op::verify_return_to()
+	     * @see verify_OP::verify_return_to()
 	     */
 	    virtual void verify_return_to();
 

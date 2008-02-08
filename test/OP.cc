@@ -52,7 +52,7 @@ class opdb_t : public sqlite3_t {
 	    }
 };
 
-class example_op_t : public opkele::verify_op {
+class example_op_t : public opkele::verify_OP {
     public:
 	kingate::cgi_gateway& gw;
 	opdb_t db;

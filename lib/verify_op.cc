@@ -32,7 +32,7 @@ namespace opkele {
 	    RP_verifier& operator++(int) { +seen; return *this; }
     };
 
-    void verify_op::verify_return_to() {
+    void verify_OP::verify_return_to() {
 	basic_OP::verify_return_to();
 	try {
 	    RP_verifier rpv(return_to);

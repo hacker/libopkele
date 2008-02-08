@@ -8,7 +8,7 @@ namespace opkele {
     /**
      * The OP implementation that does discovery verification on RP
      */
-    class verify_op : public basic_OP {
+    class verify_OP : public basic_OP {
 	public:
 
 	/**
