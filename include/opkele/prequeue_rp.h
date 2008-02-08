@@ -12,6 +12,9 @@ namespace opkele {
     using std::iterator;
     using std::output_iterator_tag;
 
+    /**
+     * discovery-enabled RP implementation, prequeueing discovered endpoints
+     */
     class prequeue_RP : public basic_RP {
 	public:
 	    /**
@@ -66,8 +69,12 @@ namespace opkele {
 	     * @name Actions
 	     * @{
 	     */
+	    /**
+	     * In addition to base class implementation it does endpoints
+	     * discovery and queueing
+	     * @param usi User-suppled identifier
+	     */
 	    void initiate(const string& usi);
-
 	    /**
 	     * @}
 	     */
