@@ -97,16 +97,16 @@ namespace opkele {
 	    throw unsupported(OPKELE_CP_ "Unsupported session_type");
 	assoc_t a;
 	if(ats=="HMAC-SHA1")
-	    a = alloc_assoc(ats,SHA_DIGEST_LENGTH,true);
+	    a = alloc_assoc(ats,SHA_DIGEST_LENGTH,false);
 	else if(ats=="HMAC-SHA256")
-	    a = alloc_assoc(ats,SHA256_DIGEST_LENGTH,true);
+	    a = alloc_assoc(ats,SHA256_DIGEST_LENGTH,false);
 	else
 	    throw unsupported(OPKELE_CP_ "Unsupported assoc_type");
 	oum.reset_fields();
 	oum.set_field("ns",OIURI_OPENID20);
 	oum.set_field("assoc_type",a->assoc_type());
 	oum.set_field("assoc_handle",a->handle());
-	oum.set_field("expires_in",util::long_to_string(assoc->expires_in()));
+	oum.set_field("expires_in",util::long_to_string(a->expires_in()));
 	secret_t secret = a->secret();
 	if(sts=="DH-SHA1" || sts=="DH-SHA256") {
 	    if(d_len != secret.size())
