@@ -163,20 +163,24 @@ namespace opkele {
 	public:
 	    const basic_openid_message& om;
 	    ostream& os;
+	    const char *pfx;
 
-	    __om_html_outputter(const basic_openid_message& m,ostream& s)
-		: om(m), os(s) { }
+	    __om_html_outputter(const basic_openid_message& m,ostream& s,const char *p=0)
+		: om(m), os(s), pfx(p) { }
 
 	    result_type operator()(argument_type f) {
 		os <<
 		    "<input type=\"hidden\""
-		    " name=\"" << util::attr_escape(f) << "\""
+		    " name=\"";
+		if(pfx)
+		    os << util::attr_escape(pfx);
+		os << util::attr_escape(f) << "\""
 		    " value=\"" << util::attr_escape(om.get_field(f)) << "\" />";
 	    }
     };
 
-    void basic_openid_message::to_htmlhiddens(ostream& o) const {
-	for_each(fields_begin(),fields_end(),__om_html_outputter(*this,o));
+    void basic_openid_message::to_htmlhiddens(ostream& o,const char* pfx) const {
+	for_each(fields_begin(),fields_end(),__om_html_outputter(*this,o,pfx));
     }
 
     void basic_openid_message::add_to_signed(const string& fields) {
