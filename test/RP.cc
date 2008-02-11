@@ -248,7 +248,6 @@ class example_rp_t : public opkele::prequeue_RP {
 	    db.exec(S);
 	}
 
-	mutable string _cid;
 	mutable string _nid;
 
 	void set_normalized_id(const string& nid) {
