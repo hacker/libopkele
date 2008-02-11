@@ -251,34 +251,6 @@ class example_rp_t : public opkele::prequeue_RP {
 	mutable string _cid;
 	mutable string _nid;
 
-	void set_claimed_id(const string& cid) {
-	    assert(as_id>=0);
-	    sqlite3_mem_t<char*> S = sqlite3_mprintf(
-		    "UPDATE auth_sessions"
-		    " SET as_claimed_id=%Q"
-		    " WHERE hts_id=%Q and as_id=%ld",
-		    cid.c_str(),
-		    htc.get_value().c_str(),as_id);
-	    db.exec(S);
-	    _cid = cid;
-	}
-	const string get_claimed_id() const {
-	    assert(as_id>=0);
-	    if(_cid.empty()) {
-		sqlite3_mem_t<char*> S = sqlite3_mprintf(
-			"SELECT as_claimed_id"
-			" FROM"
-			"  auth_sessions"
-			" WHERE"
-			"  hts_id=%Q AND as_id=%ld",
-			htc.get_value().c_str(),as_id);
-		sqlite3_table_t T; int nr,nc;
-		db.get_table(S,T,&nr,&nc);
-		assert(nr==1); assert(nc==1);
-		_cid = T.get(1,0,nc);
-	    }
-	    return _cid;
-	}
 	void set_normalized_id(const string& nid) {
 	    assert(as_id>=0);
 	    sqlite3_mem_t<char*> S = sqlite3_mprintf(
