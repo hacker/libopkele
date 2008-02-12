@@ -44,7 +44,7 @@ namespace opkele {
 
     void prequeue_RP::verify_OP(const string& OP,const string& claimed_id,const string& identity) const {
 	try {
-	    idiscover(OP_verifier(OP,identity),claimed_id);
+	    discover(OP_verifier(OP,identity),claimed_id);
 	    throw id_res_unauthorized(OPKELE_CP_
 		    "OP is not authorized to make an assertion regarding the identity");
 	}catch(__OP_verifier_good_input& ovgi) {
@@ -67,7 +67,7 @@ namespace opkele {
 
     void prequeue_RP::initiate(const string& usi) {
 	begin_queueing();
-	set_normalized_id( idiscover(endpoint_queuer(*this),usi) );
+	set_normalized_id( discover(endpoint_queuer(*this),usi) );
 	end_queueing();
     }
 
@@ -76,6 +76,11 @@ namespace opkele {
 
     const string prequeue_RP::get_normalized_id() const {
 	throw not_implemented(OPKELE_CP_ "get_normalized_id() is not implemented");
+    }
+
+    const string prequeue_RP::discover(openid_endpoint_output_iterator it,
+	    const string& id) const {
+	return idiscover(it,id);
     }
 
 }

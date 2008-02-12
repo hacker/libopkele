@@ -81,6 +81,14 @@ namespace opkele {
 
 	    void verify_OP(const string& OP,
 		    const string& claimed_id,const string& identity) const;
+
+	    /**
+	     * Perform full discovery on identity
+	     * @param it iterator used for feeding discovered endpoints back to caller
+	     * @param id user supplied identity
+	     * @returns normalized identity (canonical identifier can be found in endpoints)
+	     */
+	    virtual const string discover(openid_endpoint_output_iterator it,const string& id) const;
     };
 
 }

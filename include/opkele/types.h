@@ -225,6 +225,9 @@ namespace opkele {
 		? (c<0) : (strcmp(local_id.c_str(),x.local_id.c_str())<0); }
     };
 
+    typedef util::output_iterator_proxy<openid_endpoint_t>
+	openid_endpoint_output_iterator;
+
 }
 
 #endif /* __OPKELE_TYPES_H */

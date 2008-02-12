@@ -85,8 +85,7 @@ namespace opkele {
 
     }
 
-    typedef util::output_iterator_proxy<openid_endpoint_t>
-	endpoint_discovery_iterator;
+    typedef openid_endpoint_output_iterator endpoint_discovery_iterator;
 
     string idiscover(
 	    endpoint_discovery_iterator oi,
