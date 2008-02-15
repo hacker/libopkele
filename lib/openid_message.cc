@@ -213,9 +213,11 @@ namespace opkele {
     }
 
     string basic_openid_message::find_ns(const string& uri,const char *pfx) const {
-	if(has_field("ns"))
+	try {
 	    return get_ns(uri);
-	return pfx;
+	}catch(failed_lookup&) {
+	    return pfx;
+	}
     }
     string basic_openid_message::allocate_ns(const string& uri,const char *pfx) {
 	if(!has_field("ns"))
