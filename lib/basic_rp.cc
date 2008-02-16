@@ -6,6 +6,7 @@
 #include <opkele/uris.h>
 #include <opkele/data.h>
 #include <opkele/util.h>
+#include <opkele/util-internal.h>
 #include <opkele/curl.h>
 
 namespace opkele {

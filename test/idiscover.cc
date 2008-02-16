@@ -6,6 +6,7 @@ using namespace std;
 #include <opkele/exception.h>
 #include <opkele/discovery.h>
 #include <opkele/util.h>
+#include <opkele/util-internal.h>
 
 namespace opkele {
     ostream& operator<<(ostream& o,const opkele::openid_endpoint_t& oep) {

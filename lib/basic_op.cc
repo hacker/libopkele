@@ -6,6 +6,7 @@
 #include <opkele/basic_op.h>
 #include <opkele/exception.h>
 #include <opkele/util.h>
+#include <opkele/util-internal.h>
 #include <opkele/uris.h>
 
 namespace opkele {

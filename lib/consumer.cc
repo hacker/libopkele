@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstring>
 #include <opkele/util.h>
+#include <opkele/util-internal.h>
 #include <opkele/curl.h>
 #include <opkele/exception.h>
 #include <opkele/data.h>

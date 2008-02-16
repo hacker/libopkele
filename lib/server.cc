@@ -3,6 +3,7 @@
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
 #include <opkele/util.h>
+#include <opkele/util-internal.h>
 #include <opkele/exception.h>
 #include <opkele/server.h>
 #include <opkele/data.h>
