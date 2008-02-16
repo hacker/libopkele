@@ -159,7 +159,7 @@ namespace opkele {
 				    "XRI resolution failed with '"+status_string+"' message"
 				    ", while looking for SEP with type '"+st->uri+"'", status_code);
 			if(idis.xrd.canonical_ids.empty())
-			    throw opkele::failed_discovery(OPKELE_CP_ "No CanonicalID found for XRI identity found");
+			    throw opkele::failed_discovery(OPKELE_CP_ "No CanonicalID for XRI identity found");
 			string cid = idis.xrd.canonical_ids.begin()->second;
 			if(cids.find(cid)==cids.end()) {
 			    cids.insert(cid);
@@ -241,7 +241,7 @@ namespace opkele {
 
 		if(!parser_choked) {
 		    parse(0,0,true);
-		}else{
+		}else if(xmode&xmode_html){
 		    /* TODO: do not bother if we've seen xml */
 		    try {
 			util::tidy_doc_t td = util::tidy_doc_t::create();
