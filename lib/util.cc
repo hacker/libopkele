@@ -8,10 +8,12 @@
 #include <algorithm>
 #include <openssl/bio.h>
 #include <openssl/evp.h>
+#include <openssl/sha.h>
 #include <openssl/hmac.h>
 #include <curl/curl.h>
-#include "opkele/util.h"
-#include "opkele/exception.h"
+#include <opkele/util.h>
+#include <opkele/exception.h>
+#include <opkele/debug.h>
 
 #include <config.h>
 #ifdef HAVE_DEMANGLE
@@ -420,10 +422,11 @@ namespace opkele {
 	    else
 		throw unsupported(OPKELE_CP_ "unknown association type");
 	    unsigned int md_len = 0;
-	    unsigned char *md = HMAC(evpmd,
+	    unsigned char md[SHA256_DIGEST_LENGTH];
+	    HMAC(evpmd,
 		    &(secret.front()),secret.size(),
 		    (const unsigned char*)kv.data(),kv.length(),
-		    0,&md_len);
+		    md,&md_len);
 	    return encode_base64(md,md_len);
 	}
 
