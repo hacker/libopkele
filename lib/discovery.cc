@@ -6,6 +6,7 @@
 #include <opkele/exception.h>
 #include <opkele/util.h>
 #include <opkele/tidy.h>
+#include <opkele/data.h>
 #include <opkele/debug.h>
 
 #include "config.h"
@@ -21,8 +22,6 @@ namespace opkele {
     /* TODO: the whole discovery thing needs cleanup and optimization due to
      * many changes of concept. */
 
-    static const char *whitespace = " \t\r\n";
-    static const char *i_leaders = "=@+$!(";
     static const size_t max_html = 16384;
 
     static const struct service_type_t {
@@ -128,10 +127,10 @@ namespace opkele {
 	    string discover(endpoint_discovery_iterator& oi,const string& identity) {
 		string rv;
 		idiscovery_t idis;
-		string::size_type fsc = identity.find_first_not_of(whitespace);
+		string::size_type fsc = identity.find_first_not_of(data::_whitespace_chars);
 		if(fsc==string::npos)
 		    throw bad_input(OPKELE_CP_ "whitespace-only identity");
-		string::size_type lsc = identity.find_last_not_of(whitespace);
+		string::size_type lsc = identity.find_last_not_of(data::_whitespace_chars);
 		assert(lsc!=string::npos);
 		if(!strncasecmp(identity.c_str()+fsc,"xri://",sizeof("xri://")-1))
 		    fsc += sizeof("xri://")-1;
@@ -139,7 +138,7 @@ namespace opkele {
 		    throw bad_input(OPKELE_CP_ "not a character of importance in identity");
 		string id(identity,fsc,lsc-fsc+1);
 		idis.clear();
-		if(strchr(i_leaders,id[0])) {
+		if(strchr(data::_iname_leaders,id[0])) {
 		    /* TODO: further normalize xri identity? Like folding case
 		     * or whatever... */
 		    rv = id;
@@ -495,13 +494,13 @@ namespace opkele {
 			    const char *ns = a[1];
 			    for(;*ns && isspace(*ns);++ns);
 			    href.assign(ns);
-			    string::size_type lns=href.find_last_not_of(whitespace);
+			    string::size_type lns=href.find_last_not_of(data::_whitespace_chars);
 			    href.erase(lns+1);
 			}
 		    }
-		    for(string::size_type ns=rels.find_first_not_of(whitespace);
-			    ns!=string::npos; ns=rels.find_first_not_of(whitespace,ns)) {
-			string::size_type s = rels.find_first_of(whitespace,ns);
+		    for(string::size_type ns=rels.find_first_not_of(data::_whitespace_chars);
+			    ns!=string::npos; ns=rels.find_first_not_of(data::_whitespace_chars,ns)) {
+			string::size_type s = rels.find_first_of(data::_whitespace_chars,ns);
 			string rel;
 			if(s==string::npos) {
 			    rel.assign(rels,ns,string::npos);

@@ -12,6 +12,8 @@ namespace opkele {
     namespace data {
 	extern const char *_default_p;
 	extern const char *_default_g;
+	extern const char *_iname_leaders;
+	extern const char *_whitespace_chars;
     }
 }
 

@@ -84,6 +84,8 @@ namespace opkele {
 	 */
 	string rfc_3986_normalize_uri(const string& uri);
 
+	string normalize_identifier(const string& usi,bool strip_fragment);
+
 	/**
 	 * Match URI against realm
 	 * @param uri URI to match

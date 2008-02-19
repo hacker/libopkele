@@ -13,6 +13,7 @@
 #include <curl/curl.h>
 #include <opkele/util.h>
 #include <opkele/exception.h>
+#include <opkele/data.h>
 #include <opkele/debug.h>
 
 #include <config.h>
@@ -211,9 +212,8 @@ namespace opkele {
 	 * - if there's no path component, add '/'
 	 */
 	 string rfc_3986_normalize_uri(const string& uri) {
-	     static const char *whitespace = " \t\r\n";
 	     string rv;
-	     string::size_type ns = uri.find_first_not_of(whitespace);
+	     string::size_type ns = uri.find_first_not_of(data::_whitespace_chars);
 	     if(ns==string::npos)
 		 throw bad_input(OPKELE_CP_ "Can't normalize empty URI");
 	     string::size_type colon = uri.find(':',ns);
@@ -223,7 +223,7 @@ namespace opkele {
 		     uri.begin()+ns, uri.begin()+colon+1,
 		     back_inserter(rv), ::tolower );
 	     bool s;
-	     string::size_type ul = uri.find_last_not_of(whitespace)+1;
+	     string::size_type ul = uri.find_last_not_of(data::_whitespace_chars)+1;
 	     if(ul <= (colon+3))
 		 throw bad_input(OPKELE_CP_ "Unexpected end of URI being normalized encountered");
 	     if(uri[colon+1]!='/' || uri[colon+2]!='/')
@@ -428,6 +428,41 @@ namespace opkele {
 		    (const unsigned char*)kv.data(),kv.length(),
 		    md,&md_len);
 	    return encode_base64(md,md_len);
+	}
+
+	string normalize_identifier(const string& usi,bool strip_fragment) {
+	    if(usi.empty())
+		return usi;
+	    string rv;
+	    string::size_type fsc = usi.find_first_not_of(data::_whitespace_chars);
+	    if(fsc==string::npos)
+		return rv;
+	    string::size_type lsc = usi.find_last_not_of(data::_whitespace_chars);
+	    assert(lsc!=string::npos);
+	    if(!strncasecmp(usi.c_str()+fsc,"xri://",sizeof("xri://")-1))
+		fsc += sizeof("xri://")-1;
+	    if( (fsc+1) >= lsc )
+		return rv;
+	    rv.assign(usi,fsc,lsc-fsc+1);
+	    if(strchr(data::_iname_leaders,rv[0])) {
+		/* TODO: further normalize xri identity, fold case or
+		 * whatever... */
+	    }else{
+		if(rv.find("://")==string::npos)
+		    rv.insert(0,"http://");
+		if(strip_fragment) {
+		    string::size_type fp = rv.find('#');
+		    if(fp!=string::npos) {
+			string::size_type qp = rv.find('?');
+			if(qp==string::npos || qp<fp)
+			    rv.erase(fp);
+			else if(qp>fp)
+			    rv.erase(fp,qp-fp);
+		    }
+		}
+		rv = rfc_3986_normalize_uri(rv);
+	    }
+	    return rv;
 	}
 
     }
