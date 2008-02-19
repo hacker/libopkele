@@ -8,8 +8,27 @@
 #include <opkele/util.h>
 #include <opkele/util-internal.h>
 #include <opkele/curl.h>
+#include <opkele/debug.h>
 
 namespace opkele {
+
+    void basic_RP::reset_vars() {
+	claimed_id.clear(); identity.clear();
+    }
+
+    const string& basic_RP::get_claimed_id() const {
+	if(claimed_id.empty())
+	    throw non_identity(OPKELE_CP_ "attempting to retreive claimed_id of non-identity assertion");
+	assert(!identity.empty());
+	return claimed_id;
+    }
+
+    const string& basic_RP::get_identity() const {
+	if(identity.empty())
+	    throw non_identity(OPKELE_CP_ "attempting to retrieve identity of non-identity related assertion");
+	assert(!claimed_id.empty());
+	return identity;
+    }
 
     static void dh_get_secret(
 	    secret_t& secret, const basic_openid_message& om,
@@ -196,6 +215,7 @@ namespace opkele {
     }
 
     void basic_RP::id_res(const basic_openid_message& om,extension_t *ext) {
+	reset_vars();
 	bool o2 = om.has_field("ns")
 	    && om.get_field("ns")==OIURI_OPENID20;
 	if( (!o2) && om.has_field("user_setup_url"))
@@ -271,12 +291,17 @@ namespace opkele {
 	    }
 
 	    if(om.has_field("claimed_id")) {
+		claimed_id = om.get_field("claimed_id");
+		identity = om.get_field("identity");
 		verify_OP(
 			om.get_field("op_endpoint"),
-			om.get_field("claimed_id"),
-			om.get_field("identity") );
+			claimed_id, identity );
 	    }
 
+	}else{
+	    claimed_id = get_endpoint().claimed_id;
+	    /* TODO: check if this is the identity we asked for */
+	    identity = om.get_field("identity");
 	}
 	if(ext) ext->rp_id_res_hook(om,signeds);
     }

@@ -10,8 +10,44 @@ namespace opkele {
 
     class basic_RP {
 	public:
+	    /**
+	     * Claimed identifier from a parsed id_res message.
+	     */
+	    string claimed_id;
+	    /**
+	     * OP-Local identifier from a parsed id_res message.
+	     */
+	    string identity;
 
 	    virtual ~basic_RP() { }
+
+	    void reset_vars();
+
+	    /**
+	     * @name Assertion information retrieval
+	     * Retrieval of the information passed with openid message
+	     * @{
+	     */
+	    /**
+	     * Find out if the assertion is about identity
+	     * @return true if so
+	     */
+	    bool has_identity() const;
+	    /**
+	     * Get claimed identifier supplied with the request
+	     * @return claimed identifier
+	     * @throw non_identity if request is not about identity
+	     */
+	    const string& get_claimed_id() const;
+	    /**
+	     * Get the identity (OP-Local identifier) confirmed
+	     * @return identity
+	     * @throw non_identity if request is not about identity
+	     */
+	    const string& get_identity() const;
+	    /**
+	     * @}
+	     */
 
 	    /**
 	     * @name Global persistent store API
