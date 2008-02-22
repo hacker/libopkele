@@ -200,7 +200,13 @@ namespace opkele {
 			throw exception_curl(OPKELE_CP_ "failed to get CURLINFO_EFFECTIVE_URL",r);
 		    string cid = util::strip_uri_fragment_part( idis.canonicalized_id = util::rfc_3986_normalize_uri(eu) );
 		    if(xrds_location.empty()) {
-			html2xrd(oi,idis);
+			if(idis.xrd.empty())
+			    html2xrd(oi,idis);
+			else{
+			    for(const service_type_t *st=op_service_types;
+				    st<&op_service_types[sizeof(op_service_types)/sizeof(*op_service_types)];++st)
+				queue_endpoints(oi,idis,st);
+			}
 		    }else{
 			idis.clear();
 			idis.canonicalized_id = cid;
