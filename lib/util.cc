@@ -10,7 +10,6 @@
 #include <openssl/evp.h>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
-#include <curl/curl.h>
 #include <opkele/util.h>
 #include <opkele/exception.h>
 #include <opkele/data.h>
@@ -156,12 +155,40 @@ namespace opkele {
 	 *
 	 */
 
+	static inline bool isrfc3986unreserved(int c) {
+	    if(c<'-') return false;
+	    if(c<='.') return true;
+	    if(c<'0') return false; if(c<='9') return true;
+	    if(c<'A') return false; if(c<='Z') return true;
+	    if(c<'_') return false;
+	    if(c=='_') return true;
+	    if(c<'a') return false; if(c<='z') return true;
+	    if(c=='~') return true;
+	    return false;
+	}
+
+	struct __url_encoder : public unary_function<char,void> {
+	    public:
+		string& rv;
+
+		__url_encoder(string& r) : rv(r) { }
+
+		result_type operator()(argument_type c) {
+		    if(isrfc3986unreserved(c))
+			rv += c;
+		    else{
+			char tmp[4];
+			snprintf(tmp,sizeof(tmp),"%%%02X",
+				(c&0xff));
+			rv += tmp;
+		    }
+		}
+	};
+
 	string url_encode(const string& str) {
-	    char * t = curl_escape(str.c_str(),str.length());
-	    if(!t)
-		throw failed_conversion(OPKELE_CP_ "failed to curl_escape()");
-	    string rv(t);
-	    curl_free(t);
+	    string rv;
+	    for_each(str.begin(),str.end(),
+		    __url_encoder(rv));
 	    return rv;
 	}
 
