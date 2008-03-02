@@ -31,12 +31,20 @@ namespace opkele {
 	time_t w3c_to_time(const string& w);
 
 	/**
-	 * Encode string to the representation suitable for using in URL.
+	 * Encode string to the representation suitable for using in URL
 	 * @param str string to encode
 	 * @return encoded string
 	 * @throw failed_conversion in case of failure
 	 */
 	string url_encode(const string& str);
+
+	/**
+	 * Decode url-encoded string back to normal
+	 * @param str url-encoded string
+	 * @return decoded string
+	 * @throw failed_conversion in case of failure
+	 */
+	string url_decode(const string& str);
 
 	/**
 	 * Make string suitable for using as x(ht)ml attribute.

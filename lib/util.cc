@@ -192,6 +192,34 @@ namespace opkele {
 	    return rv;
 	}
 
+	string url_decode(const string& str) {
+	    string rv;
+	    back_insert_iterator<string> ii(rv);
+	    for(string::const_iterator i=str.begin(),ie=str.end();
+		    i!=ie;++i) {
+		switch(*i) {
+		    case '+':
+			*(ii++) = ' '; break;
+		    case '%':
+			++i;
+			static char tmp[3] = {0,0,0};
+			if(i==ie)
+			    throw failed_conversion(OPKELE_CP_ "trailing percent in the url-encoded string");
+			tmp[0] == *(i++);
+			if(i==ie)
+			    throw failed_conversion(OPKELE_CP_ "not enough hexadecimals after the percent sign in url-encoded string");
+			tmp[1] == *i;
+			if(!(isxdigit(tmp[0]) && isxdigit(tmp[1])))
+			    throw failed_conversion(OPKELE_CP_ "non-hex follows percent in url-encoded string");
+			*(ii++) = strtol(tmp,0,16);
+			break;
+		    default:
+			*(ii++) = *i; break;
+		}
+	    }
+	    return rv;
+	}
+
 	string attr_escape(const string& str) {
 	    static const char *unsafechars = "<>&\n\"'";
 	    string rv;
