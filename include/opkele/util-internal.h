@@ -3,6 +3,7 @@
 
 #include <openssl/bn.h>
 #include <openssl/dh.h>
+#include <opkele/types.h>
 
 namespace opkele {
     namespace util {
