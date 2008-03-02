@@ -139,8 +139,8 @@ namespace opkele {
 	    virtual fields_iterator fields_begin() const = 0;
 	    virtual fields_iterator fields_end() const = 0;
 
-	    virtual string append_query(const string& url) const;
-	    virtual string query_string() const;
+	    virtual string append_query(const string& url,const char *pfx="openid.") const;
+	    virtual string query_string(const char *pfx="openid.") const;
 
 
 	    virtual void reset_fields();

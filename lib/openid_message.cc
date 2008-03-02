@@ -67,13 +67,14 @@ namespace opkele {
 	    const basic_openid_message& om;
 	    bool first;
 	    string& rv;
+	    const char *pfx;
 
-	    __om_query_builder(string& r,const basic_openid_message& m)
-		: om(m), first(true), rv(r) {
+	    __om_query_builder(const char *p,string& r,const basic_openid_message& m)
+		: om(m), first(true), rv(r), pfx(p) {
 		    for_each(om.fields_begin(),om.fields_end(),*this);
 		}
-	    __om_query_builder(string& r,const basic_openid_message& m,const string& u)
-		: om(m), first(true), rv(r) {
+	    __om_query_builder(const char *p,string& r,const basic_openid_message& m,const string& u)
+		: om(m), first(true), rv(r), pfx(p) {
 		    rv = u;
 		    if(rv.find('?')==string::npos)
 			rv += '?';
@@ -87,19 +88,20 @@ namespace opkele {
 		    first = false;
 		else
 		    rv += '&';
-		rv += "openid."; rv+= f;
+		if(pfx) rv += pfx;
+		rv+= f;
 		rv += '=';
 		rv += util::url_encode(om.get_field(f));
 	    }
     };
 
-    string basic_openid_message::append_query(const string& url) const {
+    string basic_openid_message::append_query(const string& url,const char *pfx) const {
 	string rv;
-	return __om_query_builder(rv,*this,url).rv;
+	return __om_query_builder(pfx,rv,*this,url).rv;
     }
-    string basic_openid_message::query_string() const {
+    string basic_openid_message::query_string(const char *pfx) const {
 	string rv;
-	return __om_query_builder(rv,*this).rv;
+	return __om_query_builder(pfx,rv,*this).rv;
     }
 
     void basic_openid_message::reset_fields() {
