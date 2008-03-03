@@ -120,7 +120,6 @@ namespace opkele {
 
     class basic_message {
 	public:
-	    typedef list<string> fields_t;
 	    typedef util::forward_iterator_proxy<
 		string,const string&,const string*
 		> fields_iterator;
