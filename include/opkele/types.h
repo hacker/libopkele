@@ -129,6 +129,7 @@ namespace opkele {
 	    virtual ~basic_openid_message() { }
 	    basic_openid_message(const basic_openid_message& x);
 	    void copy_to(basic_openid_message& x) const;
+	    void append_to(basic_openid_message& x) const;
 
 	    virtual bool has_field(const string& n) const = 0;
 	    virtual const string& get_field(const string& n) const = 0;

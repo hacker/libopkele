@@ -16,9 +16,7 @@ namespace opkele {
 	    basic_openid_message& to;
 
 	    __om_copier(basic_openid_message& t,const basic_openid_message& f)
-		: from(f), to(t) {
-		    to.reset_fields();
-		}
+		: from(f), to(t) { }
 
 	    result_type operator()(argument_type f) {
 		to.set_field(f,from.get_field(f)); }
@@ -28,6 +26,11 @@ namespace opkele {
 	x.copy_to(*this);
     }
     void basic_openid_message::copy_to(basic_openid_message& x) const {
+	x.reset_fields();
+	for_each(fields_begin(),fields_end(),
+		__om_copier(x,*this) );
+    }
+    void basic_openid_message::append_to(basic_openid_message& x) const {
 	for_each(fields_begin(),fields_end(),
 		__om_copier(x,*this) );
     }
