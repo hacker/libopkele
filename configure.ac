@@ -178,6 +178,10 @@ PKG_CHECK_MODULES([KINGATE],[kingate-plaincgi],[have_kingate=true],[have_kingate
 AM_CONDITIONAL([HAVE_KINGATE],[$have_kingate])
 PKG_CHECK_MODULES([UUID],[uuid],[have_uuid=true],[have_uuid=false])
 AM_CONDITIONAL([HAVE_UUID],[$have_uuid])
+if $have_uuid ; then
+ AC_DEFINE([HAVE_LIBUUID],,[defined in presence of libuuid])
+ AC_SUBST([UUID_UUID],[uuid])
+fi
 
 curl_ssl_verify_host="true"
 AC_ARG_ENABLE([ssl-verify-host],
