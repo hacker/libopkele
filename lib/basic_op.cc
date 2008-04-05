@@ -152,9 +152,13 @@ namespace opkele {
 	if(openid2) {
 	    try {
 		realm = inm.get_field("realm");
+		if(realm.empty())
+		    throw failed_lookup(OPKELE_CP_ "Empty realm doesn't count");
 	    }catch(failed_lookup&) {
 		try {
 		    realm = inm.get_field("trust_root");
+		    if(realm.empty())
+			throw failed_lookup(OPKELE_CP_ "Empty trust_root doesn't count");
 		}catch(failed_lookup&) {
 		    if(return_to.empty())
 			throw bad_input(OPKELE_CP_
@@ -165,6 +169,8 @@ namespace opkele {
 	}else{
 	    try {
 		realm = inm.get_field("trust_root");
+		if(realm.empty())
+		    throw failed_lookup(OPKELE_CP_ "Empty trust_root doesn't count");
 	    }catch(failed_lookup&) {
 		if(return_to.empty())
 		    throw bad_input(OPKELE_CP_
