@@ -1,3 +1,4 @@
+#include <opkele/exception.h>
 #include <opkele/curl.h>
 
 #include "config.h"
@@ -5,6 +6,25 @@
 namespace opkele {
 
     namespace util {
+
+	curl_slist_t::~curl_slist_t() throw() {
+	    if(_s)
+		curl_slist_free_all(_s);
+	}
+
+	curl_slist_t& curl_slist_t::operator=(curl_slist *s) {
+	    if(_s)
+		curl_slist_free_all(_s);
+	    _s = s;
+	    return *this;
+	}
+
+	void curl_slist_t::append(const char *str) {
+	    curl_slist *s = curl_slist_append(_s,str);
+	    if(!s)
+		throw opkele::exception(OPKELE_CP_ "failed to curl_slist_append()");
+	    _s=s;
+	}
 
 	curl_t::~curl_t() throw() {
 	    if(_c)

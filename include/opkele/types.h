@@ -118,35 +118,46 @@ namespace opkele {
      */
     typedef tr1mem::shared_ptr<association_t> assoc_t;
 
-    class basic_openid_message {
+    class basic_fields {
 	public:
-	    typedef list<string> fields_t;
 	    typedef util::forward_iterator_proxy<
 		string,const string&,const string*
 		> fields_iterator;
 
-	    basic_openid_message() { }
-	    virtual ~basic_openid_message() { }
-	    basic_openid_message(const basic_openid_message& x);
-	    void copy_to(basic_openid_message& x) const;
-	    void append_to(basic_openid_message& x) const;
+	    basic_fields() { }
+	    virtual ~basic_fields() { }
+	    basic_fields(const basic_fields& x);
+	    void copy_to(basic_fields& x) const;
+	    void append_to(basic_fields& x) const;
 
 	    virtual bool has_field(const string& n) const = 0;
 	    virtual const string& get_field(const string& n) const = 0;
 
-	    virtual bool has_ns(const string& uri) const;
-	    virtual string get_ns(const string& uri) const;
-
 	    virtual fields_iterator fields_begin() const = 0;
 	    virtual fields_iterator fields_end() const = 0;
 
-	    virtual string append_query(const string& url,const char *pfx="openid.") const;
-	    virtual string query_string(const char *pfx="openid.") const;
-
+	    virtual string append_query(const string& url,const char *pfx=0) const;
+	    virtual string query_string(const char *pfx=0) const;
 
 	    virtual void reset_fields();
 	    virtual void set_field(const string& n,const string& v);
 	    virtual void reset_field(const string& n);
+
+    };
+
+    class basic_openid_message : public basic_fields {
+	public:
+
+	    basic_openid_message() { }
+	    basic_openid_message(const basic_openid_message& x);
+
+	    virtual bool has_ns(const string& uri) const;
+	    virtual string get_ns(const string& uri) const;
+
+	    virtual string append_query(const string& url,const char *pfx="openid.") const {
+		return basic_fields::append_query(url,pfx); }
+	    virtual string query_string(const char *pfx="openid.") const {
+		return basic_fields::query_string(pfx); }
 
 	    virtual void from_keyvalues(const string& kv);
 	    virtual void to_keyvalues(ostream& o) const;
@@ -163,8 +174,6 @@ namespace opkele {
 	    openid_message_t() { }
 	    openid_message_t(const basic_openid_message& x)
 		: basic_openid_message(x) { }
-
-	    void copy_to(basic_openid_message& x) const;
 
 	    bool has_field(const string& n) const;
 	    const string& get_field(const string& n) const;

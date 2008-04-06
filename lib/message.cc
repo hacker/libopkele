@@ -10,30 +10,6 @@ namespace opkele {
     using std::input_iterator_tag;
     using std::unary_function;
 
-    struct __om_copier : public unary_function<const string&,void> {
-	public:
-	    const basic_openid_message& from;
-	    basic_openid_message& to;
-
-	    __om_copier(basic_openid_message& t,const basic_openid_message& f)
-		: from(f), to(t) { }
-
-	    result_type operator()(argument_type f) {
-		to.set_field(f,from.get_field(f)); }
-    };
-
-    basic_openid_message::basic_openid_message(const basic_openid_message& x) {
-	x.copy_to(*this);
-    }
-    void basic_openid_message::copy_to(basic_openid_message& x) const {
-	x.reset_fields();
-	for_each(fields_begin(),fields_end(),
-		__om_copier(x,*this) );
-    }
-    void basic_openid_message::append_to(basic_openid_message& x) const {
-	for_each(fields_begin(),fields_end(),
-		__om_copier(x,*this) );
-    }
 
     struct __om_ns_finder : public unary_function<const string&,bool> {
 	public:
@@ -65,58 +41,6 @@ namespace opkele {
 	return i->substr(3);
     }
 
-    struct __om_query_builder : public unary_function<const string&,void> {
-	public:
-	    const basic_openid_message& om;
-	    bool first;
-	    string& rv;
-	    const char *pfx;
-
-	    __om_query_builder(const char *p,string& r,const basic_openid_message& m)
-		: om(m), first(true), rv(r), pfx(p) {
-		    for_each(om.fields_begin(),om.fields_end(),*this);
-		}
-	    __om_query_builder(const char *p,string& r,const basic_openid_message& m,const string& u)
-		: om(m), first(true), rv(r), pfx(p) {
-		    rv = u;
-		    if(rv.find('?')==string::npos)
-			rv += '?';
-		    else
-			first = false;
-		    for_each(om.fields_begin(),om.fields_end(),*this);
-		}
-
-	    result_type operator()(argument_type f) {
-		if(first)
-		    first = false;
-		else
-		    rv += '&';
-		if(pfx) rv += pfx;
-		rv+= f;
-		rv += '=';
-		rv += util::url_encode(om.get_field(f));
-	    }
-    };
-
-    string basic_openid_message::append_query(const string& url,const char *pfx) const {
-	string rv;
-	return __om_query_builder(pfx,rv,*this,url).rv;
-    }
-    string basic_openid_message::query_string(const char *pfx) const {
-	string rv;
-	return __om_query_builder(pfx,rv,*this).rv;
-    }
-
-    void basic_openid_message::reset_fields() {
-	throw not_implemented(OPKELE_CP_ "reset_fields() not implemented");
-    }
-    void basic_openid_message::set_field(const string&,const string&) {
-	throw not_implemented(OPKELE_CP_ "set_field() not implemented");
-    }
-    void basic_openid_message::reset_field(const string&) {
-	throw not_implemented(OPKELE_CP_ "reset_field() not implemented");
-    }
-
     void basic_openid_message::from_keyvalues(const string& kv) {
 	reset_fields();
 	string::size_type p = 0;
@@ -129,7 +53,7 @@ namespace opkele {
 	    if(nl==string::npos)
 		throw bad_input(OPKELE_CP_ "malformed input");
 	    if(nl>co)
-		insert(value_type(kv.substr(p,co-p),kv.substr(co+1,nl-co-1)));
+		set_field(kv.substr(p,co-p),kv.substr(co+1,nl-co-1));
 	    p = nl+1;
 #else /* POSTELS_LAW */
 	    string::size_type lb = kv.find_first_of("\r\n",co+1);
@@ -238,12 +162,6 @@ namespace opkele {
 	}
 	set_field("ns."+rv,uri);
 	return rv;
-    }
-
-    void openid_message_t::copy_to(basic_openid_message& x) const {
-	x.reset_fields();
-	for(const_iterator i=begin();i!=end();++i)
-	    x.set_field(i->first,i->second);
     }
 
     bool openid_message_t::has_field(const string& n) const {

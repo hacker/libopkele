@@ -12,6 +12,24 @@ namespace opkele {
 
     namespace util {
 
+	class curl_slist_t {
+	    public:
+		curl_slist *_s;
+
+		curl_slist_t() : _s(0) { }
+		curl_slist_t(curl_slist *s) : _s(s) { }
+		virtual ~curl_slist_t() throw();
+
+		curl_slist_t& operator=(curl_slist *s);
+
+		operator const curl_slist*(void) const { return _s; }
+		operator curl_slist*(void) { return _s; }
+
+		void append(const char *str);
+		void append(const string& str) {
+		    append(str.c_str()); }
+	};
+
 	class curl_t {
 	    public:
 		CURL *_c;
@@ -29,6 +47,8 @@ namespace opkele {
 
 		template<typename PT>
 		    inline CURLcode easy_setopt(CURLoption o,PT p) { assert(_c); return curl_easy_setopt(_c,o,p); }
+		inline CURLcode easy_setopt(CURLoption o,const curl_slist_t& p) {
+		    assert(_c); return curl_easy_setopt(_c,o,(const curl_slist*)p); }
 		CURLcode easy_perform() { assert(_c); return curl_easy_perform(_c); }
 		template<typename IT>
 		    inline CURLcode easy_getinfo(CURLINFO i,IT p) { assert(_c); return curl_easy_getinfo(_c,i,p); }
