@@ -260,6 +260,7 @@ namespace opkele {
 			td.opt_set(TidyXhtmlOut,true);
 			td.opt_set(TidyDoctypeMode,TidyDoctypeOmit);
 			td.opt_set(TidyMark,false);
+			td.opt_set(TidyNumEntities,true);
 			if(td.parse_string(save_html)<=0)
 			    throw exception_tidy(OPKELE_CP_ "tidy failed to parse document");
 			if(td.clean_and_repair()<=0)
