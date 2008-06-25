@@ -205,10 +205,10 @@ namespace opkele {
 			static char tmp[3] = {0,0,0};
 			if(i==ie)
 			    throw failed_conversion(OPKELE_CP_ "trailing percent in the url-encoded string");
-			tmp[0] == *(i++);
+			tmp[0] = *(i++);
 			if(i==ie)
 			    throw failed_conversion(OPKELE_CP_ "not enough hexadecimals after the percent sign in url-encoded string");
-			tmp[1] == *i;
+			tmp[1] = *i;
 			if(!(isxdigit(tmp[0]) && isxdigit(tmp[1])))
 			    throw failed_conversion(OPKELE_CP_ "non-hex follows percent in url-encoded string");
 			*(ii++) = strtol(tmp,0,16);
