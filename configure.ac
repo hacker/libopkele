@@ -149,7 +149,7 @@ AC_CHECK_HEADER([expat.h],[
  AC_MSG_ERROR([no required expat library. get one from http://expat.sourceforge.net/])
 ])
 
-AC_CHECK_HEADER([tidy.h],[
+AC_CHECK_HEADERS([tidy.h tidy/tidy.h],[
  AC_CHECK_LIB([tidy],[tidyParseBuffer],[
   TIDY_LIBS=-ltidy
   TIDY_CFLAGS=
@@ -159,7 +159,8 @@ AC_CHECK_HEADER([tidy.h],[
   AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.net/])
  ])
 ],[
- AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.net/])
+ test "$ac_header" = "tidy/tidy.h" \
+ && AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.net/])
 ])
 
 if test -n "$PCRE_LIBS" -a -n "$PCRE_CFLAGS" ; then

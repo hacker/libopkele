@@ -2,8 +2,15 @@
 #define __OPKELE_TIDY_H
 
 #include <cassert>
-#include <tidy.h>
-#include <buffio.h>
+#ifdef HAVE_TIDY_H
+# include <tidy.h>
+# include <buffio.h>
+#elif HAVE_TIDY_TIDY_H
+# include <tidy/tidy.h>
+# include <tidy/buffio.h>
+#else
+# error "Don't know where to look for htmltidy headers"
+#endif
 
 namespace opkele {
     namespace util {

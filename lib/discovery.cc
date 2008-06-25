@@ -5,11 +5,12 @@
 #include <opkele/discovery.h>
 #include <opkele/exception.h>
 #include <opkele/util.h>
-#include <opkele/tidy.h>
 #include <opkele/data.h>
 #include <opkele/debug.h>
 
 #include "config.h"
+
+#include <opkele/tidy.h>
 
 #define XRDS_HEADER "X-XRDS-Location"
 #define CT_HEADER "Content-Type"
