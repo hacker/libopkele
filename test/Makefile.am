@@ -1,4 +1,5 @@
-noinst_PROGRAMS = test idiscover RP.cgi OP.cgi
+noinst_PROGRAMS = test idiscover \
+	${_dependent_programs_}
 
 AM_CPPFLAGS=${CPPFLAGS_DEBUG}
 DEFAULT_INCLUDES = -I${top_builddir}
@@ -17,6 +18,8 @@ idiscover_LDADD = ${top_builddir}/lib/libopkele.la
 if    HAVE_SQLITE3
 if     HAVE_KINGATE
 if      HAVE_UUID
+
+_dependent_programs_ = RP.cgi OP.cgi
 
 RP_cgi_SOURCES = RP.cc
 nodist_RP_cgi_SOURCES = RP-db.cc
