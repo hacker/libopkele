@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
- <version version="2.0">
+ <version version="2.0" date="June 26th, 2008">
   <ni>OpenID 2.0 support</ni>
   <ni>Major rewrite of the whole thing</ni>
   <ni>Support for XRDS (YADIS and XRI/inames) discovery</ni>
   <ni>Sheerly improved html-based discovery (only code using new, 2.0-enabled
   classes benefits from it)</ni>
   <ni>Deprecation of the old api</ni>
-  <ni>Added sample RP implementation</ni>
+  <ni>Added sample RP and OP implementations</ni>
   <ni>Require expat xml stream parser library</ni>
   <ni>Require htmltidy library</ni>
   <ni>Require tr1/memory (shared_ptr) support - either modern gcc or boost
