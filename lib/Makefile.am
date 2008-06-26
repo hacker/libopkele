@@ -31,4 +31,4 @@ libopkele_la_SOURCES = \
 		       fields.cc message.cc \
 		       basic_op.cc verify_op.cc
 libopkele_la_LDFLAGS = \
-	-version-info 2:0:0
+	-version-info 3:0:0
