@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
- <version>
+ <version version="2.0">
   <ni>OpenID 2.0 support</ni>
   <ni>Major rewrite of the whole thing</ni>
   <ni>Support for XRDS (YADIS and XRI/inames) discovery</ni>
