@@ -1,8 +1,10 @@
 #include <opkele/types.h>
 #include <opkele/exception.h>
 #include <opkele/util.h>
+#include <algorithm>
 
 namespace opkele {
+    using std::for_each;
     using std::unary_function;
 
     struct __om_copier : public unary_function<const string&,void> {

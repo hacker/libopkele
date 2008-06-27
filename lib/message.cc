@@ -1,4 +1,6 @@
 #include <cassert>
+#include <algorithm>
+
 #include <opkele/types.h>
 #include <opkele/exception.h>
 #include <opkele/util.h>
