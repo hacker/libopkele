@@ -42,9 +42,9 @@ namespace opkele {
 	    OP_verifier& operator++(int) { return *this; }
     };
 
-    void prequeue_RP::verify_OP(const string& OP,const string& claimed_id,const string& id) const {
+    void prequeue_RP::verify_OP(const string& OP,const string& _claimed_id,const string& id) const {
 	try {
-	    discover(OP_verifier(OP,id),claimed_id);
+	    discover(OP_verifier(OP,id),_claimed_id);
 	    throw id_res_unauthorized(OPKELE_CP_
 		    "OP is not authorized to make an assertion regarding the identity");
 	}catch(__OP_verifier_good_input& ovgi) {

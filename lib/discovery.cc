@@ -339,7 +339,7 @@ namespace opkele {
 		    const char *hv = ++colon;
 		    size_t hnl = colon-h;
 		    int rb;
-		    for(rb = bytes-hnl-1;rb>0 && isspace(*hv);++hv,--rb);
+		    for(rb = bytes-hnl-1;rb>0 && isspace(*hv);++hv,--rb) ;
 		    while(rb>0 && isspace(hv[rb-1])) --rb;
 		    if(rb) {
 			if( (hnl>=sizeof(XRDS_HEADER))
@@ -500,7 +500,7 @@ namespace opkele {
 			    rels.assign(a[1]);
 			}else if( !strcasecmp(a[0],"href") ) {
 			    const char *ns = a[1];
-			    for(;*ns && isspace(*ns);++ns);
+			    for(;*ns && isspace(*ns);++ns) ;
 			    href.assign(ns);
 			    string::size_type lns=href.find_last_not_of(data::_whitespace_chars);
 			    href.erase(lns+1);

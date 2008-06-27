@@ -155,7 +155,7 @@ namespace opkele {
 
 		    basic_filterator<IT>& operator++() {
 			bool found = false;
-			for(++it;!(it==ei || (found=is_interesting()));++it);
+			for(++it;!(it==ei || (found=is_interesting()));++it) ;
 			if(!found) empty=true;
 			return *this;
 		    }
@@ -167,7 +167,7 @@ namespace opkele {
 
 		    void prepare() {
 			bool found = false;
-			for(;!(it==ei || (found=is_interesting()));++it);
+			for(;!(it==ei || (found=is_interesting()));++it) ;
 			if(!found) empty = true;
 		    }
 		    virtual bool is_interesting() const = 0;

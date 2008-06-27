@@ -211,7 +211,7 @@ namespace opkele {
 			tmp[1] = *i;
 			if(!(isxdigit(tmp[0]) && isxdigit(tmp[1])))
 			    throw failed_conversion(OPKELE_CP_ "non-hex follows percent in url-encoded string");
-			*(ii++) = strtol(tmp,0,16);
+			*(ii++) = (char)strtol(tmp,0,16);
 			break;
 		    default:
 			*(ii++) = *i; break;
@@ -348,10 +348,10 @@ namespace opkele {
 			 throw bad_input(OPKELE_CP_ "Invalid percent-encoded character in URI being normalized");
 		     int cc = strtol(tmp,0,16);
 		     if( isalpha(cc) || isdigit(cc) || strchr("._~-",cc) )
-			 pseg += cc;
+			 pseg += (char)cc;
 		     else{
 			 pseg += '%';
-			 pseg += toupper(tmp[0]); pseg += toupper(tmp[1]);
+			 pseg += (char)toupper(tmp[0]); pseg += (char)toupper(tmp[1]);
 		     }
 		 }else if(qf) {
 		     rv += pseg; rv += c;

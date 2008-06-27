@@ -158,7 +158,7 @@ namespace opkele {
 	string rv = pfx;
 	if(has_field("ns."+rv)) {
 	    string::reference c=rv[rv.length()];
-	    for(c='a';c<='z' && has_field("ns."+rv);++c);
+	    for(c='a';c<='z' && has_field("ns."+rv);++c) ;
 	    if(c=='z')
 		throw exception(OPKELE_CP_ "Failed to allocate namespace");
 	}

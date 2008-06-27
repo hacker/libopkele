@@ -10,7 +10,7 @@ namespace opkele {
     template<class __a1,class __a2,class __r>
 	struct bitwise_xor : public binary_function<__a1,__a2,__r> {
 	    __r operator() (const __a1& a1,const __a2& a2) const {
-		return a1^a2;
+		return (__r)(a1^a2);
 	    }
 	};
 
