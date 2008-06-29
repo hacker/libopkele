@@ -253,9 +253,12 @@ namespace opkele {
 			util::tidy_doc_t td = util::tidy_doc_t::create();
 			if(!td)
 			    throw exception_tidy(OPKELE_CP_ "failed to create htmltidy document");
-#ifndef NDEBUG
-			td.opt_set(TidyQuiet,false);
+#ifdef NDEBUG
+			td.opt_set(TidyQuiet,true);
 			td.opt_set(TidyShowWarnings,false);
+#else /* NDEBUG */
+			td.opt_set(TidyQuiet,false);
+			td.opt_set(TidyShowWarnings,true);
 #endif /* NDEBUG */
 			td.opt_set(TidyForceOutput,true);
 			td.opt_set(TidyXhtmlOut,true);
