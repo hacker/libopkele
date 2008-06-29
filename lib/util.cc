@@ -122,6 +122,21 @@ namespace opkele {
 	    return rv;
 	}
 
+#ifndef HAVE_TIMEGM
+	static time_t timegm(struct tm *t) {
+	    char *tz = getenv("TZ");
+	    setenv("TZ","",1); tzset();
+	    time_t rv = mktime(t);
+	    if(tz)
+		setenv("TZ",tz,1);
+	    else
+		unsetenv("TZ");
+	    tzset();
+	    return rv;
+	}
+#	define timegm opkele::util::timegm
+#endif /* HAVE_TIMEGM */
+
 	time_t w3c_to_time(const string& w) {
 	    int fraction;
 	    struct tm tm_t;
@@ -145,10 +160,10 @@ namespace opkele {
 		throw failed_conversion(OPKELE_CP_ "failed to sscanf()");
 	    tm_t.tm_mon--;
 	    tm_t.tm_year-=1900;
-	    time_t rv = mktime(&tm_t);
+	    time_t rv = timegm(&tm_t);
 	    if(rv==(time_t)-1)
-		throw failed_conversion(OPKELE_CP_ "failed to mktime()");
-	    return rv-timezone;
+		throw failed_conversion(OPKELE_CP_ "failed to gmtime()");
+	    return rv;
 	}
 
 	/*
