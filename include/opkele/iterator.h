@@ -103,7 +103,7 @@ namespace opkele {
 		~forward_iterator_proxy() { delete I; }
 
 		forward_iterator_proxy& operator=(const forward_iterator_proxy<T,TR,TP>& x) {
-		    delete I; I = x.I->dup(); }
+		    delete I; I = x.I->dup(); return *this; }
 
 		bool operator==(const forward_iterator_proxy<T,TR,TP>& x) const {
 		    return (*I)==(*(x.I)); }

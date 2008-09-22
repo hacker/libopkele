@@ -210,6 +210,7 @@ namespace opkele {
 	string url_decode(const string& str) {
 	    string rv;
 	    back_insert_iterator<string> ii(rv);
+	    char tmp[3]; tmp[2] = 0;
 	    for(string::const_iterator i=str.begin(),ie=str.end();
 		    i!=ie;++i) {
 		switch(*i) {
@@ -217,7 +218,6 @@ namespace opkele {
 			*(ii++) = ' '; break;
 		    case '%':
 			++i;
-			static char tmp[3] = {0,0,0};
 			if(i==ie)
 			    throw failed_conversion(OPKELE_CP_ "trailing percent in the url-encoded string");
 			tmp[0] = *(i++);
