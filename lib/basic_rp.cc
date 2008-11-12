@@ -1,3 +1,4 @@
+#include <sys/types.h>
 #include <cassert>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
