@@ -283,6 +283,7 @@ namespace opkele {
 		(*(expat_t*)this) = parser_create_ns();
 		set_user_data(); set_element_handler();
 		set_character_data_handler();
+		set_unknown_encoding_handler();
 
 		if(xmode&xmode_html) {
 		    html_openid1.clear(); html_openid2.clear();
@@ -567,6 +568,13 @@ namespace opkele {
 			}
 		    }
 		}
+	    }
+
+	    int unknown_encoding(const XML_Char *n,XML_Encoding *i) {
+		for(int ii=0;ii < sizeof(i->map)/sizeof(i->map[0]);++ii)
+		    i->map[ii] = ii;
+		i->convert = 0; i->release = 0;
+		return XML_STATUS_OK;
 	    }
 
     };
