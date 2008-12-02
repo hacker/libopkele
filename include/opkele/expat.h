@@ -26,6 +26,9 @@ namespace opkele {
 		    return XML_Parse(_x,s,len,final);
 		}
 
+		virtual int unknown_encoding(const XML_Char * /* n */,XML_Encoding * /* i */) { return XML_STATUS_ERROR; }
+		void set_unknown_encoding_handler();
+
 		virtual void start_element(const XML_Char * /* n */,const XML_Char ** /* a */) { }
 		virtual void end_element(const XML_Char * /* n */) { }
 		void set_element_handler();

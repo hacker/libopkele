@@ -92,6 +92,15 @@ namespace opkele {
 	    XML_SetNamespaceDeclHandler(_x,_start_namespace_decl,_end_namespace_decl);
 	}
 
+	static int _unknown_encoding(void *ehd,const XML_Char *n,XML_Encoding *i) {
+	    return ((expat_t*)ehd)->unknown_encoding(n,i);
+	}
+
+	void expat_t::set_unknown_encoding_handler() {
+	    assert(_x);
+	    XML_SetUnknownEncodingHandler(_x,_unknown_encoding,this);
+	}
+
     }
 
 }
