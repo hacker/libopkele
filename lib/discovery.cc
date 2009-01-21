@@ -454,25 +454,36 @@ namespace opkele {
 		    --skipping; return;
 		}
 		if(is_qelement(n,NSURI_XRD "\tType")) {
-		    assert(xrd); assert(xrd_service); assert(cdata==&cdata_buf);
-		    xrd_service->types.insert(cdata_buf);
+		    if(xrd && xrd_service) {
+			assert(cdata==&cdata_buf);
+			xrd_service->types.insert(cdata_buf);
+		    }
 		}else if(is_qelement(n,NSURI_XRD "\tService")) {
-		    assert(xrd); assert(xrd_service);
-		    assert(!pt_stack.empty());
-		    assert(pt_stack.back()==(NSURI_XRD "\tService"));
-		    pt_stack.pop_back();
-		    xrd_service = 0;
-		}else if(is_qelement(n,NSURI_XRD "\tStatus")) {
-		    assert(xrd);
-		    if(is_qelement(pt_stack.back().c_str(),n)) {
-			assert(cdata==&status_string);
+		    if(!(xrd && xrd_service)) {
+			skipping = -1;
+		    }else{
+			assert(!pt_stack.empty());
+			assert(pt_stack.back()==(NSURI_XRD "\tService"));
 			pt_stack.pop_back();
-			if(status_code!=100)
-			    skipping = -1;
+			xrd_service = 0;
+		    }
+		}else if(is_qelement(n,NSURI_XRD "\tStatus")) {
+		    if(!xrd) {
+			skipping=-1;
+		    }else{
+			if(is_qelement(pt_stack.back().c_str(),n)) {
+			    assert(cdata==&status_string);
+			    pt_stack.pop_back();
+			    if(status_code!=100)
+				skipping = -1;
+			}
 		    }
 		}else if(is_qelement(n,NSURI_XRD "\tExpires")) {
-		    assert(xrd);
-		    xrd->expires = util::w3c_to_time(cdata_buf);
+		    if(!xrd) {
+			skipping=-1;
+		    }else{
+			xrd->expires = util::w3c_to_time(cdata_buf);
+		    }
 		}else if((xmode&xmode_html) && is_element(n,"head")) {
 		    skipping = -1;
 		}
