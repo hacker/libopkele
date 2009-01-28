@@ -484,6 +484,10 @@ namespace opkele {
 		    }else{
 			xrd->expires = util::w3c_to_time(cdata_buf);
 		    }
+		}else if(is_qelement(n,NSURI_XRD "\tXRD")) {
+		    assert(!pt_stack.empty());
+		    assert(pt_stack.back()==(NSURI_XRD "\tXRD"));
+		    pt_stack.pop_back();
 		}else if((xmode&xmode_html) && is_element(n,"head")) {
 		    skipping = -1;
 		}
