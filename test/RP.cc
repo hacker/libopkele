@@ -1,6 +1,7 @@
 #include <uuid/uuid.h>
 #include <iostream>
 #include <cassert>
+#include <cstdlib>
 #include <stdexcept>
 #include <string>
 #include <set>
