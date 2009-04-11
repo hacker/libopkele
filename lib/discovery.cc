@@ -585,8 +585,8 @@ namespace opkele {
 		}
 	    }
 
-	    int unknown_encoding(const XML_Char *n,XML_Encoding *i) {
-		for(int ii=0;ii < sizeof(i->map)/sizeof(i->map[0]);++ii)
+	    int unknown_encoding(const XML_Char* /* n */,XML_Encoding *i) {
+		for(unsigned int ii=0;ii < sizeof(i->map)/sizeof(i->map[0]);++ii)
 		    i->map[ii] = ii;
 		i->convert = 0; i->release = 0;
 		return XML_STATUS_OK;
