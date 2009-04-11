@@ -2,7 +2,7 @@
 WANT_AUTOMAKE=1.8
 export WANT_AUTOMAKE
 libtoolize -f \
-&& aclocal \
+&& aclocal -I aclocal.d \
 && autoheader \
 && automake -a \
 && autoconf \

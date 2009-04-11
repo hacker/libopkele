@@ -1,6 +1,7 @@
-
 SUBDIRS=include lib test
 EXTRA_DIST= NEWS NEWS.xml NEWS.xsl
+
+ACLOCAL_AMFLAGS=-I aclocal.d
 
 pkgconfigdir=${libdir}/pkgconfig
 pkgconfig_DATA=libopkele.pc
