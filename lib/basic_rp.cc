@@ -218,7 +218,8 @@ namespace opkele {
     void basic_RP::id_res(const basic_openid_message& om,extension_t *ext) {
 	reset_vars();
 	bool o2 = om.has_field("ns")
-	    && om.get_field("ns")==OIURI_OPENID20 && !om.get_field("op_endpoint").empty();
+	    && om.get_field("ns")==OIURI_OPENID20
+	    && om.has_field("op_endpoint") && !om.get_field("op_endpoint").empty();
 	if( (!o2) && om.has_field("user_setup_url"))
 	    throw id_res_setup(OPKELE_CP_ "assertion failed, setup url provided",
 		    om.get_field("user_setup_url"));
