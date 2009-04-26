@@ -9,5 +9,5 @@ fi
 && aclocal -I aclocal.d \
 && autoheader \
 && automake -a \
-&& autoconf \
+&& (autoconf || autoconf) \
 && ./configure "$@"
