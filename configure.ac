@@ -153,7 +153,7 @@ AC_CHECK_HEADER([expat.h],[
 ])
 
 AC_CHECK_HEADERS([tidy.h tidy/tidy.h],[
- AC_CHECK_LIB([tidy],[tidyParseBuffer],[
+ test -z "$TIDY_LIBS" && AC_CHECK_LIB([tidy],[tidyParseBuffer],[
   TIDY_LIBS=-ltidy
   TIDY_CFLAGS=
   AC_SUBST([TIDY_LIBS])
@@ -162,7 +162,7 @@ AC_CHECK_HEADERS([tidy.h tidy/tidy.h],[
   AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.net/])
  ])
 ],[
- test "$ac_header" = "tidy/tidy.h" \
+ test -z "$TIDY_LIBS" -a "$ac_header" = "tidy/tidy.h" \
  && AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.net/])
 ])
 
