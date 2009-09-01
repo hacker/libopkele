@@ -372,7 +372,7 @@ namespace opkele {
 		     rv += pseg; rv += c;
 		     pseg.clear();
 		 }else if(n>=ul || strchr("?/#",c)) {
-		     if(pseg.empty() || pseg==".") {
+		     if( (unsafe!=string::npos && pseg.empty()) || pseg==".") {
 		     }else if(pseg=="..") {
 			 if(psegs.size()>1) {
 			     rv.resize(psegs.top()); psegs.pop();
