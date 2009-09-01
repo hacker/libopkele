@@ -73,6 +73,8 @@ void test_rfc_3986_normalize_uri() {
 	    "http://hacker.klever.net/ah/%5x", false );
     test_rfc_3986_normalize_uri(
 	    "Http://Hacker.Klever.Net:", true, "http://hacker.klever.net/" );
+    test_rfc_3986_normalize_uri(
+	    "http://www.xxx.com/openid/1", true, "http://www.xxx.com/openid/1" );
 }
 
 void test_w3c_to_time(const char *w3c,time_t expected) {
