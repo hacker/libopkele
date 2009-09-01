@@ -289,7 +289,7 @@ namespace opkele {
 		if(tpi==tp.end())
 		    throw id_res_bad_return_to(OPKELE_CP_ string("Parameter '")+rpi->first+"' from return_to is missing from the request");
 		if(tpi->second!=rpi->second)
-		    throw id_res_bad_return_to(OPKELE_CP_ string("Parameter '")+rpi->first+"' from return_to doesn't matche the request");
+		    throw id_res_bad_return_to(OPKELE_CP_ string("Parameter '")+rpi->first+"' from return_to doesn't match the request");
 	    }
 
 	    if(om.has_field("claimed_id")) {
