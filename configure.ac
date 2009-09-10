@@ -166,16 +166,6 @@ AC_CHECK_HEADERS([tidy.h tidy/tidy.h],[
  && AC_MSG_ERROR([no required htmltidy library found. get one from http://tidy.sourceforge.net/])
 ])
 
-if test -n "$PCRE_LIBS" -a -n "$PCRE_CFLAGS" ; then
- AC_SUBST([PCRE_CFLAGS])
- AC_SUBST([PCRE_LIBS])
- :
-else
- PKG_CHECK_MODULES([PCRE],[libpcre],,[
-  AC_MSG_ERROR([no libpcre found, go get it at http://www.pcre.org/])
- ])
-fi
-
 PKG_CHECK_MODULES([SQLITE3],[sqlite3],[have_sqlite3=true],[have_sqlite3=false])
 AM_CONDITIONAL([HAVE_SQLITE3],[$have_sqlite3])
 PKG_CHECK_MODULES([KINGATE],[kingate-plaincgi],[have_kingate=true],[have_kingate=false])
