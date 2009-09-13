@@ -50,7 +50,7 @@ namespace opkele {
 		    return *this;
 		}
 
-		operator const TidyDoc(void) const { return _x; }
+		operator TidyDoc(void) const { return _x; }
 		operator TidyDoc(void) { return _x; }
 
 		inline bool opt_set(TidyOptionId o,bool v) {

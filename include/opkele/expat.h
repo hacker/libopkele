@@ -18,7 +18,7 @@ namespace opkele {
 
 		expat_t& operator=(XML_Parser x);
 
-		operator const XML_Parser(void) const { return _x; }
+		operator XML_Parser(void) const { return _x; }
 		operator XML_Parser(void) { return _x; }
 
 		inline bool parse(const char *s,int len,bool final=false) {
