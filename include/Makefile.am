@@ -11,7 +11,6 @@ nobase_include_HEADERS = \
 	opkele/sreg.h \
 	opkele/extension_chain.h \
 	opkele/uris.h \
-	opkele/tr1-mem.h \
 	opkele/basic_rp.h opkele/prequeue_rp.h \
 	opkele/iterator.h \
 	opkele/basic_op.h opkele/verify_op.h \
