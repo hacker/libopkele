@@ -15,6 +15,7 @@ nobase_include_HEADERS = \
 	opkele/iterator.h \
 	opkele/basic_op.h opkele/verify_op.h \
 	opkele/util.h \
+	opkele/ax.h opkele/oauth_ext.h \
 	${NODIST_HEADERS_}
 
 noinst_HEADERS = \

@@ -27,6 +27,7 @@ libopkele_la_SOURCES = \
 		       discovery.cc \
 		       basic_rp.cc prequeue_rp.cc \
 		       fields.cc message.cc \
-		       basic_op.cc verify_op.cc
+		       basic_op.cc verify_op.cc \
+		       ax.cc oauth_ext.cc
 libopkele_la_LDFLAGS = \
 	-version-info 3:0:0
