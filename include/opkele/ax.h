@@ -11,8 +11,8 @@
 namespace opkele {
 
     /**
-     * OpenID simple registration extension implementation
-     * http://openid.net/specs/openid-simple-registration-extension-1_0.html
+     * OpenID attribute exchange extension implementation
+     * http://openid.net/specs/openid-attribute-exchange-1_0.html
      */
     class ax_t : public extension_t {
 	public:
@@ -80,5 +80,5 @@ namespace opkele {
     };
 }
 
-#endif /* __OPKELE_SREG_H */
+#endif /* __OPKELE_AX_H */
 

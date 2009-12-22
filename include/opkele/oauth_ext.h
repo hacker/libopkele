@@ -18,15 +18,6 @@ namespace opkele {
 	public:
 	    std::string m_consumer, m_scope, m_request_token;
 
-	    /**
-	     * Consumer constructor.
-	     * @param fr required fields
-	     * @see fields_required
-	     * @param fo optional fields
-	     * @see fields_optional
-	     * @param pu policy url
-	     * @see policy_url
-	     */
 	    oauth_ext_t(const char *consumer = "", const char *scope = "") : m_consumer(consumer), m_scope(scope) { }
 
 	    virtual void rp_checkid_hook(basic_openid_message& om);
