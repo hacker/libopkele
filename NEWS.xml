@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <news>
+ <version version="2.0.4" date="December 22nd, 2009">
+  <ni>added attribute exchange and oauth openid extensions contributed by Joseph
+  Smarr of Plaxo</ni>
+  <ni>removed legacy compatibility code and dependency on pcre</ni>
+  <ni>minor build fixes and improvements</ni>
+ </version>
  <version version="2.0.3" date="September 1st, 2009">
   <ni>Fixed an URI normalization bug misnormalizing URIs with a single-character
   trailing component</ni>
