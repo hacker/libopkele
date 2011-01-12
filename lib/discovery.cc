@@ -120,7 +120,7 @@ namespace opkele {
 		    discover_at(idis,xrds_location,xmode_xrd);
 		}
 		idis.normalized_id = idis.canonicalized_id = yurl;
-		service_type_t st;
+		service_type_t st = { 0, 0 };
 		for(st.uri=*types;*types;st.uri=*(++types))
 		    queue_endpoints(oi,idis,&st);
 	    }
