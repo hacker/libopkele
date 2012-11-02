@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <unistd.h>
 using namespace std;
 #include <opkele/exception.h>
 #include <opkele/util.h>

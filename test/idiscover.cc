@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <iterator>
 #include <algorithm>
+#include <unistd.h>
 using namespace std;
 #include <opkele/exception.h>
 #include <opkele/discovery.h>
