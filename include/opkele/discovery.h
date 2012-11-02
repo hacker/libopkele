@@ -21,7 +21,7 @@ namespace opkele {
 		public:
 
 		    inline _DT& add(long priority,const _DT& d) {
-			return insert(typename map_type::value_type(priority,d))->second;
+			return this->insert(typename map_type::value_type(priority,d))->second;
 		    }
 
 		    bool has_value(const _DT& d) const {
