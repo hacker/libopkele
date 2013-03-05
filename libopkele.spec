@@ -6,7 +6,7 @@ License: GPL
 URL: http://kin.klever.net/libopkele/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: gcc-c++ openssl-devel libcurl-devel libtidy-devel
+BuildRequires: gcc-c++ openssl-devel libcurl-devel libtidy-devel expat-devel
 
 %description
 libopkele is a c++ implementation of an OpenID decentralized identity system.
