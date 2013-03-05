@@ -2,11 +2,15 @@ Summary: a c++ implementation of an OpenID decentralized identity system
 Name: libopkele
 Version: 2.0.4
 Release: 1
-License: GPL
+License: BSD
 URL: http://kin.klever.net/libopkele/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: gcc-c++ openssl-devel libcurl-devel libtidy-devel expat-devel
+BuildRequires: expat-devel
+BuildRequires: gcc-c++
+BuildRequires: libcurl-devel
+BuildRequires: libtidy-devel
+BuildRequires: openssl-devel
 
 %description
 libopkele is a c++ implementation of an OpenID decentralized identity system.
@@ -18,23 +22,21 @@ interaction to the implementor.
 
 %build
 %configure
-
 make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
-%make_install
+make install DESTDIR=%{buildroot}
 
 %clean
 rm -rf %{buildroot}
 
-%post
-ldconfig
+%post -p /sbin/ldconfig
 
-%postun
-ldconfig
+%postun -p /sbin/ldconfig
 
 %files
+%defattr(-,root,root,-)
 %{_libdir}/libopkele.a
 %{_libdir}/libopkele.la
 %{_libdir}/libopkele.so
@@ -44,7 +46,7 @@ ldconfig
 
 %package devel
 Summary: Development headers for libopkele
-Requires: %{name} = %{version}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 libopkele is a c++ implementation of an OpenID decentralized identity system.
@@ -52,6 +54,7 @@ It provides OpenID protocol handling, leaving authentication and user
 interaction to the implementor.
 
 %files devel
+%defattr(-,root,root,-)
 %dir %{_includedir}/opkele
 %{_includedir}/opkele/acconfig.h
 %{_includedir}/opkele/association.h
