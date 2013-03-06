@@ -2,7 +2,7 @@ Summary: a c++ implementation of an OpenID decentralized identity system
 Name: libopkele
 Version: 2.0.4
 Release: 1
-License: BSD
+License: MIT
 URL: http://kin.klever.net/libopkele/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
