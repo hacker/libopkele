@@ -13,6 +13,7 @@ PKG_PROG_PKG_CONFIG
 
 AC_HEADER_STDC
 AC_CHECK_FUNCS([timegm])
+AC_CHECK_HEADERS([ext/algorithm.h])
 
 AC_PATH_PROG([XSLTPROC],[xsltproc],[true])
 

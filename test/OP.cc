@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cassert>
 #include <string>
-#include <ext/algorithm>
 using namespace std;
 #include <kingate/exception.h>
 #include <kingate/plaincgi.h>
@@ -15,6 +14,11 @@ using namespace std;
 #include <opkele/debug.h>
 #include <opkele/verify_op.h>
 #include <opkele/sreg.h>
+
+#include "config.h"
+#ifdef HAVE_EXT_ALGORITHM_H
+# include <ext/algorithm>
+#endif
 
 #include "sqlite.h"
 #include "kingate_openid_message.h"
