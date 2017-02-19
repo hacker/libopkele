@@ -73,12 +73,20 @@ namespace opkele {
 	    if(!(dh = DH_new()))
 		throw exception_openssl(OPKELE_CP_ "failed to DH_new()");
 	    c_pub = util::base64_to_bignum(inm.get_field("dh_consumer_public"));
-	    try { dh->p = util::base64_to_bignum(inm.get_field("dh_modulus"));
+	    BIGNUM *p;
+	    BIGNUM *g;
+	    try { p = util::base64_to_bignum(inm.get_field("dh_modulus"));
 	    }catch(failed_lookup&) {
-		dh->p = util::dec_to_bignum(data::_default_p); }
-	    try { dh->g = util::base64_to_bignum(inm.get_field("dh_gen"));
+		p = util::dec_to_bignum(data::_default_p); }
+	    try { g = util::base64_to_bignum(inm.get_field("dh_gen"));
 	    }catch(failed_lookup&) {
-		dh->g = util::dec_to_bignum(data::_default_g); }
+		g = util::dec_to_bignum(data::_default_g); }
+	    #if OPENSSL_VERSION_NUMBER >= 0x10100000L
+		DH_set0_pqg(dh, p, NULL, g);
+	    #else
+		dh->p = p;
+		dh->g = g;
+	    #endif
 	    if(!DH_generate_key(dh))
 		throw exception_openssl(OPKELE_CP_ "failed to DH_generate_key()");
 	    vector<unsigned char> ck(DH_size(dh)+1);
@@ -113,7 +121,13 @@ namespace opkele {
 	    if(d_len != secret.size())
 		throw bad_input(OPKELE_CP_ "Association secret and session MAC are not of the same size");
 	    oum.set_field("session_type",sts);
-	    oum.set_field("dh_server_public",util::bignum_to_base64(dh->pub_key));
+	    const BIGNUM *pub_key;
+	    #if OPENSSL_VERSION_NUMBER >= 0x10100000L
+		DH_get0_key(dh, &pub_key, NULL);
+	    #else
+		pub_key = dh->pub_key;
+	    #endif
+	    oum.set_field("dh_server_public",util::bignum_to_base64(pub_key));
 	    string b64; secret.enxor_to_base64(key_digest,b64);
 	    oum.set_field("enc_mac_key",b64);
 	}else /* TODO: support cleartext over encrypted connection */
