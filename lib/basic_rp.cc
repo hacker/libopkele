@@ -80,16 +80,28 @@ namespace opkele {
 	util::dh_t dh = DH_new();
 	if(!dh)
 	    throw exception_openssl(OPKELE_CP_ "failed to DH_new()");
-	dh->p = util::dec_to_bignum(data::_default_p);
-	dh->g = util::dec_to_bignum(data::_default_g);
+	BIGNUM *p = util::dec_to_bignum(data::_default_p);
+	BIGNUM *g = util::dec_to_bignum(data::_default_g);
+	#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+		DH_set0_pqg(dh, p, NULL, g);
+	#else
+		dh->p = util::dec_to_bignum(data::_default_p);
+		dh->g = util::dec_to_bignum(data::_default_g);
+	#endif
 	if(!DH_generate_key(dh))
 	    throw exception_openssl(OPKELE_CP_ "failed to DH_generate_key()");
 	openid_message_t req;
 	req.set_field("ns",OIURI_OPENID20);
 	req.set_field("mode","associate");
-	req.set_field("dh_modulus",util::bignum_to_base64(dh->p));
-	req.set_field("dh_gen",util::bignum_to_base64(dh->g));
-	req.set_field("dh_consumer_public",util::bignum_to_base64(dh->pub_key));
+	req.set_field("dh_modulus",util::bignum_to_base64(p));
+	req.set_field("dh_gen",util::bignum_to_base64(g));
+	const BIGNUM *pub_key;
+	#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+		DH_get0_key(dh, &pub_key, NULL);
+	#else
+		pub_key = dh->pub_key;
+	#endif
+	req.set_field("dh_consumer_public",util::bignum_to_base64(pub_key));
 	openid_message_t res;
 	req.set_field("assoc_type","HMAC-SHA256");
 	req.set_field("session_type","DH-SHA256");
